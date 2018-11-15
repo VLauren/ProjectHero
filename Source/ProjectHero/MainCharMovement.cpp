@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "MainCharMovement.h"
 #include "MainChar.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
@@ -45,23 +43,14 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		Move.Z = YVel;
 		FHitResult Hit;
 
-		// FRotator forward = ((ASwimer*)GetOwner())->CameraArm->RelativeRotation;
-		// movimientoEsteFrame = forward.RotateVector(movimientoEsteFrame);
-
 		// Movimiento
 		if(AMainChar::GetPlayerState() == EMainCharState::MOVING)
 			SafeMoveUpdatedComponent(Move, UpdatedComponent->GetComponentRotation(), true, Hit);
-		// Velocity += movimientoEsteFrame;
 
 		// Si chocamos con algo, me deslizo sobre el
 		if (Hit.IsValidBlockingHit())
 			SlideAlongSurface(Move, 1.f - Hit.Time, Hit.Normal, Hit);
-
 		
-		// FString grounded = IsMovingOnGround() ? "true" : "false";
-		FString grounded = IsFlying() ? "true" : "false";
-		// UE_LOG(LogTemp, Warning, TEXT("velocity: %s, ground: %s"), *Velocity.ToString(), *grounded);
-
 		movimientoDeseado.Z = 0;
 
 		if (!movimientoDeseado.IsNearlyZero())
@@ -160,8 +149,6 @@ bool UMainCharMovement::IsGrounded()
 		}
 		return false;
 	}
-
-	// UWorld::LineTraceSingleByChannel()
 
 	return false;
 }

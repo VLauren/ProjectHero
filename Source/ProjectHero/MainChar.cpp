@@ -84,11 +84,11 @@ void AMainChar::BeginPlay()
 		// hitBox->SetVisibility(false);
 		hitBox->SetHiddenInGame(true);
 
-		// evento de overlap del hitbox
-		// hitBox->OnComponentBeginOverlap.AddDynamic(this, &AProta::OnHitboxOverlap);
+		// Hit box overlap event
+		// hitBox->OnComponentBeginOverlap.AddDynamic(this, &AMainChar::OnHitboxOverlap);
 	}
 
-	// TODO Animacion
+	// TODO Animation
 	// AnimState = EProtaAnimState::AS_STAND;
 	// Mesh->PlayAnimation(AnimStand, true);
 

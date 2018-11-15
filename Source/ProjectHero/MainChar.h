@@ -57,10 +57,9 @@ public:
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class USkeletalMeshComponent* Mesh;
 
-	// Animaciones
-	// TODO
+	// TODO Animations
 
-	// Estado
+	// State
 	EMainCharState CharState;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -79,10 +78,10 @@ public:
 
 private:
 
-	// referencia estatica al personaje
+	// Static reference to the main character (singleton)
 	static AMainChar* Instance;
 
-	// Metodos de input
+	// Input methods
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void Jump();
@@ -95,9 +94,10 @@ private:
 	void AttackMove(float amount, float time);
 	void DoAttack();
 
+	// Flag to notify the start of the next linked attack
 	bool linkAttack;
 
-	// Datos del ataque actual
+	// Current attack data
 	int currentAttackIndex;
 	int currentAttackFrame;
 };
