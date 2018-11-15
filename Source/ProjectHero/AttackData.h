@@ -11,15 +11,14 @@ struct FAttackInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(EditAnywhere)
-		int hitStart = 24;
 	UPROPERTY(EditAnywhere)
-		int hitEnd = 44;
+		int hitStart = 10;
 	UPROPERTY(EditAnywhere)
-		int linkStart = 40;
+		int hitEnd = 30;
 	UPROPERTY(EditAnywhere)
-		int lastFrame = 60;
-
+		int linkStart = 20;
+	UPROPERTY(EditAnywhere)
+		int lastFrame = 40;
 };
 
 UCLASS()
@@ -30,6 +29,4 @@ class PROJECTHERO_API UAttackData : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 		TArray<FAttackInfo> Attacks;
-	
-	
 };

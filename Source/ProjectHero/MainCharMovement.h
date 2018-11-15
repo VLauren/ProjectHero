@@ -7,7 +7,8 @@
 #include "MainCharMovement.generated.h"
 
 /**
- * 
+ * MainCharMovement updates movement for the main character.
+ * It manages control movement, jump, knockbacks, movement while attacking, etc.
  */
 UCLASS()
 class PROJECTHERO_API UMainCharMovement : public UPawnMovementComponent
@@ -30,6 +31,7 @@ public:
 	void Push(float strength, float time, bool forward, FVector direction = FVector::ZeroVector);
 
 private:
+	class AMainChar* MainChar = nullptr;
 	class USkeletalMeshComponent* Mesh = nullptr;
 
 	FVector Move;

@@ -9,8 +9,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Engine/Engine.h"
 
-const float AMainChar::MOVEMENT_SPEED = 500.0f;
-
 AMainChar* AMainChar::Instance;
 
 AMainChar::AMainChar()
@@ -65,6 +63,13 @@ AMainChar::AMainChar()
 	Movement = CreateDefaultSubobject<UMainCharMovement>(TEXT("Movement"));
 	Movement->UpdatedComponent = RootComponent;
 
+	// Default values
+	MovementSpeed = 500.0f;
+	RotationLerpSpeed = 0.1f;
+	JumpStrength = 12;
+	GravityStrength = 30.0f;
+	StopLerpSpeed = 0.07f;
+
 	Instance = this;
 }
 
@@ -117,7 +122,6 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	// input de acciones
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainChar::Attack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainChar::Jump);
-	PlayerInputComponent->BindAction("Ability", IE_Pressed, this, &AMainChar::Ability);
 }
 
 void AMainChar::MoveForward(float AxisValue)
@@ -142,44 +146,7 @@ void AMainChar::Jump()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Jump"));
 
-	//HACK
-	if(!Underground)
-		Movement->Jump();
-}
-
-void AMainChar::Ability()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Ability"));
-
-	// HACK por ahora hago la habilidad directamente aqui
-	if (!Underground)
-	{
-		// Hago invisible los meshes
-
-		// Capsula mas baja
-		CapsuleComponent->SetCapsuleSize(34.0f, 34.0f);
-		AddActorWorldOffset(FVector(0, 0, -54.0f));
-
-		TArray<UStaticMeshComponent*> Meshes;
-		GetComponents<UStaticMeshComponent>(Meshes);
-		for (size_t i = 0; i < Meshes.Num(); i++)
-		{
-			Meshes[i]->SetVisibility(false);
-		}
-
-		Underground = true;
-	}
-	else
-	{
-		TArray<UStaticMeshComponent*> Meshes;
-		GetComponents<UStaticMeshComponent>(Meshes);
-		for (size_t i = 0; i < Meshes.Num(); i++)
-			Meshes[i]->SetVisibility(true);
-
-		CapsuleComponent->SetCapsuleSize(34.0f, 88.0f);
-		Underground = false;
-	}
-
+	Movement->Jump();
 }
 
 EMainCharState AMainChar::GetPlayerState()

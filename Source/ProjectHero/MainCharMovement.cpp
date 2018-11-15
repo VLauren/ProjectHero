@@ -13,6 +13,8 @@ void UMainCharMovement::BeginPlay()
 {
 	Super::BeginPlay();
 
+	MainChar = (AMainChar*)GetOwner();
+
 	Move = FVector::ZeroVector;
 	YVel = 0;
 }
@@ -23,17 +25,17 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!PawnOwner || !UpdatedComponent || ShouldSkipUpdate(DeltaTime))
+	if (!PawnOwner || !UpdatedComponent || MainChar == nullptr || ShouldSkipUpdate(DeltaTime))
 		return;
 
 	// Calculo el vector de movimiento
 	FVector movimientoDeseado;
-	movimientoDeseado = ConsumeInputVector().GetClampedToMaxSize(1.0f) * AMainChar::MOVEMENT_SPEED;
+	movimientoDeseado = ConsumeInputVector().GetClampedToMaxSize(1.0f) * MainChar->MovementSpeed;
 	movimientoDeseado.Z = YVel;
 	movimientoDeseado *= DeltaTime;
 
 	// Move = movimientoDeseado;
-	Move = FMath::Lerp(Move, movimientoDeseado, 0.07f);
+	Move = FMath::Lerp(Move, movimientoDeseado, MainChar->StopLerpSpeed);
 
 	// FVector movimientoEsteFrame = movimientoDeseado;
 
@@ -68,9 +70,9 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			FRotator ctrlRot = movimientoDeseado.Rotation();
 
 			if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
-				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, 0.1f);
+				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot,  MainChar->RotationLerpSpeed);
 			else if(PushActive && PushForward)
-				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, 0.1f);
+				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, MainChar->RotationLerpSpeed);
 			UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 		}
 	}
@@ -87,7 +89,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	else
 	{
 		// Aplico la gravedad
-		YVel -= 30.0f * DeltaTime;
+		YVel -= MainChar->GravityStrength * DeltaTime;
 	}
 
 	if (justJumped > 0)
@@ -114,9 +116,12 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UMainCharMovement::Jump()
 {
+	if (MainChar == nullptr)
+		return;
+
 	if (IsGrounded())
 	{
-		YVel = 12;
+		YVel = MainChar->JumpStrength;
 		justJumped = 4;
 	}
 }

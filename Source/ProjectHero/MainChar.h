@@ -17,28 +17,26 @@ enum class EMainCharState : uint8
 	HIT
 };
 
+/**
+ * Main character pawn class.
+ */
 UCLASS()
 class PROJECTHERO_API AMainChar : public APawn
 {
 	GENERATED_BODY()
 
-	// Capsula
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UCapsuleComponent* CapsuleComponent;
 
-	// hitbox: caja
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UBoxComponent* hitBox = nullptr;
 
-	// camera boom
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
-	// follow camera
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 
-	// movimiento
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UMainCharMovement* Movement;
 
@@ -49,8 +47,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-
-	static const float MOVEMENT_SPEED;
 
 	static FVector GetPlayerLocation();
 	static EMainCharState GetPlayerState();
@@ -69,6 +65,18 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 		UAttackData* AttackData = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float MovementSpeed;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float RotationLerpSpeed;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float JumpStrength;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float GravityStrength;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float StopLerpSpeed;
+
 private:
 
 	// referencia estatica al personaje
@@ -79,7 +87,6 @@ private:
 	void MoveRight(float AxisValue);
 	void Jump();
 	void Attack();
-	void Ability();
 
 	bool CheckAttackStart();
 	bool CheckIfLinkFrame();
@@ -87,9 +94,6 @@ private:
 	void StartAttack(int index);
 	void AttackMove(float amount, float time);
 	void DoAttack();
-
-	// HACK
-	bool Underground;
 
 	bool linkAttack;
 
