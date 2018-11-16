@@ -158,7 +158,17 @@ void AMainChar::Jump()
 
 	// If the character is attacking I cancel the attack
 	if (CharState == EMainCharState::ATTACK)
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("ATTACK Jump cancel"));
 		Cancel();
+	}
+
+	// If the character is dodging I cancel the dodge
+	if (CharState == EMainCharState::DODGE)
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("DODGE Jump cancel"));
+		Cancel();
+	}
 
 	// If and only if the character is in moving state it can jump
 	if (CharState == EMainCharState::MOVING)
