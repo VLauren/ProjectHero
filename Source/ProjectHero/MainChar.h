@@ -12,7 +12,6 @@ UENUM()
 enum class EMainCharState : uint8
 {
 	MOVING,
-	AIR,
 	ATTACK,
 	HIT
 };
@@ -93,6 +92,8 @@ private:
 	void StartAttack(int index);
 	void AttackMove(float amount, float time);
 	void DoAttack();
+
+	void Cancel();
 
 	// Flag to notify the start of the next linked attack
 	bool linkAttack;

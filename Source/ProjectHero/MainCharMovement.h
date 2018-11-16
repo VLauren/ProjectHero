@@ -30,6 +30,8 @@ public:
 
 	void Push(float strength, float time, bool forward, FVector direction = FVector::ZeroVector);
 
+	void Cancel();
+
 private:
 	class AMainChar* MainChar = nullptr;
 	class USkeletalMeshComponent* Mesh = nullptr;

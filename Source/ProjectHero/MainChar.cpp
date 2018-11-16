@@ -146,7 +146,21 @@ void AMainChar::Jump()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Jump"));
 
-	Movement->Jump();
+
+	if (!Movement->IsGrounded())
+		return;
+
+	// If the character is attacking I cancel the attack
+	if (CharState == EMainCharState::ATTACK)
+	{
+		Cancel();
+	}
+
+	// If and only if the character is in moving state it can jump
+	if (CharState == EMainCharState::MOVING)
+	{
+		Movement->Jump();
+	}
 }
 
 EMainCharState AMainChar::GetPlayerState()
@@ -238,49 +252,59 @@ void AMainChar::DoAttack()
 {
 	if (CharState == EMainCharState::ATTACK)
 	{
-		if(GEngine)
+		if (GEngine)
 		{
 			FString msg = FString::Printf(TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, currentAttackFrame, (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
 			GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Green, msg);
 		}
-	}
-	currentAttackFrame++; 
+		currentAttackFrame++;
 
-	if (hitBox != nullptr)
-	{
-		if (CheckActiveFrame())
+		if (hitBox != nullptr)
 		{
-			hitBox->SetGenerateOverlapEvents(true);
-			// hitBox->SetVisibility(true);
-			hitBox->SetHiddenInGame(false);
-		}
-		else
-		{
-			hitBox->SetGenerateOverlapEvents(false);
-			// hitBox->SetVisibility(false);
-			hitBox->SetHiddenInGame(true);
-		}
-	}
-
-	// compruebo si ha terminado el ataque
-	if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].lastFrame)
-	{
-		if (linkAttack)
-		{
-			// lanzo el siguiente ataque
-			StartAttack(currentAttackIndex + 1);
-		}
-		else
-		{
-			// TODO Animacion
-			// AnimState = EProtaAnimState::AS_STAND;
-			// Mesh->PlayAnimation(AnimStand, false);
-
-			if (CharState != EMainCharState::MOVING)
+			if (CheckActiveFrame())
 			{
-				CharState = EMainCharState::MOVING;
-				Movement->ResetYVel();
+				hitBox->SetGenerateOverlapEvents(true);
+				// hitBox->SetVisibility(true);
+				hitBox->SetHiddenInGame(false);
+			}
+			else
+			{
+				hitBox->SetGenerateOverlapEvents(false);
+				// hitBox->SetVisibility(false);
+				hitBox->SetHiddenInGame(true);
+			}
+		}
+
+		// compruebo si ha terminado el ataque
+		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].lastFrame)
+		{
+			if (linkAttack)
+			{
+				// lanzo el siguiente ataque
+				StartAttack(currentAttackIndex + 1);
+			}
+			else
+			{
+				// TODO Animacion
+				// AnimState = EProtaAnimState::AS_STAND;
+				// Mesh->PlayAnimation(AnimStand, false);
+
+				if (CharState != EMainCharState::MOVING)
+				{
+					CharState = EMainCharState::MOVING;
+					Movement->ResetYVel();
+				}
 			}
 		}
 	}
 }
+
+void AMainChar::Cancel()
+{
+	CharState = EMainCharState::MOVING;
+	Movement->Cancel(); 
+	hitBox->SetGenerateOverlapEvents(false);
+	hitBox->SetHiddenInGame(true);
+}
+
+

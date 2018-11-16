@@ -108,7 +108,7 @@ void UMainCharMovement::Jump()
 	if (MainChar == nullptr)
 		return;
 
-	if (IsGrounded())
+	// if (IsGrounded())
 	{
 		YVel = MainChar->JumpStrength;
 		justJumped = 4;
@@ -163,3 +163,8 @@ void UMainCharMovement::Push(float strength, float time, bool forward, FVector d
 	PushForward = forward;
 }
 
+void UMainCharMovement::Cancel()
+{
+	PushActive = false;
+	YVel = 0;
+}
