@@ -143,6 +143,8 @@ bool UMainCharMovement::IsGrounded()
 
 	// DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 1, 0, 1);
 
+	// TODO change to SwipeTrace using a sphere
+
 	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, ColParams))
 	{
 		if (OutHit.bBlockingHit)

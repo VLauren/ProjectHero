@@ -105,6 +105,10 @@ void AMainChar::Tick(float DeltaTime)
 
 	DoAttack();
 
+	// Double jump, air dodge and air attack recovery
+	if (AirJump && Movement->IsGrounded()) AirJump = false;
+	if (AirDodge && Movement->IsGrounded()) AirDodge = false;
+	if (AirAttack && Movement->IsGrounded()) AirAttack = false;
 }
 
 // Called to bind functionality to input
@@ -149,7 +153,7 @@ void AMainChar::Jump()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Jump"));
 
-	if (!Movement->IsGrounded())
+	if (!Movement->IsGrounded() && AirJump)
 		return;
 
 	// If the character is attacking I cancel the attack
@@ -158,11 +162,18 @@ void AMainChar::Jump()
 
 	// If and only if the character is in moving state it can jump
 	if (CharState == EMainCharState::MOVING)
+	{
+		if (!Movement->IsGrounded())
+			AirJump = true;
 		Movement->Jump();
+	}
 }
 
 void AMainChar::Dodge()
 {
+	if (!Movement->IsGrounded() && AirDodge)
+		return;
+
 	// If the character is attacking I cancel the attack
 	if (CharState == EMainCharState::ATTACK)
 		Cancel();
@@ -173,6 +184,9 @@ void AMainChar::Dodge()
 		CharState = EMainCharState::DODGE;
 		Movement->Dodge();
 		GetWorld()->GetTimerManager().SetTimer(DodgeTimerHandle, this, &AMainChar::Cancel, DodgeTime);
+
+		if (!Movement->IsGrounded())
+			AirDodge = true;
 	}
 }
 
@@ -197,7 +211,13 @@ void AMainChar::Attack()
 
 	if (CheckAttackStart())
 	{
-		StartAttack(0);
+		if (Movement->IsGrounded() || !AirAttack)
+		{
+			StartAttack(0);
+
+			if (!Movement->IsGrounded())
+				AirAttack = true;
+		}
 	}
 	else if (CharState != EMainCharState::HIT && CheckIfLinkFrame())
 	{
@@ -323,6 +343,7 @@ void AMainChar::Cancel()
 	Movement->Cancel(); 
 	hitBox->SetGenerateOverlapEvents(false);
 	hitBox->SetHiddenInGame(true);
+	AirAttack = false;
 }
 
 

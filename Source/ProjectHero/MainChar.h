@@ -87,6 +87,10 @@ private:
 	// Flag to notify the start of the next linked attack
 	bool linkAttack;
 
+	bool AirAttack;
+	bool AirDodge;
+	bool AirJump;
+
 	// Current attack data
 	int currentAttackIndex;
 	int currentAttackFrame;
