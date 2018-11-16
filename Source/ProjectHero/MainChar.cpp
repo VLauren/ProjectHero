@@ -69,6 +69,7 @@ AMainChar::AMainChar()
 	JumpStrength = 12;
 	GravityStrength = 30.0f;
 	StopLerpSpeed = 0.07f;
+	DodgeTime = 0.3f;
 
 	Instance = this;
 }
@@ -122,6 +123,8 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	// input de acciones
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainChar::Attack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainChar::Jump);
+	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AMainChar::Dodge);
+	PlayerInputComponent->BindAction("Dodge", IE_Released, this, &AMainChar::StopRun);
 }
 
 void AMainChar::MoveForward(float AxisValue)
@@ -146,21 +149,36 @@ void AMainChar::Jump()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Jump"));
 
-
 	if (!Movement->IsGrounded())
 		return;
 
 	// If the character is attacking I cancel the attack
 	if (CharState == EMainCharState::ATTACK)
-	{
 		Cancel();
-	}
+
+	// If and only if the character is in moving state it can jump
+	if (CharState == EMainCharState::MOVING)
+		Movement->Jump();
+}
+
+void AMainChar::Dodge()
+{
+	// If the character is attacking I cancel the attack
+	if (CharState == EMainCharState::ATTACK)
+		Cancel();
 
 	// If and only if the character is in moving state it can jump
 	if (CharState == EMainCharState::MOVING)
 	{
-		Movement->Jump();
+		CharState = EMainCharState::DODGE;
+		Movement->Dodge();
+		GetWorld()->GetTimerManager().SetTimer(DodgeTimerHandle, this, &AMainChar::Cancel, DodgeTime);
 	}
+}
+
+void AMainChar::StopRun()
+{
+
 }
 
 EMainCharState AMainChar::GetPlayerState()

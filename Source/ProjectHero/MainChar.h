@@ -13,7 +13,8 @@ enum class EMainCharState : uint8
 {
 	MOVING,
 	ATTACK,
-	HIT
+	HIT,
+	DODGE
 };
 
 /**
@@ -75,15 +76,29 @@ public:
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float StopLerpSpeed;
 
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float DodgeTime;
+
 private:
 
 	// Static reference to the main character (singleton)
 	static AMainChar* Instance;
 
+	// Flag to notify the start of the next linked attack
+	bool linkAttack;
+
+	// Current attack data
+	int currentAttackIndex;
+	int currentAttackFrame;
+
+	FTimerHandle DodgeTimerHandle;
+
 	// Input methods
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void Jump();
+	void Dodge();
+	void StopRun();
 	void Attack();
 
 	bool CheckAttackStart();
@@ -94,11 +109,4 @@ private:
 	void DoAttack();
 
 	void Cancel();
-
-	// Flag to notify the start of the next linked attack
-	bool linkAttack;
-
-	// Current attack data
-	int currentAttackIndex;
-	int currentAttackFrame;
 };

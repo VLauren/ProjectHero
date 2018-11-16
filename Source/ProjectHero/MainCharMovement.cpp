@@ -27,13 +27,15 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		return;
 
 	// Calculo el vector de movimiento
-	FVector movimientoDeseado;
-	movimientoDeseado = ConsumeInputVector().GetClampedToMaxSize(1.0f) * MainChar->MovementSpeed;
-	movimientoDeseado.Z = YVel;
-	movimientoDeseado *= DeltaTime;
+	FVector movementVector;
+	InputVector = ConsumeInputVector().GetClampedToMaxSize(1.0f);
+	movementVector = InputVector * MainChar->MovementSpeed;
+	// TODO if running use run speed
+	movementVector.Z = YVel;
+	movementVector *= DeltaTime;
 
 	// Move = movimientoDeseado;
-	Move = FMath::Lerp(Move, movimientoDeseado, MainChar->StopLerpSpeed);
+	Move = FMath::Lerp(Move, movementVector, MainChar->StopLerpSpeed);
 
 	// FVector movimientoEsteFrame = movimientoDeseado;
 
@@ -51,12 +53,12 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		if (Hit.IsValidBlockingHit())
 			SlideAlongSurface(Move, 1.f - Hit.Time, Hit.Normal, Hit);
 		
-		movimientoDeseado.Z = 0;
+		movementVector.Z = 0;
 
-		if (!movimientoDeseado.IsNearlyZero())
+		if (!movementVector.IsNearlyZero())
 		{
 			// Rotacion de la malla
-			FRotator ctrlRot = movimientoDeseado.Rotation();
+			FRotator ctrlRot = movementVector.Rotation();
 
 			if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
 				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot,  MainChar->RotationLerpSpeed);
@@ -64,10 +66,6 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, MainChar->RotationLerpSpeed);
 			UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 		}
-	}
-	else
-	{
-
 	}
 
 	if (IsGrounded())
@@ -113,6 +111,14 @@ void UMainCharMovement::Jump()
 		YVel = MainChar->JumpStrength;
 		justJumped = 4;
 	}
+}
+
+void UMainCharMovement::Dodge()
+{
+	if (InputVector != FVector::ZeroVector)
+		Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, InputVector);
+	else
+		Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, -MainChar->GetActorForwardVector());
 }
 
 void UMainCharMovement::ResetYVel()

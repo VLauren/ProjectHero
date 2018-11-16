@@ -23,7 +23,7 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	void Jump();
-
+	void Dodge();
 	void ResetYVel();
 
 	bool IsGrounded();
@@ -36,6 +36,7 @@ private:
 	class AMainChar* MainChar = nullptr;
 	class USkeletalMeshComponent* Mesh = nullptr;
 
+	FVector InputVector;
 	FVector Move;
 	float YVel;
 	int32 justJumped;
