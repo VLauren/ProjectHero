@@ -93,8 +93,6 @@ void AMainChar::BeginPlay()
 	// AnimState = EProtaAnimState::AS_STAND;
 	// Mesh->PlayAnimation(AnimStand, true);
 
-	UE_LOG(LogTemp, Warning, TEXT("paco"));
-
 	CharState = EMainCharState::MOVING;
 }
 
@@ -109,6 +107,9 @@ void AMainChar::Tick(float DeltaTime)
 	if (AirJump && Movement->IsGrounded()) AirJump = false;
 	if (AirDodge && Movement->IsGrounded()) AirDodge = false;
 	if (AirAttack && Movement->IsGrounded()) AirAttack = false;
+
+	FString runLog = Running ? "TRUE" : "FALSE";
+	UE_LOG(LogTemp, Warning, TEXT("Running: %s"), *runLog);
 }
 
 // Called to bind functionality to input
@@ -181,6 +182,8 @@ void AMainChar::Jump()
 
 void AMainChar::Dodge()
 {
+	Running = true;
+
 	if (!Movement->IsGrounded() && AirDodge)
 		return;
 
@@ -202,7 +205,10 @@ void AMainChar::Dodge()
 
 void AMainChar::StopRun()
 {
-
+	if (Running)
+	{
+		Running = false;
+	}
 }
 
 EMainCharState AMainChar::GetPlayerState()
@@ -354,6 +360,12 @@ void AMainChar::Cancel()
 	hitBox->SetGenerateOverlapEvents(false);
 	hitBox->SetHiddenInGame(true);
 	AirAttack = false;
+	// Running = false;
+}
+
+bool AMainChar::IsRunning()
+{
+	return Running;
 }
 
 

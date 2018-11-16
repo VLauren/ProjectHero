@@ -79,6 +79,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float DodgeTime;
 
+	bool IsRunning();
+
 private:
 
 	// Static reference to the main character (singleton)
@@ -90,6 +92,7 @@ private:
 	bool AirAttack;
 	bool AirDodge;
 	bool AirJump;
+	bool Running;
 
 	// Current attack data
 	int currentAttackIndex;

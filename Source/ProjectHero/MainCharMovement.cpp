@@ -26,11 +26,12 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	if (!PawnOwner || !UpdatedComponent || MainChar == nullptr || ShouldSkipUpdate(DeltaTime))
 		return;
 
-	// Calculo el vector de movimiento
+	// Movement vector calculation
 	FVector movementVector;
 	InputVector = ConsumeInputVector().GetClampedToMaxSize(1.0f);
 	movementVector = InputVector * MainChar->MovementSpeed;
-	// TODO if running use run speed
+	if (MainChar->IsRunning())
+		movementVector *= 2; // HACK TODO create RunningSpeed variable
 	movementVector.Z = YVel;
 	movementVector *= DeltaTime;
 
