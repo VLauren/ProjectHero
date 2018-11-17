@@ -107,9 +107,6 @@ void AMainChar::Tick(float DeltaTime)
 	if (AirJump && Movement->IsGrounded()) AirJump = false;
 	if (AirDodge && Movement->IsGrounded()) AirDodge = false;
 	if (AirAttack && Movement->IsGrounded()) AirAttack = false;
-
-	FString runLog = Running ? "TRUE" : "FALSE";
-	UE_LOG(LogTemp, Warning, TEXT("Running: %s"), *runLog);
 }
 
 // Called to bind functionality to input
