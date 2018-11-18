@@ -19,9 +19,9 @@ void UMainCharMovement::BeginPlay()
 
 void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
-	// SafeMoveUpdatedComponent
-
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	isMoving = false;
 
 	if (!PawnOwner || !UpdatedComponent || MainChar == nullptr || ShouldSkipUpdate(DeltaTime))
 		return;
@@ -47,8 +47,12 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		FHitResult Hit;
 
 		// Movimiento
-		if(AMainChar::GetPlayerState() == EMainCharState::MOVING)
+		if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
+		{
 			SafeMoveUpdatedComponent(Move, UpdatedComponent->GetComponentRotation(), true, Hit);
+			if (!InputVector.IsNearlyZero())
+				isMoving = true;
+		}
 
 		// Si chocamos con algo, me deslizo sobre el
 		if (Hit.IsValidBlockingHit())
@@ -160,6 +164,11 @@ bool UMainCharMovement::IsGrounded()
 	}
 
 	return false;
+}
+
+bool UMainCharMovement::IsMoving()
+{
+	return isMoving;
 }
 
 void UMainCharMovement::Push(float strength, float time, bool forward, FVector direction)

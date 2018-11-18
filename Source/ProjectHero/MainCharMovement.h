@@ -26,7 +26,11 @@ public:
 	void Dodge();
 	void ResetYVel();
 
-	bool IsGrounded();
+	UFUNCTION(BlueprintPure)
+		bool IsGrounded();
+
+	UFUNCTION(BlueprintPure)
+		bool IsMoving();
 
 	void Push(float strength, float time, bool forward, FVector direction = FVector::ZeroVector);
 
@@ -41,6 +45,7 @@ private:
 	float YVel;
 	int32 justJumped;
 	FRotator CurrentRotation;
+	bool isMoving;
 
 	// Variables para push
 	FVector PushDir;
