@@ -75,9 +75,18 @@ public:
 		float GravityStrength;
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float StopLerpSpeed;
-
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float DodgeTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool AirAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool AirDodge;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool AirJump;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool Running;
+
 
 	bool IsRunning();
 
@@ -88,11 +97,6 @@ private:
 
 	// Flag to notify the start of the next linked attack
 	bool linkAttack;
-
-	bool AirAttack;
-	bool AirDodge;
-	bool AirJump;
-	bool Running;
 
 	// Current attack data
 	int currentAttackIndex;
