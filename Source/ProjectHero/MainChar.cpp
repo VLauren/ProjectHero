@@ -365,4 +365,9 @@ bool AMainChar::IsRunning()
 	return Running;
 }
 
+bool AMainChar::IsDodging()
+{
+	return CharState == EMainCharState::DODGE;
+}
+
 

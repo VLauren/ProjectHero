@@ -90,6 +90,9 @@ public:
 
 	bool IsRunning();
 
+	UFUNCTION(BlueprintPure)
+		bool IsDodging();
+
 private:
 
 	// Static reference to the main character (singleton)
