@@ -120,10 +120,18 @@ void UMainCharMovement::Jump()
 
 void UMainCharMovement::Dodge()
 {
-	if (InputVector != FVector::ZeroVector)
-		Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, InputVector);
-	else
-		Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, -MainChar->GetActorForwardVector());
+	FVector direction = InputVector;
+	if (InputVector == FVector::ZeroVector)
+		direction = -MainChar->GetActorForwardVector();
+	
+	Push(2.5f * MainChar->MovementSpeed, MainChar->DodgeTime, false, direction);
+
+	UpdatedComponent->GetOwner()->SetActorRotation(direction.Rotation());
+
+	// if (InputVector != FVector::ZeroVector)
+		// Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, InputVector);
+	// else
+		// Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, -MainChar->GetActorForwardVector());
 }
 
 void UMainCharMovement::ResetYVel()
