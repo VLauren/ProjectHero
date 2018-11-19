@@ -327,14 +327,15 @@ void AMainChar::DoAttack()
 		}
 
 		// compruebo si ha terminado el ataque
-		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].lastFrame)
+		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd + 1)
 		{
 			if (linkAttack)
 			{
 				// lanzo el siguiente ataque
 				StartAttack(currentAttackIndex + 1);
 			}
-			else
+			// Si ha terminado la animacion vuelvo a estado neutral
+			else if (currentAttackFrame >= AttackData->Attacks[currentAttackIndex].lastFrame)
 			{
 				// TODO Animacion
 				// AnimState = EProtaAnimState::AS_STAND;
