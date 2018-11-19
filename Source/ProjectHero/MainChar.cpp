@@ -370,4 +370,13 @@ bool AMainChar::IsDodging()
 	return CharState == EMainCharState::DODGE;
 }
 
+bool AMainChar::IsAttacking()
+{
+	return CharState == EMainCharState::ATTACK;
+}
+
+int AMainChar::GetAttackIndex()
+{
+	return currentAttackIndex;
+}
 

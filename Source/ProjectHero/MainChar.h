@@ -93,6 +93,12 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool IsDodging();
 
+	UFUNCTION(BlueprintPure)
+		bool IsAttacking();
+
+	UFUNCTION(BlueprintPure)
+		int GetAttackIndex();
+
 private:
 
 	// Static reference to the main character (singleton)
