@@ -1,4 +1,5 @@
 #include "MainChar.h"
+#include "Enemy.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
@@ -10,6 +11,7 @@
 #include "Engine/Engine.h"
 
 AMainChar* AMainChar::Instance;
+#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(2, 1.5, FColor::White, text)
 
 AMainChar::AMainChar()
 {
@@ -103,6 +105,11 @@ void AMainChar::Tick(float DeltaTime)
 	if (AirJump && Movement->IsGrounded()) AirJump = false;
 	if (AirDodge && Movement->IsGrounded()) AirDodge = false;
 	if (AirAttack && Movement->IsGrounded()) AirAttack = false;
+
+	// EMainCharState
+	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EMainCharState"), true);
+	// if (!EnumPtr) return FString("Invalid");
+	print(EnumPtr->GetNameByValue((int64)CharState).ToString());
 }
 
 // Called to bind functionality to input
@@ -184,7 +191,7 @@ void AMainChar::Dodge()
 	if (CharState == EMainCharState::ATTACK)
 		Cancel();
 
-	// If and only if the character is in moving state it can jump
+	// If and only if the character is in moving state it can dodge
 	if (CharState == EMainCharState::MOVING)
 	{
 		CharState = EMainCharState::DODGE;
@@ -331,6 +338,18 @@ void AMainChar::DoAttack()
 				}
 			}
 		}
+	}
+}
+
+void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+{
+	// UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
+
+	if (OtherComp != nullptr)
+	{
+		// Si es enemigo, le hago daño
+		// if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>())
+			// ((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 500);
 	}
 }
 

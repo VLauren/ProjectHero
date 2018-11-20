@@ -39,7 +39,6 @@ private:
 
 	FVector InputVector;
 	FVector Move;
-	float YVel;
 	int32 justJumped;
 	FRotator CurrentRotation;
 	bool isMoving;

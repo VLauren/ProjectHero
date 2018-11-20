@@ -72,8 +72,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float JumpStrength;
 	UPROPERTY(EditAnywhere, Category = MovementValues)
-		float GravityStrength;
-	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float StopLerpSpeed;
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float DodgeTime;
@@ -127,6 +125,8 @@ private:
 	void StartAttack(int index);
 	void AttackMove(float amount, float time);
 	void DoAttack();
+
+	void OnHitboxOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	void Cancel();
 };

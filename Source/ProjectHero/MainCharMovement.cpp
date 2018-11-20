@@ -11,7 +11,7 @@ void UMainCharMovement::BeginPlay()
 	MainChar = (AMainChar*)GetOwner();
 
 	Move = FVector::ZeroVector;
-	YVel = 0;
+	ZVel = 0;
 }
 
 void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -29,7 +29,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	movementVector = InputVector * MainChar->MovementSpeed;
 	if (MainChar->IsRunning())
 		movementVector *= 2; // HACK TODO create RunningSpeed variable
-	movementVector.Z = YVel;
+	//// movementVector.Z = YVel;
 	movementVector *= DeltaTime;
 
 	// Move = movimientoDeseado;
@@ -40,7 +40,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// Movimiento
 	if (!Move.IsNearlyZero() && (AMainChar::GetPlayerState() == EMainCharState::MOVING) || (AMainChar::GetPlayerState() == EMainCharState::ATTACK))
 	{
-		Move.Z = YVel;
+		//// Move.Z = YVel;
 		FHitResult Hit;
 
 		// Movimiento
@@ -49,7 +49,10 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			SafeMoveUpdatedComponent(Move, UpdatedComponent->GetComponentRotation(), true, Hit);
 			if (!InputVector.IsNearlyZero())
 				isMoving = true;
+			UseGravity = true;
 		}
+		else
+			UseGravity = false;
 
 		// Si chocamos con algo, me deslizo sobre el
 		if (Hit.IsValidBlockingHit())
@@ -69,38 +72,24 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 		}
 	}
-
-	if (IsGrounded())
-	{
-		// La velocidad Z es cero
-		YVel = 0.0f;
-	}
 	else
 	{
-		// Aplico la gravedad
-		YVel -= MainChar->GravityStrength * DeltaTime;
+		UseGravity = false;
 	}
+
+	// if (IsGrounded())
+	// {
+		// La velocidad Z es cero
+		// YVel = 0.0f;
+	// }
+	// else
+	// {
+		// Aplico la gravedad
+		// YVel -= MainChar->GravityStrength * DeltaTime;
+	// }
 
 	if (justJumped > 0)
 		justJumped--;
-
-	if (PushActive)
-	{
-		FHitResult Hit;
-		FVector PushFrameMove;
-
-		if (!PushForward)
-			PushFrameMove = PushDir * DeltaTime * PushStrength;
-		else
-			PushFrameMove = GetOwner()->GetActorForwardVector() * DeltaTime * PushStrength;
-		SafeMoveUpdatedComponent(PushFrameMove, UpdatedComponent->GetComponentRotation(), true, Hit);
-
-		// Cuanto termine el tiempo, dejo de moverme por el knockback
-		PushElapsedTime += DeltaTime;
-		if (PushElapsedTime >= PushTime)
-			PushActive = false;
-	}
-
 }
 
 bool UMainCharMovement::IsGrounded()
@@ -118,9 +107,16 @@ void UMainCharMovement::Jump()
 
 	// if (IsGrounded())
 	{
-		YVel = MainChar->JumpStrength;
+		UseGravity = true;
+		ZVel = MainChar->JumpStrength;
 		justJumped = 4;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("========="));
+	UE_LOG(LogTemp, Warning, TEXT("JUMP"));
+	UE_LOG(LogTemp, Warning, TEXT("JUMP"));
+	UE_LOG(LogTemp, Warning, TEXT("JUMP"));
+	UE_LOG(LogTemp, Warning, TEXT("========="));
 }
 
 void UMainCharMovement::Dodge()
@@ -142,7 +138,7 @@ void UMainCharMovement::Dodge()
 void UMainCharMovement::ResetYVel()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Reset Y Vel"));
-	YVel = 0;
+	ZVel = 0;
 }
 
 bool UMainCharMovement::IsMoving()
@@ -154,5 +150,5 @@ bool UMainCharMovement::IsMoving()
 void UMainCharMovement::Cancel()
 {
 	PushActive = false;
-	YVel = 0;
+	ZVel = 0;
 }

@@ -16,7 +16,6 @@ class PROJECTHERO_API UPHMovement : public UPawnMovementComponent
 
 private:
 
-
 protected:
 
 	virtual void BeginPlay() override;
@@ -29,6 +28,8 @@ protected:
 	float PushElapsedTime;
 	bool PushForward;
 
+	float ZVel;
+
 public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
@@ -37,5 +38,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 		virtual bool IsGrounded();
+
+	bool UseGravity = true;
 
 };

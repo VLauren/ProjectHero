@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PHMovement.h"
+#include "PHPawn.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 
@@ -15,6 +16,42 @@ void UPHMovement::BeginPlay()
 void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// Move over time
+	if (PushActive)
+	{
+		FHitResult Hit;
+		FVector PushFrameMove;
+
+		if (!PushForward)
+			PushFrameMove = PushDir * DeltaTime * PushStrength;
+		else
+			PushFrameMove = GetOwner()->GetActorForwardVector() * DeltaTime * PushStrength;
+		SafeMoveUpdatedComponent(PushFrameMove, UpdatedComponent->GetComponentRotation(), true, Hit);
+
+		PushElapsedTime += DeltaTime;
+		if (PushElapsedTime >= PushTime)
+			PushActive = false;
+	}
+
+	// Gravity
+	if (IsGrounded() || !UseGravity)
+	{
+		if (ZVel != 0.0f)
+			UE_LOG(LogTemp, Warning, TEXT("GRAV 0!!!!!"));
+
+		// Vertical velocity is cero
+		ZVel = 0.0f;
+	}
+	else
+	{
+		// Apply gravity
+		ZVel -= Cast<APHPawn>(GetOwner())->GravityStrength * DeltaTime;
+	}
+
+	// Vertical movement
+	FHitResult Hit;
+	SafeMoveUpdatedComponent(FVector(0, 0, ZVel), UpdatedComponent->GetComponentRotation(), true, Hit);
 }
 
 void UPHMovement::MoveOverTime(float strength, float time, bool forward, FVector direction)
