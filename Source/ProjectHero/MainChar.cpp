@@ -88,7 +88,7 @@ void AMainChar::BeginPlay()
 		hitBox->SetHiddenInGame(true);
 
 		// Hit box overlap event
-		// hitBox->OnComponentBeginOverlap.AddDynamic(this, &AMainChar::OnHitboxOverlap);
+		hitBox->OnComponentBeginOverlap.AddDynamic(this, &AMainChar::OnHitboxOverlap);
 	}
 
 	CharState = EMainCharState::MOVING;
@@ -343,13 +343,12 @@ void AMainChar::DoAttack()
 
 void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-	// UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
+	UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
 
 	if (OtherComp != nullptr)
 	{
-		// Si es enemigo, le hago daño
-		// if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>())
-			// ((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 500);
+		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>())
+			((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 500);
 	}
 }
 
