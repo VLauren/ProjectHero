@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PawnMovementComponent.h"
+#include "PHMovement.h"
 #include "MainCharMovement.generated.h"
 
 /**
@@ -11,7 +11,7 @@
  * It manages control movement, jump, knockbacks, movement while attacking, etc.
  */
 UCLASS()
-class PROJECTHERO_API UMainCharMovement : public UPawnMovementComponent
+class PROJECTHERO_API UMainCharMovement : public UPHMovement
 {
 	GENERATED_BODY()
 
@@ -22,17 +22,14 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
+	virtual bool IsGrounded();
+
 	void Jump();
 	void Dodge();
 	void ResetYVel();
 
 	UFUNCTION(BlueprintPure)
-		bool IsGrounded();
-
-	UFUNCTION(BlueprintPure)
 		bool IsMoving();
-
-	void Push(float strength, float time, bool forward, FVector direction = FVector::ZeroVector);
 
 	void Cancel();
 
@@ -47,11 +44,4 @@ private:
 	FRotator CurrentRotation;
 	bool isMoving;
 
-	// Variables para push
-	FVector PushDir;
-	float PushStrength;
-	float PushTime;
-	float PushActive;
-	float PushElapsedTime;
-	bool PushForward;
 };

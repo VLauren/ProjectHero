@@ -2,7 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "PHPawn.h"
 #include "MainCharMovement.h"
 #include "AttackData.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
@@ -21,7 +21,7 @@ enum class EMainCharState : uint8
  * Main character pawn class.
  */
 UCLASS()
-class PROJECTHERO_API AMainChar : public APawn
+class PROJECTHERO_API AMainChar : public APHPawn
 {
 	GENERATED_BODY()
 
