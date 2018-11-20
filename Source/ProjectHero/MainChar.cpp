@@ -15,7 +15,7 @@ AMainChar::AMainChar()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Creo la capsula de colision del personaje
+	// Add the character's capsule
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	CapsuleComponent->InitCapsuleSize(34.0f, 88.0f);
 	CapsuleComponent->SetCollisionProfileName("MainChar");
@@ -28,20 +28,20 @@ AMainChar::AMainChar()
 	CapsuleComponent->SetVisibility(true);
 	CapsuleComponent->SetHiddenInGame(false);
 
-	//Cel spring arm para la camara
+	// Camera's spring arm
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 700.0f;
 
-	// Agrego la camara
+	// Add the camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 
-	// Con el input, la camara no rota pero el brazo si
+	// Input does not rotate the camera but the spring arm
 	CameraBoom->bUsePawnControlRotation = true;
 	FollowCamera->bUsePawnControlRotation = true;
 
-	// Malla
+	// Mesh
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	if (Mesh != nullptr)
 	{
@@ -59,7 +59,7 @@ AMainChar::AMainChar()
 		Mesh->SetCanEverAffectNavigation(false);
 	}
 
-	// Componente de movimiento
+	// Movement component
 	Movement = CreateDefaultSubobject<UMainCharMovement>(TEXT("Movement"));
 	Movement->UpdatedComponent = RootComponent;
 
@@ -89,10 +89,6 @@ void AMainChar::BeginPlay()
 		// hitBox->OnComponentBeginOverlap.AddDynamic(this, &AMainChar::OnHitboxOverlap);
 	}
 
-	// TODO Animation
-	// AnimState = EProtaAnimState::AS_STAND;
-	// Mesh->PlayAnimation(AnimStand, true);
-
 	CharState = EMainCharState::MOVING;
 }
 
@@ -114,15 +110,15 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// input de camara
+	// Camera input
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
-	// input de movimiento (controller)
+	// Movement input
 	PlayerInputComponent->BindAxis("MoveRight", this, &AMainChar::MoveRight);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainChar::MoveForward);
 
-	// input de acciones
+	// Actions input
 	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainChar::Attack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainChar::Jump);
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AMainChar::Dodge);
@@ -282,21 +278,12 @@ void AMainChar::StartAttack(int index)
 	currentAttackFrame = 0;
 	currentAttackIndex = index;
 
-	// TODO Animacion
-	// if (currentAttackIndex == 0)
-		// Mesh->PlayAnimation(AnimAttack1, false);
-	// if (currentAttackIndex == 1)
-		// Mesh->PlayAnimation(AnimAttack2, false);
-	// if (currentAttackIndex == 2)
-		// Mesh->PlayAnimation(AnimAttack3, false);
-	// AnimState = EProtaAnimState::AS_ATTACK;
-
 	AttackMove(1, 0.5f);
 }
 
 void AMainChar::AttackMove(float amount, float time)
 {
-	Movement->Push(1200, 0.15f, true); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
+	Movement->MoveOverTime(1200, 0.15f, true); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
 }
 
 void AMainChar::DoAttack()
@@ -337,10 +324,6 @@ void AMainChar::DoAttack()
 			// Si ha terminado la animacion vuelvo a estado neutral
 			else if (currentAttackFrame >= AttackData->Attacks[currentAttackIndex].lastFrame)
 			{
-				// TODO Animacion
-				// AnimState = EProtaAnimState::AS_STAND;
-				// Mesh->PlayAnimation(AnimStand, false);
-
 				if (CharState != EMainCharState::MOVING)
 				{
 					CharState = EMainCharState::MOVING;

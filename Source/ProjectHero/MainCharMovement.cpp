@@ -1,11 +1,8 @@
 #include "MainCharMovement.h"
 #include "MainChar.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
-#include "Runtime/Engine/Classes/Engine/Engine.h"
-#include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 
-#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::White, text)
 
 void UMainCharMovement::BeginPlay()
 {
@@ -106,6 +103,14 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 }
 
+bool UMainCharMovement::IsGrounded()
+{
+	if (justJumped > 0)
+		return false;
+
+	return Super::IsGrounded();
+}
+
 void UMainCharMovement::Jump()
 {
 	if (MainChar == nullptr)
@@ -124,7 +129,7 @@ void UMainCharMovement::Dodge()
 	if (InputVector == FVector::ZeroVector)
 		direction = -MainChar->GetActorForwardVector();
 	
-	Push(2.5f * MainChar->MovementSpeed, MainChar->DodgeTime, false, direction);
+	MoveOverTime(2.5f * MainChar->MovementSpeed, MainChar->DodgeTime, false, direction);
 
 	UpdatedComponent->GetOwner()->SetActorRotation(direction.Rotation());
 
@@ -140,54 +145,11 @@ void UMainCharMovement::ResetYVel()
 	YVel = 0;
 }
 
-bool UMainCharMovement::IsGrounded()
-{
-	if (justJumped > 0)
-		return false;
-
-	FHitResult OutHit;
-	
-	FVector Start = UpdatedComponent->GetOwner()->GetActorLocation();
-
-	float CapsuleHalfHeight = Cast<UCapsuleComponent>(UpdatedComponent)->GetUnscaledCapsuleHalfHeight();
-	FVector End = Start + FVector(0, 0, -CapsuleHalfHeight - 12); // Capsule Half Height = 88
-
-	FCollisionQueryParams ColParams;
-
-	// DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 1, 0, 1);
-
-	// TODO change to SwipeTrace using a sphere
-
-	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, ColParams))
-	{
-		if (OutHit.bBlockingHit)
-		{
-			return true;
-
-			print(FString::Printf(TEXT("You are hitting: %s"), *OutHit.GetActor()->GetName()));
-			print(FString::Printf(TEXT("Impact Point: %s"), *OutHit.ImpactPoint.ToString()));
-			print(FString::Printf(TEXT("Normal Point: %s"), *OutHit.ImpactNormal.ToString()));
-		}
-		return false;
-	}
-
-	return false;
-}
-
 bool UMainCharMovement::IsMoving()
 {
 	return isMoving;
 }
 
-void UMainCharMovement::Push(float strength, float time, bool forward, FVector direction)
-{
-	PushActive = true;
-	PushStrength = strength;
-	PushTime = time;
-	PushElapsedTime = 0;
-	PushDir = direction.GetSafeNormal();
-	PushForward = forward;
-}
 
 void UMainCharMovement::Cancel()
 {
