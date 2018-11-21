@@ -111,12 +111,6 @@ void UMainCharMovement::Jump()
 		ZVel = MainChar->JumpStrength;
 		justJumped = 4;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("========="));
-	UE_LOG(LogTemp, Warning, TEXT("JUMP"));
-	UE_LOG(LogTemp, Warning, TEXT("JUMP"));
-	UE_LOG(LogTemp, Warning, TEXT("JUMP"));
-	UE_LOG(LogTemp, Warning, TEXT("========="));
 }
 
 void UMainCharMovement::Dodge()
@@ -137,7 +131,6 @@ void UMainCharMovement::Dodge()
 
 void UMainCharMovement::ResetYVel()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Reset Y Vel"));
 	ZVel = 0;
 }
 

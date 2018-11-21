@@ -1,4 +1,6 @@
 #include "Enemy.h"
+#include "PHPawn.h"
+#include "EnemyMovement.h"
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 
 AEnemy::AEnemy()
@@ -16,23 +18,26 @@ AEnemy::AEnemy()
 	RootComponent = CapsuleComponent;
 
 	// Movement component
-	Movement = CreateDefaultSubobject<UPHMovement>(TEXT("Movement"));
+	Movement = CreateDefaultSubobject<UEnemyMovement>(TEXT("Movement"));
 	Movement->UpdatedComponent = RootComponent;
+
+	GravityStrength = 30.0;
 }
 
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	State = EEnemyState::MOVING;
+	Movement->UseGravity = true;
 }
 
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack)
+void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch)
 {
 	// Change state to hit stun
 
@@ -41,5 +46,12 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack)
 	KBDirection.Z = 0;
 	KBDirection.Normalize();
 	Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection);
+
+	if (launch)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Launch!"));
+		Cast<UEnemyMovement>(Movement)->Launch();
+		State = EEnemyState::LAUNCHED;
+	}
 }
 

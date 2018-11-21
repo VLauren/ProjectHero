@@ -19,6 +19,11 @@ struct FAttackInfo
 		int linkStart = 20;
 	UPROPERTY(EditAnywhere)
 		int lastFrame = 40;
+	UPROPERTY(EditAnywhere)
+		bool launchEnemy = false;
+	UPROPERTY(EditAnywhere)
+		bool rise = false;
+
 };
 
 UCLASS()

@@ -62,9 +62,9 @@ public:
 	// State
 	EMainCharState CharState;
 
-	UPROPERTY(EditDefaultsOnly, Category = AttackData)
-		UAttackData* AttackData = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = AttackData)
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		UAttackData* AttackDataA = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
 		UAttackData* AttackDataB = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = MovementValues)
@@ -106,8 +106,10 @@ private:
 
 	// Flag to notify the start of the next linked attack
 	bool linkAttack;
+	bool attackChange;
 
 	// Current attack data
+	UAttackData* AttackData = nullptr;
 	int currentAttackIndex;
 	int currentAttackFrame;
 
@@ -119,6 +121,9 @@ private:
 	void Jump();
 	void Dodge();
 	void StopRun();
+	void AttackA();
+	void AttackB();
+
 	void Attack();
 
 	bool CheckAttackStart();

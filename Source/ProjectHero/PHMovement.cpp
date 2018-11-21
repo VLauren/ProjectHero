@@ -38,7 +38,10 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	if (IsGrounded() || !UseGravity)
 	{
 		if (ZVel != 0.0f)
-			UE_LOG(LogTemp, Warning, TEXT("GRAV 0!!!!!"));
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("GRAV 0!!!!!"));
+			// UseGravity = false;
+		}
 
 		// Vertical velocity is cero
 		ZVel = 0.0f;

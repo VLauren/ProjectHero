@@ -74,6 +74,8 @@ AMainChar::AMainChar()
 	DodgeTime = 0.3f;
 
 	Instance = this;
+
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 // Called when the game starts or when spawned
@@ -128,8 +130,8 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainChar::MoveForward);
 
 	// Actions input
-	PlayerInputComponent->BindAction("AttackA", IE_Pressed, this, &AMainChar::Attack);
-	PlayerInputComponent->BindAction("AttackB", IE_Pressed, this, &AMainChar::Attack);
+	PlayerInputComponent->BindAction("AttackA", IE_Pressed, this, &AMainChar::AttackA);
+	PlayerInputComponent->BindAction("AttackB", IE_Pressed, this, &AMainChar::AttackB);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainChar::Jump);
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AMainChar::Dodge);
 	PlayerInputComponent->BindAction("Dodge", IE_Released, this, &AMainChar::StopRun);
@@ -224,6 +226,26 @@ FVector AMainChar::GetPlayerLocation()
 	return FVector();
 }
 
+void AMainChar::AttackA()
+{
+	if (AttackData != AttackDataA)
+	{
+		AttackData = AttackDataA;
+		attackChange = true;
+	}
+	Attack();
+}
+
+void AMainChar::AttackB()
+{
+	if (AttackData != AttackDataB)
+	{
+		AttackData = AttackDataB;
+		attackChange = true;
+	}
+	Attack();
+}
+
 void AMainChar::Attack()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Attack Input"));
@@ -258,9 +280,13 @@ bool AMainChar::CheckIfLinkFrame()
 		UE_LOG(LogTemp, Error, TEXT("NO HAY DATOS DE ATAQUE"));
 		return false;
 	}
+
+	if (attackChange)
+		return false;
+
 	bool hasNextAttack = currentAttackIndex < (AttackData->Attacks.Num() - 1);
 
-	return CharState == EMainCharState::ATTACK && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].linkStart && hasNextAttack;
+	return CharState == EMainCharState::ATTACK && hasNextAttack && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].linkStart;
 }
 
 bool AMainChar::CheckActiveFrame()
@@ -277,6 +303,7 @@ bool AMainChar::CheckActiveFrame()
 void AMainChar::StartAttack(int index)
 {
 	linkAttack = false;
+	attackChange = false;
 
 	if (AttackData == nullptr)
 	{
@@ -352,7 +379,13 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (OtherComp != nullptr)
 	{
 		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>())
-			((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
+		{
+			if (AttackData->Attacks[currentAttackIndex].launchEnemy)
+				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800, true);
+				// ((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
+			else
+				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
+		}
 	}
 }
 

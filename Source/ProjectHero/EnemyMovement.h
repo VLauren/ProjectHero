@@ -12,4 +12,9 @@ class PROJECTHERO_API UEnemyMovement : public UPHMovement
 {
 	GENERATED_BODY()
 	
+public:
+	virtual bool IsGrounded();
+
+	void Launch();
+
 };
