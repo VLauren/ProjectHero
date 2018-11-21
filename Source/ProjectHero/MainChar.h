@@ -113,6 +113,8 @@ private:
 	int currentAttackIndex;
 	int currentAttackFrame;
 
+	UAttackData* NextAttackData = nullptr;
+
 	FTimerHandle DodgeTimerHandle;
 
 	// Input methods

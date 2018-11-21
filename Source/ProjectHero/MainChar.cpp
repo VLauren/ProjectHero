@@ -230,8 +230,9 @@ void AMainChar::AttackA()
 {
 	if (AttackData != AttackDataA)
 	{
-		AttackData = AttackDataA;
+		NextAttackData = AttackDataA;
 		attackChange = true;
+		linkAttack = false;
 	}
 	Attack();
 }
@@ -240,8 +241,9 @@ void AMainChar::AttackB()
 {
 	if (AttackData != AttackDataB)
 	{
-		AttackData = AttackDataB;
+		NextAttackData = AttackDataB;
 		attackChange = true;
+		linkAttack = false;
 	}
 	Attack();
 }
@@ -254,6 +256,12 @@ void AMainChar::Attack()
 	{
 		if (Movement->IsGrounded() || !AirAttack)
 		{
+			if (attackChange)
+			{
+				AttackData = NextAttackData;
+				attackChange = false;
+			}
+
 			StartAttack(0);
 
 			if (!Movement->IsGrounded())
@@ -303,7 +311,6 @@ bool AMainChar::CheckActiveFrame()
 void AMainChar::StartAttack(int index)
 {
 	linkAttack = false;
-	attackChange = false;
 
 	if (AttackData == nullptr)
 	{
@@ -325,6 +332,8 @@ void AMainChar::AttackMove(float amount, float time)
 
 void AMainChar::DoAttack()
 {
+	// UE_LOG(LogTemp, Warning, TEXT("Link: %s, Change: %s"), (linkAttack ? TEXT("true") : TEXT("false")));
+
 	if (CharState == EMainCharState::ATTACK)
 	{
 		if (GEngine)
