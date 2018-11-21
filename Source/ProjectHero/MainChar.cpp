@@ -348,14 +348,14 @@ void AMainChar::DoAttack()
 			if (CheckActiveFrame())
 			{
 				hitBox->SetGenerateOverlapEvents(true);
-				// hitBox->SetVisibility(true);
+				hitBox->SetVisibility(true);
 				hitBox->SetHiddenInGame(false);
 			}
 			else
 			{
 				hitBox->SetGenerateOverlapEvents(false);
 				// hitBox->SetVisibility(false);
-				hitBox->SetHiddenInGame(true);
+				// hitBox->SetHiddenInGame(true);
 			}
 		}
 
