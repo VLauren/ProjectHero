@@ -50,7 +50,7 @@ AMainChar::AMainChar()
 		Mesh->AlwaysLoadOnClient = true;
 		Mesh->AlwaysLoadOnServer = true;
 		Mesh->bOwnerNoSee = false;
-		Mesh->MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPose;
+		Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
 		Mesh->bCastDynamicShadow = true;
 		Mesh->bAffectDynamicIndirectLighting = true;
 		Mesh->PrimaryComponentTick.TickGroup = TG_PrePhysics;
@@ -80,12 +80,14 @@ AMainChar::AMainChar()
 void AMainChar::BeginPlay()
 {
 	Super::BeginPlay();
+
 	hitBox = (UBoxComponent*)GetComponentByClass(UBoxComponent::StaticClass());
 	if (hitBox != nullptr)
 	{
-		hitBox->SetGenerateOverlapEvents(false);
+		UE_LOG(LogTemp, Warning, TEXT("There is a hitbox"));
+		hitBox->SetGenerateOverlapEvents(true);
 		// hitBox->SetVisibility(false);
-		hitBox->SetHiddenInGame(true);
+		// hitBox->SetHiddenInGame(true);
 
 		// Hit box overlap event
 		hitBox->OnComponentBeginOverlap.AddDynamic(this, &AMainChar::OnHitboxOverlap);
@@ -126,7 +128,8 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMainChar::MoveForward);
 
 	// Actions input
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMainChar::Attack);
+	PlayerInputComponent->BindAction("AttackA", IE_Pressed, this, &AMainChar::Attack);
+	PlayerInputComponent->BindAction("AttackB", IE_Pressed, this, &AMainChar::Attack);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainChar::Jump);
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AMainChar::Dodge);
 	PlayerInputComponent->BindAction("Dodge", IE_Released, this, &AMainChar::StopRun);
@@ -343,12 +346,13 @@ void AMainChar::DoAttack()
 
 void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OVERLAP"));
 	UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
 
 	if (OtherComp != nullptr)
 	{
 		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>())
-			((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 500);
+			((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
 	}
 }
 
