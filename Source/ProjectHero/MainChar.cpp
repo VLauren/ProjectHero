@@ -33,11 +33,15 @@ AMainChar::AMainChar()
 	// Camera's spring arm
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 700.0f;
+	CameraBoom->TargetArmLength = 500.0f;
+
+	CameraBoom->bEnableCameraLag = true;
+	CameraBoom->CameraLagSpeed = 5;
 
 	// Add the camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->SetRelativeLocation(FVector(0, 0, 100));
 
 	// Input does not rotate the camera but the spring arm
 	CameraBoom->bUsePawnControlRotation = true;
@@ -96,6 +100,8 @@ void AMainChar::BeginPlay()
 	}
 
 	CharState = EMainCharState::MOVING;
+
+	UE_LOG(LogTemp, Warning, TEXT("CameraLagSpeed: %f"), CameraBoom->CameraLagSpeed)
 }
 
 // Called every frame
@@ -152,6 +158,10 @@ void AMainChar::MoveRight(float AxisValue)
 	{
 		if (Movement && (Movement->UpdatedComponent == RootComponent))
 			Movement->AddInputVector(FRotator(0, GetControlRotation().Yaw, 0).RotateVector(FVector(0, 1, 0)) * AxisValue);
+
+
+		if (CharState == EMainCharState::MOVING)
+			AddControllerYawInput(AxisValue / 6);
 	}
 }
 
