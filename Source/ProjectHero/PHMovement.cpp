@@ -55,6 +55,8 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	// Vertical movement
 	FHitResult Hit;
 	SafeMoveUpdatedComponent(FVector(0, 0, ZVel), UpdatedComponent->GetComponentRotation(), true, Hit);
+	if (Hit.IsValidBlockingHit())
+		SlideAlongSurface(FVector(0, 0, ZVel), 1.f - Hit.Time, Hit.Normal, Hit);
 }
 
 void UPHMovement::MoveOverTime(float strength, float time, bool forward, FVector direction)

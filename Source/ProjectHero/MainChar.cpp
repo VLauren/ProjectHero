@@ -400,12 +400,17 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 
 void AMainChar::Cancel()
 {
+	// If I'm dodging, I stop the post dodge cancel timer
+	if (CharState == EMainCharState::DODGE)
+		GetWorld()->GetTimerManager().ClearTimer(DodgeTimerHandle);
+
 	CharState = EMainCharState::MOVING;
 	Movement->Cancel(); 
 	hitBox->SetGenerateOverlapEvents(false);
 	hitBox->SetHiddenInGame(true);
 	AirAttack = false;
 	// Running = false;
+
 }
 
 bool AMainChar::IsRunning()

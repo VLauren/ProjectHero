@@ -74,7 +74,8 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	}
 	else
 	{
-		UseGravity = false;
+		if (AMainChar::GetPlayerState() == EMainCharState::DODGE)
+			UseGravity = false;
 	}
 
 	// if (IsGrounded())
