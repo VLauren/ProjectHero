@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "PHPawn.h"
 #include "EnemyMovement.h"
+#include "PHGame.h"
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 
 AEnemy::AEnemy()
@@ -30,6 +31,16 @@ void AEnemy::BeginPlay()
 	
 	State = EEnemyState::MOVING;
 	Movement->UseGravity = true;
+
+	// if (Enemies == nullptr)
+	// {
+		// UE_LOG(LogTemp, Warning, TEXT("New enemy set"));
+	// }
+
+
+	Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Add(this);
+
+	UE_LOG(LogTemp, Warning, TEXT("Enemy Set Num: %d"), Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Num());
 }
 
 void AEnemy::Tick(float DeltaTime)

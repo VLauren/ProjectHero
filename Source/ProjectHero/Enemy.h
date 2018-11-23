@@ -25,6 +25,7 @@ class PROJECTHERO_API AEnemy : public APHPawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UPHMovement* Movement;
 public:
+
 	// Sets default values for this pawn's properties
 	AEnemy();
 

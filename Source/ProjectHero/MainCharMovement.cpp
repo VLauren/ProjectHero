@@ -1,5 +1,6 @@
 #include "MainCharMovement.h"
 #include "MainChar.h"
+#include "PHGame.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "DrawDebugHelpers.h"
 
@@ -60,9 +61,21 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		
 		movementVector.Z = 0;
 
+		// HACKERINO
+		if (AMainChar::GetPlayerState() == EMainCharState::ATTACK)
+		{
+			// Attack tracking
+			FVector dir = Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Array()[0]->GetActorLocation() - GetOwner()->GetActorLocation();
+			dir.Z = 0;
+			dir.Normalize();
+			CurrentRotation = FMath::Lerp(CurrentRotation, dir.Rotation(), MainChar->RotationLerpSpeed);
+			UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
+		}
+		else
+
 		if (!movementVector.IsNearlyZero())
 		{
-			// Rotacion de la malla
+			// Movement rotation
 			FRotator ctrlRot = movementVector.Rotation();
 
 			if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
@@ -71,6 +84,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, MainChar->RotationLerpSpeed);
 			UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 		}
+
 	}
 	else
 	{

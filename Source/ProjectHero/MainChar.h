@@ -5,6 +5,7 @@
 #include "PHPawn.h"
 #include "MainCharMovement.h"
 #include "AttackData.h"
+#include "Enemy.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "MainChar.generated.h"
 
@@ -101,6 +102,8 @@ public:
 
 	UFUNCTION(BlueprintPure)
 		UAttackData* GetCurrentAttackData();
+
+	AEnemy* AutoTarget;
 
 private:
 
