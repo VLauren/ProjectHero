@@ -99,6 +99,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		int GetAttackIndex();
 
+	UFUNCTION(BlueprintPure)
+		UAttackData* GetCurrentAttackData();
+
 private:
 
 	// Static reference to the main character (singleton)

@@ -445,3 +445,8 @@ int AMainChar::GetAttackIndex()
 	return currentAttackIndex;
 }
 
+UAttackData* AMainChar::GetCurrentAttackData()
+{
+	return AttackData;
+}
+
