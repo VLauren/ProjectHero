@@ -2,6 +2,7 @@
 
 #include "PHMovement.h"
 #include "PHPawn.h"
+#include "DrawDebugHelpers.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 
@@ -72,28 +73,23 @@ void UPHMovement::MoveOverTime(float strength, float time, bool forward, FVector
 bool UPHMovement::IsGrounded()
 {
 	FHitResult OutHit;
-	
-	FVector Start = UpdatedComponent->GetOwner()->GetActorLocation();
 
 	float CapsuleHalfHeight = Cast<UCapsuleComponent>(UpdatedComponent)->GetUnscaledCapsuleHalfHeight();
-	FVector End = Start + FVector(0, 0, -CapsuleHalfHeight - 12); // Capsule Half Height = 88
+	float Radius = Cast<UCapsuleComponent>(UpdatedComponent)->GetScaledCapsuleRadius();
+
+	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 3.0f);
 
 	FCollisionQueryParams ColParams;
 
-	// DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 1, 0, 1);
-
-	// TODO change to SwipeTrace using a sphere
-
-	if (GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, ColParams))
+	// DrawDebugSphere(GetWorld(), Position, Radius, 8, FColor::Green);
+	if (GetWorld()->SweepSingleByChannel(OutHit, Position, Position, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(Radius)))
 	{
-		if (OutHit.bBlockingHit)
-		{
-			return true;
-
-			print(FString::Printf(TEXT("You are hitting: %s"), *OutHit.GetActor()->GetName()));
-			print(FString::Printf(TEXT("Impact Point: %s"), *OutHit.ImpactPoint.ToString()));
-			print(FString::Printf(TEXT("Normal Point: %s"), *OutHit.ImpactNormal.ToString()));
-		}
+		// UE_LOG(LogTemp, Warning, TEXT("SUELO"));
+		return true;
+	}
+	else
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("NO SUELO"));
 		return false;
 	}
 
