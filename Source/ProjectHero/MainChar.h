@@ -115,6 +115,7 @@ private:
 	UAttackData* AttackData = nullptr;
 	int currentAttackIndex;
 	float currentAttackFrame;
+	bool AlreadyHit;
 
 	UAttackData* NextAttackData = nullptr;
 

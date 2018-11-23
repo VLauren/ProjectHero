@@ -333,13 +333,14 @@ void AMainChar::StartAttack(int index)
 	CharState = EMainCharState::ATTACK;
 	currentAttackFrame = 0;
 	currentAttackIndex = index;
+	AlreadyHit = false;
 
 	AttackMove(1, 0.5f);
 }
 
 void AMainChar::AttackMove(float amount, float time)
 {
-	Movement->MoveOverTime(1200, 0.15f, true); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
+	Movement->MoveOverTime(1200, 0.15f, true, FVector::ZeroVector, Movement->IsGrounded()); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
 }
 
 void AMainChar::DoAttack(float DeltaTime)
@@ -357,7 +358,7 @@ void AMainChar::DoAttack(float DeltaTime)
 
 		if (hitBox != nullptr)
 		{
-			if (CheckActiveFrame())
+			if (CheckActiveFrame() && !AlreadyHit)
 			{
 				hitBox->SetGenerateOverlapEvents(true);
 				hitBox->SetVisibility(true);
@@ -394,18 +395,21 @@ void AMainChar::DoAttack(float DeltaTime)
 
 void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OVERLAP"));
-	UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
-
 	if (OtherComp != nullptr)
 	{
-		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>())
+		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() && OtherComp->IsA(UCapsuleComponent::StaticClass()))
 		{
+			// UE_LOG(LogTemp, Warning, TEXT("OVERLAP"));
+			// UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
+
 			if (AttackData->Attacks[currentAttackIndex].launchEnemy)
 				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800, true);
 				// ((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
 			else
 				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
+
+			// HACK For now, I disable the hit box
+			AlreadyHit = true;
 		}
 	}
 }

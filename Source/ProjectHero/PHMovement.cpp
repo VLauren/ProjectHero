@@ -28,12 +28,16 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 			PushFrameMove = PushDir * DeltaTime * PushStrength;
 		else
 			PushFrameMove = GetOwner()->GetActorForwardVector() * DeltaTime * PushStrength;
-		SafeMoveUpdatedComponent(PushFrameMove, UpdatedComponent->GetComponentRotation(), true, Hit);
+
+		if (!PushStickToGround || CheckGroundedAhead(PushFrameMove))
+			SafeMoveUpdatedComponent(PushFrameMove, UpdatedComponent->GetComponentRotation(), true, Hit);
 
 		PushElapsedTime += DeltaTime;
 		if (PushElapsedTime >= PushTime)
 			PushActive = false;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("%s UseGrav: %s, Grounded: %s"), *GetOwner()->GetName(), UseGravity ? TEXT("True") : TEXT("False"), IsGrounded() ? TEXT("True") : TEXT("False"));
 
 	// Gravity
 	if (IsGrounded() || !UseGravity)
@@ -60,7 +64,7 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 		SlideAlongSurface(FVector(0, 0, ZVel), 1.f - Hit.Time, Hit.Normal, Hit);
 }
 
-void UPHMovement::MoveOverTime(float strength, float time, bool forward, FVector direction)
+void UPHMovement::MoveOverTime(float strength, float time, bool forward, FVector direction, bool stickToGround)
 {
 	PushActive = true;
 	PushStrength = strength;
@@ -68,30 +72,44 @@ void UPHMovement::MoveOverTime(float strength, float time, bool forward, FVector
 	PushElapsedTime = 0;
 	PushDir = direction.GetSafeNormal();
 	PushForward = forward;
+	PushStickToGround = stickToGround;
 }
 
-bool UPHMovement::IsGrounded()
+bool UPHMovement::CheckGroundedAtPosition(FVector Position)
 {
-	FHitResult OutHit;
-
-	float CapsuleHalfHeight = Cast<UCapsuleComponent>(UpdatedComponent)->GetUnscaledCapsuleHalfHeight();
 	float Radius = Cast<UCapsuleComponent>(UpdatedComponent)->GetScaledCapsuleRadius();
 
-	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 3.0f);
-
+	FHitResult OutHit;
 	FCollisionQueryParams ColParams;
 
-	// DrawDebugSphere(GetWorld(), Position, Radius, 8, FColor::Green);
 	if (GetWorld()->SweepSingleByChannel(OutHit, Position, Position, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(Radius)))
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("SUELO"));
+		// UE_LOG(LogTemp, Warning, TEXT("GROUNDED"));
 		return true;
 	}
 	else
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("NO SUELO"));
+		// UE_LOG(LogTemp, Warning, TEXT("NOT GROUNDED"));
 		return false;
 	}
+}
 
-	return false;
+bool UPHMovement::CheckGroundedAhead(FVector Delta)
+{
+	float CapsuleHalfHeight = Cast<UCapsuleComponent>(UpdatedComponent)->GetUnscaledCapsuleHalfHeight();
+	float Radius = Cast<UCapsuleComponent>(UpdatedComponent)->GetScaledCapsuleRadius();
+	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 3.0f);
+
+	return CheckGroundedAtPosition(Position + Delta);
+}
+
+bool UPHMovement::IsGrounded()
+{
+	float CapsuleHalfHeight = Cast<UCapsuleComponent>(UpdatedComponent)->GetUnscaledCapsuleHalfHeight();
+	float Radius = Cast<UCapsuleComponent>(UpdatedComponent)->GetScaledCapsuleRadius();
+	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 3.0f);
+
+	DrawDebugSphere(GetWorld(), Position, Radius, 8, FColor::Green);
+
+	return CheckGroundedAtPosition(Position);
 }

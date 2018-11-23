@@ -16,17 +16,21 @@ class PROJECTHERO_API UPHMovement : public UPawnMovementComponent
 
 private:
 
+	bool CheckGroundedAtPosition(FVector Position);
+	bool CheckGroundedAhead(FVector Delta);
+
 protected:
 
 	virtual void BeginPlay() override;
 
-	// Variables para push
+	// Move over time vars
 	FVector PushDir;
 	float PushStrength;
 	float PushTime;
 	float PushActive;
 	float PushElapsedTime;
 	bool PushForward;
+	bool PushStickToGround;
 
 	float ZVel;
 
@@ -34,7 +38,7 @@ public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
-	void MoveOverTime(float strength, float time, bool forward, FVector direction = FVector::ZeroVector);
+	void MoveOverTime(float strength, float time, bool forward, FVector direction = FVector::ZeroVector, bool stickToGround = false);
 
 	UFUNCTION(BlueprintPure)
 		virtual bool IsGrounded();

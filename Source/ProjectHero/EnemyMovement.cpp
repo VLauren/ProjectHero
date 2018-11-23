@@ -11,7 +11,7 @@ void UEnemyMovement::Launch()
 bool UEnemyMovement::IsGrounded()
 {
 	// if (Cast<AEnemy>(GetOwner())->State == EEnemyState::LAUNCHED)
-	if(ZVel >= 0)
+	if(ZVel > 0)
 		return false;
 
 	return Super::IsGrounded();

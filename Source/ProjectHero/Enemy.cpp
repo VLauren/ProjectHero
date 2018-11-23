@@ -45,7 +45,10 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 	FVector KBDirection = GetActorLocation() - sourcePoint;
 	KBDirection.Z = 0;
 	KBDirection.Normalize();
-	Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection);
+	bool stg = !launch && Movement->IsGrounded();
+	Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
+
+	UE_LOG(LogTemp, Warning, TEXT("STG?? %s"), stg ? TEXT("TRUE") : TEXT("FALSE"));
 
 	// FString a;
 	// a = (sourcePoint.ToString());
