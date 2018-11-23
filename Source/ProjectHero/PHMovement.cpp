@@ -37,7 +37,7 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 			PushActive = false;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("%s UseGrav: %s, Grounded: %s"), *GetOwner()->GetName(), UseGravity ? TEXT("True") : TEXT("False"), IsGrounded() ? TEXT("True") : TEXT("False"));
+	// UE_LOG(LogTemp, Warning, TEXT("%s UseGrav: %s, Grounded: %s"), *GetOwner()->GetName(), UseGravity ? TEXT("True") : TEXT("False"), IsGrounded() ? TEXT("True") : TEXT("False"));
 
 	// Gravity
 	if (IsGrounded() || !UseGravity)

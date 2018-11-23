@@ -63,5 +63,7 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 		Cast<UEnemyMovement>(Movement)->Launch();
 		State = EEnemyState::LAUNCHED;
 	}
+	else if (!Movement->IsGrounded())
+		Cast<UEnemyMovement>(Movement)->AirHit();
 }
 
