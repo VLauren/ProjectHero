@@ -111,7 +111,7 @@ private:
 	// Current attack data
 	UAttackData* AttackData = nullptr;
 	int currentAttackIndex;
-	int currentAttackFrame;
+	float currentAttackFrame;
 
 	UAttackData* NextAttackData = nullptr;
 
@@ -133,7 +133,7 @@ private:
 	bool CheckActiveFrame();
 	void StartAttack(int index);
 	void AttackMove(float amount, float time);
-	void DoAttack();
+	void DoAttack(float DeltaTime);
 
 	UFUNCTION()
 		void OnHitboxOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);

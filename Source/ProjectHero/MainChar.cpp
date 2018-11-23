@@ -72,9 +72,9 @@ AMainChar::AMainChar()
 	// Default values
 	MovementSpeed = 500.0f;
 	RotationLerpSpeed = 0.1f;
-	JumpStrength = 12;
-	GravityStrength = 30.0f;
-	StopLerpSpeed = 0.07f;
+	JumpStrength = 24;
+	GravityStrength = 60.0f;
+	StopLerpSpeed = 0.14f;
 	DodgeTime = 0.3f;
 
 	Instance = this;
@@ -102,6 +102,8 @@ void AMainChar::BeginPlay()
 	CharState = EMainCharState::MOVING;
 
 	UE_LOG(LogTemp, Warning, TEXT("CameraLagSpeed: %f"), CameraBoom->CameraLagSpeed)
+
+	GetWorld()->Exec(GetWorld(), TEXT("stat FPS"));
 }
 
 // Called every frame
@@ -109,7 +111,7 @@ void AMainChar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	DoAttack();
+	DoAttack(DeltaTime);
 
 	// Double jump, air dodge and air attack recovery
 	if (AirJump && Movement->IsGrounded()) AirJump = false;
@@ -340,7 +342,7 @@ void AMainChar::AttackMove(float amount, float time)
 	Movement->MoveOverTime(1200, 0.15f, true); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
 }
 
-void AMainChar::DoAttack()
+void AMainChar::DoAttack(float DeltaTime)
 {
 	// UE_LOG(LogTemp, Warning, TEXT("Link: %s, Change: %s"), (linkAttack ? TEXT("true") : TEXT("false")));
 
@@ -348,10 +350,10 @@ void AMainChar::DoAttack()
 	{
 		if (GEngine)
 		{
-			FString msg = FString::Printf(TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, currentAttackFrame, (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
+			FString msg = FString::Printf(TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, FMath::FloorToInt(currentAttackFrame), (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
 			GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Green, msg);
 		}
-		currentAttackFrame++;
+		currentAttackFrame += DeltaTime * 60;
 
 		if (hitBox != nullptr)
 		{

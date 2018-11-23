@@ -5,7 +5,7 @@ void UEnemyMovement::Launch()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Movement Launch!"));
 	UseGravity = true;
-	ZVel = 12; // TODO variable or constant
+	ZVel = 24; // TODO variable or constant
 }
 
 bool UEnemyMovement::IsGrounded()

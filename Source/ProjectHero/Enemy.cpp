@@ -21,7 +21,7 @@ AEnemy::AEnemy()
 	Movement = CreateDefaultSubobject<UEnemyMovement>(TEXT("Movement"));
 	Movement->UpdatedComponent = RootComponent;
 
-	GravityStrength = 30.0;
+	GravityStrength = 60.0;
 }
 
 void AEnemy::BeginPlay()
