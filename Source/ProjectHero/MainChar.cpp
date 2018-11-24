@@ -395,7 +395,14 @@ void AMainChar::Targeting()
 	if (CharState == EMainCharState::ATTACK)
 	{
 		APHGame* Game = Cast<APHGame>(GetWorld()->GetAuthGameMode());
-		AutoTarget = Game->GetClosestEnemy(Game->Enemies, GetActorLocation());
+		TSet<AEnemy*> enemiesInFront;
+		if (Movement->GetCurrentInputVector() != FVector::ZeroVector)
+			enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), Movement->GetCurrentInputVector());
+		else
+			enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), GetActorForwardVector());
+
+		// AutoTarget = Game->GetClosestEnemy(Game->Enemies, GetActorLocation());
+		AutoTarget = Game->GetClosestEnemy(enemiesInFront, GetActorLocation());
 	}
 }
 

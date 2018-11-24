@@ -103,7 +103,10 @@ public:
 	UFUNCTION(BlueprintPure)
 		UAttackData* GetCurrentAttackData();
 
-	AEnemy* AutoTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AEnemy* AutoTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AEnemy* LockTarget;
 
 private:
 

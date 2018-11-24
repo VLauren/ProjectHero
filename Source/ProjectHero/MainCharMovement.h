@@ -32,6 +32,7 @@ public:
 		bool IsMoving();
 
 	void Cancel();
+	FVector GetCurrentInputVector();
 
 private:
 	class AMainChar* MainChar = nullptr;

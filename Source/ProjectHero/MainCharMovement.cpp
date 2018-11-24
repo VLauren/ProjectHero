@@ -171,3 +171,8 @@ void UMainCharMovement::Cancel()
 	PushActive = false;
 	ZVel = 0;
 }
+
+FVector UMainCharMovement::GetCurrentInputVector()
+{
+	return InputVector;
+}
