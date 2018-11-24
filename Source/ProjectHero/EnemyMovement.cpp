@@ -24,7 +24,6 @@ void UEnemyMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 void UEnemyMovement::Launch()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Movement Launch!"));
 	UseGravity = true;
 	ZVel = 24; // TODO variable or constant
 }

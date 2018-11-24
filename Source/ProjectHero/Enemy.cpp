@@ -59,18 +59,8 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 	bool stg = !launch && Movement->IsGrounded();
 	Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
 
-	UE_LOG(LogTemp, Warning, TEXT("STG?? %s"), stg ? TEXT("TRUE") : TEXT("FALSE"));
-
-	// FString a;
-	// a = (sourcePoint.ToString());
-	// a = (GetActorLocation.ToString());
-	// a = (KBDirection.ToString());
-
-	UE_LOG(LogTemp, Warning, TEXT("Damage kb source:%s, loc:%s, dir:%s"), *(sourcePoint.ToString()), *(GetActorLocation().ToString()), *(KBDirection.ToString()));
-
 	if (launch)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Launch!"));
 		Cast<UEnemyMovement>(Movement)->Launch();
 		State = EEnemyState::LAUNCHED;
 	}

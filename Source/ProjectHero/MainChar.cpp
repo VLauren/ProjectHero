@@ -1,5 +1,6 @@
 #include "MainChar.h"
 #include "Enemy.h"
+#include "PHGame.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
@@ -112,6 +113,7 @@ void AMainChar::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	DoAttack(DeltaTime);
+	Targeting();
 
 	// Double jump, air dodge and air attack recovery
 	if (AirJump && Movement->IsGrounded()) AirJump = false;
@@ -169,8 +171,6 @@ void AMainChar::MoveRight(float AxisValue)
 
 void AMainChar::Jump()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Jump"));
-
 	if (!Movement->IsGrounded() && AirJump)
 		return;
 
@@ -235,7 +235,7 @@ EMainCharState AMainChar::GetPlayerState()
 
 FVector AMainChar::GetPlayerLocation()
 {
-	return FVector();
+	return Instance->GetActorLocation();
 }
 
 void AMainChar::AttackA()
@@ -262,8 +262,6 @@ void AMainChar::AttackB()
 
 void AMainChar::Attack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack Input"));
-
 	if (CheckAttackStart())
 	{
 		if (Movement->IsGrounded() || !AirAttack)
@@ -283,8 +281,7 @@ void AMainChar::Attack()
 	else if (CharState != EMainCharState::HIT && CheckIfLinkFrame())
 	{
 		linkAttack = true;
-		
-		UE_LOG(LogTemp, Warning, TEXT("LINK! %d"), (currentAttackIndex + 1));
+		// UE_LOG(LogTemp, Warning, TEXT("LINK! %d"), (currentAttackIndex + 1));
 	}
 }
 
@@ -297,7 +294,7 @@ bool AMainChar::CheckIfLinkFrame()
 {
 	if (AttackData == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NO HAY DATOS DE ATAQUE"));
+		UE_LOG(LogTemp, Error, TEXT("NO ATTACK DATA"));
 		return false;
 	}
 
@@ -313,7 +310,7 @@ bool AMainChar::CheckActiveFrame()
 {
 	if (AttackData == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NO HAY DATOS DE ATAQUE"));
+		UE_LOG(LogTemp, Error, TEXT("NO ATTACK DATA"));
 		return false;
 	}
 
@@ -326,7 +323,7 @@ void AMainChar::StartAttack(int index)
 
 	if (AttackData == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("NO HAY DATOS DE ATAQUE"));
+		UE_LOG(LogTemp, Error, TEXT("NO ATTACK DATA"));
 		return;
 	}
 
@@ -390,6 +387,15 @@ void AMainChar::DoAttack(float DeltaTime)
 				}
 			}
 		}
+	}
+}
+
+void AMainChar::Targeting()
+{
+	if (CharState == EMainCharState::ATTACK)
+	{
+		APHGame* Game = Cast<APHGame>(GetWorld()->GetAuthGameMode());
+		AutoTarget = Game->GetClosestEnemy(Game->Enemies, GetActorLocation());
 	}
 }
 

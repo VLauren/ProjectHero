@@ -65,11 +65,22 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		if (AMainChar::GetPlayerState() == EMainCharState::ATTACK)
 		{
 			// Attack tracking
-			FVector dir = Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Array()[0]->GetActorLocation() - GetOwner()->GetActorLocation();
-			dir.Z = 0;
-			dir.Normalize();
-			CurrentRotation = FMath::Lerp(CurrentRotation, dir.Rotation(), MainChar->RotationLerpSpeed);
-			UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
+
+			if (MainChar->AutoTarget != nullptr)
+			{
+				FVector dir = MainChar->AutoTarget->GetActorLocation() - MainChar->GetActorLocation();
+
+				dir.Z = 0;
+				dir.Normalize();
+				CurrentRotation = FMath::Lerp(CurrentRotation, dir.Rotation(), MainChar->RotationLerpSpeed);
+				UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
+
+				// UE_LOG(LogTemp, Warning, TEXT("Target: %s"), *MainChar->AutoTarget->GetName());
+			}
+			else
+			{
+				// UE_LOG(LogTemp, Warning, TEXT("Target: NULL"));
+			}
 		}
 		else
 
