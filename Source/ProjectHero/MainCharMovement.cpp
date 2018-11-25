@@ -75,7 +75,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				CurrentRotation = FMath::Lerp(CurrentRotation, dir.Rotation(), MainChar->RotationLerpSpeed);
 				UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 
-				// Camera reorientation
+				// Camera auto reorientation
 				FRotator Current = MainChar->Controller->GetControlRotation();
 				FRotator Target = MainChar->Mesh->GetComponentRotation() + FRotator(0, 90, 0);
 				float InputScale = Cast<APlayerController>(MainChar->Controller)->InputYawScale;
@@ -84,15 +84,15 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				// WHY UNREAL
 				if (DeltaYaw > 180) DeltaYaw -= 360;
 				if (DeltaYaw < -180) DeltaYaw += 360;
-
 				// TODO ComposeRotator
 
-				// Auto lock adjustment
-				if(FMath::Abs(DeltaYaw) > 60)
+				// Auto target adjustment
+				if(MainChar->LockTarget == nullptr && FMath::Abs(DeltaYaw) > 60)
 					MainChar->AddControllerYawInput(DeltaYaw * DeltaTime * 0.5f / InputScale);
 
-				// Target lock adjustment
-				// MainChar->AddControllerYawInput(DeltaYaw * DeltaTime / InputScale);
+				// Lock target adjustment
+				if (MainChar->LockTarget != nullptr && FMath::Abs(DeltaYaw) > 5)
+					MainChar->AddControllerYawInput(DeltaYaw * DeltaTime / InputScale);
 			}
 		}
 		else
@@ -114,6 +114,8 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	{
 		if (AMainChar::GetPlayerState() == EMainCharState::DODGE)
 			UseGravity = false;
+		if (AMainChar::GetPlayerState() == EMainCharState::MOVING) // Moving sate but without innput (eg: after air attack)
+			UseGravity = true;
 	}
 
 	// if (IsGrounded())
