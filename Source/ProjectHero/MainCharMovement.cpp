@@ -75,11 +75,24 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				CurrentRotation = FMath::Lerp(CurrentRotation, dir.Rotation(), MainChar->RotationLerpSpeed);
 				UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 
-				// UE_LOG(LogTemp, Warning, TEXT("Target: %s"), *MainChar->AutoTarget->GetName());
-			}
-			else
-			{
-				// UE_LOG(LogTemp, Warning, TEXT("Target: NULL"));
+				// Camera reorientation
+				FRotator Current = MainChar->Controller->GetControlRotation();
+				FRotator Target = MainChar->Mesh->GetComponentRotation() + FRotator(0, 90, 0);
+				float InputScale = Cast<APlayerController>(MainChar->Controller)->InputYawScale;
+				float DeltaYaw = (Target - Current).Yaw;
+
+				// WHY UNREAL
+				if (DeltaYaw > 180) DeltaYaw -= 360;
+				if (DeltaYaw < -180) DeltaYaw += 360;
+
+				// TODO ComposeRotator
+
+				// Auto lock adjustment
+				if(FMath::Abs(DeltaYaw) > 60)
+					MainChar->AddControllerYawInput(DeltaYaw * DeltaTime * 0.5f / InputScale);
+
+				// Target lock adjustment
+				// MainChar->AddControllerYawInput(DeltaYaw * DeltaTime / InputScale);
 			}
 		}
 		else
