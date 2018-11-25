@@ -103,6 +103,7 @@ public:
 	UFUNCTION(BlueprintPure)
 		UAttackData* GetCurrentAttackData();
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		AEnemy* AutoTarget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -135,6 +136,7 @@ private:
 	void StopRun();
 	void AttackA();
 	void AttackB();
+	void CameraReset();
 
 	void Attack();
 

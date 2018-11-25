@@ -145,6 +145,7 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainChar::Jump);
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AMainChar::Dodge);
 	PlayerInputComponent->BindAction("Dodge", IE_Released, this, &AMainChar::StopRun);
+	PlayerInputComponent->BindAction("CameraReset", IE_Pressed, this, &AMainChar::CameraReset);
 }
 
 void AMainChar::MoveForward(float AxisValue)
@@ -465,5 +466,14 @@ int AMainChar::GetAttackIndex()
 UAttackData* AMainChar::GetCurrentAttackData()
 {
 	return AttackData;
+}
+
+void AMainChar::CameraReset()
+{
+	FRotator Current = Controller->GetControlRotation();
+	FRotator Target = Mesh->GetComponentRotation() + FRotator(0, 90, 0);
+	float InputScale = Cast<APlayerController>(Controller)->InputYawScale;
+
+	AddControllerYawInput((Target.Yaw - Current.Yaw) / InputScale);
 }
 
