@@ -34,6 +34,7 @@ protected:
 
 	float ZVel;
 	bool QuickFall;
+	float QuickFallSpeed;
 
 public:
 
@@ -41,7 +42,7 @@ public:
 
 	void MoveOverTime(float strength, float time, bool forward, FVector direction = FVector::ZeroVector, bool stickToGround = false);
 
-	void Descend();
+	void Descend(float Speed);
 
 	UFUNCTION(BlueprintPure)
 		virtual bool IsGrounded();

@@ -66,10 +66,10 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	// Descent
 	if (QuickFall)
 	{
-		float quickFallSpeed = -DeltaTime * 1600;
-		SafeMoveUpdatedComponent(FVector(0, 0, quickFallSpeed), UpdatedComponent->GetComponentRotation(), true, Hit);
+		float quickFallDelta = -DeltaTime * QuickFallSpeed;
+		SafeMoveUpdatedComponent(FVector(0, 0, quickFallDelta), UpdatedComponent->GetComponentRotation(), true, Hit);
 		if (Hit.IsValidBlockingHit())
-			SlideAlongSurface(FVector(0, 0, quickFallSpeed), 1.f - Hit.Time, Hit.Normal, Hit);
+			SlideAlongSurface(FVector(0, 0, quickFallDelta), 1.f - Hit.Time, Hit.Normal, Hit);
 
 		if (IsGrounded())
 			QuickFall = false;
@@ -87,9 +87,10 @@ void UPHMovement::MoveOverTime(float strength, float time, bool forward, FVector
 	PushStickToGround = stickToGround;
 }
 
-void UPHMovement::Descend()
+void UPHMovement::Descend(float Speed)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Descend"));
+	QuickFallSpeed = Speed;
 	QuickFall = true;
 }
 

@@ -40,4 +40,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false);
+	void QuickFall();
 };

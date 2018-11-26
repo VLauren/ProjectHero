@@ -123,7 +123,8 @@ void AMainChar::Tick(float DeltaTime)
 	// EMainCharState
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EMainCharState"), true);
 	// if (!EnumPtr) return FString("Invalid");
-	print(EnumPtr->GetNameByValue((int64)CharState).ToString());
+	// print(EnumPtr->GetNameByValue((int64)CharState).ToString());
+	print(IsAttackB() ? "ATTACK B" : "ATTACK A");
 }
 
 // Called to bind functionality to input
@@ -324,12 +325,25 @@ bool AMainChar::CheckIfLinkFrame()
 		return false;
 	}
 
-	if (attackChange)
-		return false;
-
 	bool hasNextAttack = currentAttackIndex < (AttackData->Attacks.Num() - 1);
 
-	return CharState == EMainCharState::ATTACK && hasNextAttack && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].linkStart;
+	if (currentAttackIndex >= AttackData->Attacks.Num())
+	{
+		UE_LOG(LogTemp, Error, TEXT("ERROR ACCESSING ATTACK DATA. Index:%d, Attack %s - 1"), currentAttackIndex, IsAttackB() ? TEXT("B") : TEXT("A"));
+		return false;
+	}
+
+	bool linkFrame = currentAttackFrame >= AttackData->Attacks[currentAttackIndex].linkStart;
+
+	if (!attackChange)
+	{
+		return CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame;
+	}
+	else
+	{
+		currentAttackIndex = 0;
+		return CharState == EMainCharState::ATTACK && linkFrame;
+	}
 }
 
 bool AMainChar::CheckActiveFrame()
@@ -337,6 +351,12 @@ bool AMainChar::CheckActiveFrame()
 	if (AttackData == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("NO ATTACK DATA"));
+		return false;
+	}
+
+	if (currentAttackIndex >= AttackData->Attacks.Num())
+	{
+		UE_LOG(LogTemp, Error, TEXT("ERROR ACCESSING ATTACK DATA. Index:%d, Attack %s - 2"), currentAttackIndex, IsAttackB() ? TEXT("B") : TEXT("A"));
 		return false;
 	}
 
@@ -359,11 +379,25 @@ void AMainChar::StartAttack(int index)
 	AlreadyHit = false;
 	FallAttack = false;
 
+	if (attackChange)
+	{
+		AttackData = NextAttackData;
+		attackChange = false;
+		currentAttackFrame = 0;
+		currentAttackIndex = 0;
+	}
+
 	AttackMove(1, 0.5f);
 }
 
 void AMainChar::AttackMove(float amount, float time)
 {
+	if (currentAttackIndex >= AttackData->Attacks.Num())
+	{
+		UE_LOG(LogTemp, Error, TEXT("ERROR ACCESSING ATTACK DATA. Index:%d, Attack %s - 3"), currentAttackIndex, IsAttackB() ? TEXT("B") : TEXT("A"));
+		return;
+	}
+
 	FAttackInfo attack = AttackData->Attacks[currentAttackIndex];
 	Movement->MoveOverTime(attack.moveAmount, 0.15f, true, FVector::ZeroVector, Movement->IsGrounded()); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
 }
@@ -390,17 +424,27 @@ void AMainChar::DoAttack(float DeltaTime)
 				hitBox->SetVisibility(true);
 				hitBox->SetHiddenInGame(false);
 
+				if (currentAttackIndex >= AttackData->Attacks.Num())
+				{
+					UE_LOG(LogTemp, Error, TEXT("ERROR ACCESSING ATTACK DATA. Index:%d, Attack %s - 4"), currentAttackIndex, IsAttackB() ? TEXT("B") : TEXT("A"));
+					return;
+				}
+
 				// On the first active frame
 				if (currentAttackFrame == 0 || currentAttackFrame - 1 < AttackData->Attacks[currentAttackIndex].hitStart)
 				{
 					if (AttackData->Attacks[currentAttackIndex].descend)
 					{
-						Movement->Descend();
+						Movement->Descend(1600);
 						FallAttack = true;
 					}
 
-					// if (AttackData->Attacks[currentAttackIndex].ascend)
-						// ;
+					if (AttackData->Attacks[currentAttackIndex].ascend)
+					{
+						// if (!Movement->IsGrounded())
+							// AirJump = true;
+						// Movement->Jump();
+					}
 				}
 			}
 			else
@@ -409,6 +453,12 @@ void AMainChar::DoAttack(float DeltaTime)
 				// hitBox->SetVisibility(false);
 				// hitBox->SetHiddenInGame(true);
 			}
+		}
+
+		if (currentAttackIndex >= AttackData->Attacks.Num())
+		{
+			UE_LOG(LogTemp, Error, TEXT("ERROR ACCESSING ATTACK DATA. Index:%d, Attack %s - 5"), currentAttackIndex, IsAttackB() ? TEXT("B") : TEXT("A"));
+			return;
 		}
 
 		// Attack finish check
@@ -445,6 +495,12 @@ void AMainChar::FallAttackEnd()
 
 bool AMainChar::CanTrack()
 {
+	if (currentAttackIndex >= AttackData->Attacks.Num())
+	{
+		UE_LOG(LogTemp, Error, TEXT("ERROR ACCESSING ATTACK DATA. Index:%d, Attack %s - 6"), currentAttackIndex, IsAttackB() ? TEXT("B") : TEXT("A"));
+		return false;
+	}
+
 	return currentAttackFrame < AttackData->Attacks[currentAttackIndex].hitEnd && !(FallAttack && Movement->IsGrounded());
 }
 
@@ -473,11 +529,22 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			// UE_LOG(LogTemp, Warning, TEXT("OVERLAP"));
 			// UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
 
-			if (AttackData->Attacks[currentAttackIndex].launchEnemy)
-				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), AttackData->Attacks[currentAttackIndex].moveAmount, true);
+			if (currentAttackIndex >= AttackData->Attacks.Num())
+			{
+				UE_LOG(LogTemp, Error, TEXT("ERROR ACCESSING ATTACK DATA. Index:%d, Attack %s - 7"), currentAttackIndex, IsAttackB() ? TEXT("B") : TEXT("A"));
+				return;
+			}
+
+			FAttackInfo attackInfo = AttackData->Attacks[currentAttackIndex];
+
+			if (attackInfo.launchEnemy)
+				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), attackInfo.moveAmount, true);
 				// ((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
 			else
-				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), AttackData->Attacks[currentAttackIndex].moveAmount);
+				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), attackInfo.moveAmount);
+
+			if (attackInfo.descend)
+				Cast<AEnemy>(OtherComp->GetOwner())->QuickFall();
 
 			// HACK For now, I disable the hit box
 			AlreadyHit = true;

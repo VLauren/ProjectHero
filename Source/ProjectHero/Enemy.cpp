@@ -68,3 +68,8 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 		Cast<UEnemyMovement>(Movement)->AirHit();
 }
 
+void AEnemy::QuickFall()
+{
+	Movement->Descend(1900);
+}
+
