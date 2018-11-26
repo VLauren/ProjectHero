@@ -113,6 +113,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		AEnemy* LockTarget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool FallAttack;
+
+	void FallAttackEnd();
+
 private:
 
 	// Static reference to the main character (singleton)

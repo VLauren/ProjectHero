@@ -24,7 +24,9 @@ struct FAttackInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool launchEnemy = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool rise = false;
+		bool ascend = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool descend = false;
 
 };
 

@@ -33,12 +33,15 @@ protected:
 	bool PushStickToGround;
 
 	float ZVel;
+	bool QuickFall;
 
 public:
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	void MoveOverTime(float strength, float time, bool forward, FVector direction = FVector::ZeroVector, bool stickToGround = false);
+
+	void Descend();
 
 	UFUNCTION(BlueprintPure)
 		virtual bool IsGrounded();

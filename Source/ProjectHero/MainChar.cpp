@@ -357,13 +357,15 @@ void AMainChar::StartAttack(int index)
 	currentAttackFrame = 0;
 	currentAttackIndex = index;
 	AlreadyHit = false;
+	FallAttack = false;
 
 	AttackMove(1, 0.5f);
 }
 
 void AMainChar::AttackMove(float amount, float time)
 {
-	Movement->MoveOverTime(1200, 0.15f, true, FVector::ZeroVector, Movement->IsGrounded()); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
+	FAttackInfo attack = AttackData->Attacks[currentAttackIndex];
+	Movement->MoveOverTime(attack.moveAmount, 0.15f, true, FVector::ZeroVector, Movement->IsGrounded()); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
 }
 
 void AMainChar::DoAttack(float DeltaTime)
@@ -376,16 +378,30 @@ void AMainChar::DoAttack(float DeltaTime)
 		{
 			FString msg = FString::Printf(TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, FMath::FloorToInt(currentAttackFrame), (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
 			GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Green, msg);
+			// UE_LOG(LogTemp, Warning, TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, FMath::FloorToInt(currentAttackFrame), (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
 		}
 		currentAttackFrame += DeltaTime * 60;
 
 		if (hitBox != nullptr)
 		{
-			if (CheckActiveFrame() && !AlreadyHit)
+			if (CheckActiveFrame() && !AlreadyHit && (!FallAttack || !Movement->IsGrounded()))
 			{
 				hitBox->SetGenerateOverlapEvents(true);
 				hitBox->SetVisibility(true);
 				hitBox->SetHiddenInGame(false);
+
+				// On the first active frame
+				if (currentAttackFrame == 0 || currentAttackFrame - 1 < AttackData->Attacks[currentAttackIndex].hitStart)
+				{
+					if (AttackData->Attacks[currentAttackIndex].descend)
+					{
+						Movement->Descend();
+						FallAttack = true;
+					}
+
+					// if (AttackData->Attacks[currentAttackIndex].ascend)
+						// ;
+				}
 			}
 			else
 			{
@@ -414,6 +430,11 @@ void AMainChar::DoAttack(float DeltaTime)
 			}
 		}
 	}
+}
+
+void AMainChar::FallAttackEnd()
+{
+	// TODO algo para que solo se llame la primera vez?
 }
 
 void AMainChar::Targeting()
