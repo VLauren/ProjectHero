@@ -411,15 +411,15 @@ void AMainChar::DoAttack(float DeltaTime)
 			}
 		}
 
-		// compruebo si ha terminado el ataque
+		// Attack finish check
 		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd + 1)
 		{
 			if (linkAttack)
 			{
-				// lanzo el siguiente ataque
+				// Next attack launch
 				StartAttack(currentAttackIndex + 1);
 			}
-			// Si ha terminado la animacion vuelvo a estado neutral
+			// Return to neutral state if recovery has ended
 			else if (currentAttackFrame >= AttackData->Attacks[currentAttackIndex].lastFrame)
 			{
 				if (CharState != EMainCharState::MOVING)
@@ -428,6 +428,12 @@ void AMainChar::DoAttack(float DeltaTime)
 					Movement->ResetYVel();
 				}
 			}
+			// Fall attack end
+			else if (false)
+			{
+				// TODO consistent recovery frames after touching the ground
+
+			}
 		}
 	}
 }
@@ -435,6 +441,11 @@ void AMainChar::DoAttack(float DeltaTime)
 void AMainChar::FallAttackEnd()
 {
 	// TODO algo para que solo se llame la primera vez?
+}
+
+bool AMainChar::CanTrack()
+{
+	return currentAttackFrame < AttackData->Attacks[currentAttackIndex].hitEnd && !(FallAttack && Movement->IsGrounded());
 }
 
 void AMainChar::Targeting()
@@ -512,6 +523,11 @@ int AMainChar::GetAttackIndex()
 UAttackData* AMainChar::GetCurrentAttackData()
 {
 	return AttackData;
+}
+
+bool AMainChar::IsAttackB()
+{
+	return AttackData == AttackDataB || AttackData == AirAttackDataB;
 }
 
 void AMainChar::CameraReset()

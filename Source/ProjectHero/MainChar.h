@@ -107,6 +107,8 @@ public:
 	UFUNCTION(BlueprintPure)
 		UAttackData* GetCurrentAttackData();
 
+	UFUNCTION(BlueprintPure)
+		bool IsAttackB();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		AEnemy* AutoTarget;
@@ -117,6 +119,8 @@ public:
 		bool FallAttack;
 
 	void FallAttackEnd();
+
+	bool CanTrack();
 
 private:
 

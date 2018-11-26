@@ -66,7 +66,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		{
 			// Attack tracking
 
-			if (MainChar->AutoTarget != nullptr)
+			if (MainChar->AutoTarget != nullptr && MainChar->CanTrack())
 			{
 				FVector dir = MainChar->AutoTarget->GetActorLocation() - MainChar->GetActorLocation();
 
@@ -187,6 +187,7 @@ bool UMainCharMovement::IsMoving()
 void UMainCharMovement::Cancel()
 {
 	PushActive = false;
+	QuickFall = false;
 	ZVel = 0;
 }
 
