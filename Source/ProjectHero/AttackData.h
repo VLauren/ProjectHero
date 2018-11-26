@@ -20,6 +20,8 @@ struct FAttackInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int lastFrame = 40;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int moveAmount = 40;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool launchEnemy = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool rise = false;

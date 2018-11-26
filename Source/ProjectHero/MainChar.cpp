@@ -241,20 +241,45 @@ FVector AMainChar::GetPlayerLocation()
 
 void AMainChar::AttackA()
 {
-	if (AttackData != AttackDataA)
+	UAttackData* Data;
+	if (Movement->IsGrounded()) 
 	{
-		NextAttackData = AttackDataA;
+		Data = AttackDataA;
+		UE_LOG(LogTemp, Warning, TEXT("Ground A"))
+	}
+	else
+	{
+		Data = AirAttackDataA;
+		UE_LOG(LogTemp, Warning, TEXT("Air A"))
+	}
+
+	if (AttackData != Data)
+	{
+		NextAttackData = Data;
 		attackChange = true;
 		linkAttack = false;
 	}
+
 	Attack();
 }
 
 void AMainChar::AttackB()
 {
-	if (AttackData != AttackDataB)
+	UAttackData* Data;
+	if (Movement->IsGrounded())
 	{
-		NextAttackData = AttackDataB;
+		Data = AttackDataB;
+		UE_LOG(LogTemp, Warning, TEXT("Ground B"))
+	}
+	else
+	{
+		Data = AirAttackDataB;
+		UE_LOG(LogTemp, Warning, TEXT("Air B"))
+	}
+
+	if (AttackData != Data)
+	{
+		NextAttackData = Data;
 		attackChange = true;
 		linkAttack = false;
 	}
@@ -282,7 +307,7 @@ void AMainChar::Attack()
 	else if (CharState != EMainCharState::HIT && CheckIfLinkFrame())
 	{
 		linkAttack = true;
-		// UE_LOG(LogTemp, Warning, TEXT("LINK! %d"), (currentAttackIndex + 1));
+		UE_LOG(LogTemp, Warning, TEXT("LINK! %d"), (currentAttackIndex + 1));
 	}
 }
 
@@ -417,10 +442,10 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			// UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
 
 			if (AttackData->Attacks[currentAttackIndex].launchEnemy)
-				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800, true);
+				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), AttackData->Attacks[currentAttackIndex].moveAmount, true);
 				// ((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
 			else
-				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
+				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), AttackData->Attacks[currentAttackIndex].moveAmount);
 
 			// HACK For now, I disable the hit box
 			AlreadyHit = true;

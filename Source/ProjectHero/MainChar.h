@@ -67,6 +67,10 @@ public:
 		UAttackData* AttackDataA = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
 		UAttackData* AttackDataB = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		UAttackData* AirAttackDataA = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		UAttackData* AirAttackDataB = nullptr;;
 
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float MovementSpeed;
