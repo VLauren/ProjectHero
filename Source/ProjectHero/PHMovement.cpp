@@ -128,7 +128,8 @@ bool UPHMovement::IsGrounded()
 	float Radius = Cast<UCapsuleComponent>(UpdatedComponent)->GetScaledCapsuleRadius();
 	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 3.0f);
 
-	DrawDebugSphere(GetWorld(), Position, Radius, 8, FColor::Green);
+	// Grounded sphere
+	// DrawDebugSphere(GetWorld(), Position, Radius, 8, FColor::Green);
 
 	return CheckGroundedAtPosition(Position);
 }

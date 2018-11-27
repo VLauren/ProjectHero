@@ -426,8 +426,10 @@ void AMainChar::DoAttack(float DeltaTime)
 			if (CheckActiveFrame() && !AlreadyHit && (!FallAttack || !Movement->IsGrounded()))
 			{
 				hitBox->SetGenerateOverlapEvents(true);
-				hitBox->SetVisibility(true);
-				hitBox->SetHiddenInGame(false);
+				// hitBox->SetVisibility(true);
+				// hitBox->SetHiddenInGame(false);
+
+				// TODO Check first activation frame with GetAllOverlappingActors or UpdateOverlaps
 
 				if (currentAttackIndex >= AttackData->Attacks.Num())
 				{
@@ -570,7 +572,7 @@ void AMainChar::Cancel()
 	CharState = EMainCharState::MOVING;
 	Movement->Cancel(); 
 	hitBox->SetGenerateOverlapEvents(false);
-	hitBox->SetHiddenInGame(true);
+	// hitBox->SetHiddenInGame(true);
 	AirAttack = false;
 	// Running = false;
 
