@@ -50,6 +50,8 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			SafeMoveUpdatedComponent(Move, UpdatedComponent->GetComponentRotation(), true, Hit);
 			if (!InputVector.IsNearlyZero())
 				isMoving = true;
+			else
+				MainChar->Running = false;
 			UseGravity = true;
 		}
 		else
@@ -118,17 +120,6 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			UseGravity = true;
 	}
 
-	// if (IsGrounded())
-	// {
-		// La velocidad Z es cero
-		// YVel = 0.0f;
-	// }
-	// else
-	// {
-		// Aplico la gravedad
-		// YVel -= MainChar->GravityStrength * DeltaTime;
-	// }
-
 	if (justJumped > 0)
 		justJumped--;
 }
@@ -160,12 +151,21 @@ void UMainCharMovement::Jump()
 void UMainCharMovement::Dodge()
 {
 	FVector direction = InputVector;
-	if (InputVector == FVector::ZeroVector)
-		direction = -MainChar->GetActorForwardVector();
-	
-	MoveOverTime(2.5f * MainChar->MovementSpeed, MainChar->DodgeTime, false, direction);
+	if (InputVector != FVector::ZeroVector)
+	{
+		MoveOverTime(2.5f * MainChar->MovementSpeed, MainChar->DodgeTime, false, direction);
+		UpdatedComponent->GetOwner()->SetActorRotation(direction.Rotation());
 
-	UpdatedComponent->GetOwner()->SetActorRotation(direction.Rotation());
+		MainChar->BackDodge = false;
+	}
+	else
+	{
+		direction = -MainChar->GetActorForwardVector();
+		MoveOverTime(2.5f * MainChar->MovementSpeed, MainChar->DodgeTime, false, direction);
+
+		MainChar->BackDodge = true;
+	}
+	
 
 	// if (InputVector != FVector::ZeroVector)
 		// Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, InputVector);

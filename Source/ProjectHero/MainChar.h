@@ -91,7 +91,8 @@ public:
 		bool AirJump;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
 		bool Running;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool BackDodge;
 
 	bool IsRunning();
 

@@ -226,7 +226,7 @@ void AMainChar::StopRun()
 {
 	if (Running)
 	{
-		Running = false;
+		// Running = false;
 	}
 }
 
@@ -300,6 +300,7 @@ void AMainChar::Attack()
 			}
 
 			StartAttack(0);
+			Running = false;
 
 			if (!Movement->IsGrounded())
 				AirAttack = true;
