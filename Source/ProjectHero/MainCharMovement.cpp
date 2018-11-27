@@ -63,11 +63,9 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		
 		movementVector.Z = 0;
 
-		// HACKERINO
+		// Attack tracking
 		if (AMainChar::GetPlayerState() == EMainCharState::ATTACK)
 		{
-			// Attack tracking
-
 			if (MainChar->AutoTarget != nullptr && MainChar->CanTrack())
 			{
 				FVector dir = MainChar->AutoTarget->GetActorLocation() - MainChar->GetActorLocation();
@@ -157,6 +155,8 @@ void UMainCharMovement::Dodge()
 		UpdatedComponent->GetOwner()->SetActorRotation(direction.Rotation());
 
 		MainChar->BackDodge = false;
+
+		CurrentRotation = InputVector.Rotation();
 	}
 	else
 	{

@@ -6,6 +6,7 @@
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 #include "Runtime/Engine/Classes/Engine/StaticMesh.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
+#include "DrawDebugHelpers.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -122,9 +123,12 @@ void AMainChar::Tick(float DeltaTime)
 
 	// EMainCharState
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EMainCharState"), true);
-	// if (!EnumPtr) return FString("Invalid");
-	// print(EnumPtr->GetNameByValue((int64)CharState).ToString());
-	print(IsAttackB() ? "ATTACK B" : "ATTACK A");
+	print(EnumPtr->GetNameByValue((int64)CharState).ToString());
+
+	// int(IsAttackB() ? "ATTACK B" : "ATTACK A");
+
+	// UE_LOG(LogTemp, Warning, TEXT(""));
+	DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * 300), FColor::Green);
 }
 
 // Called to bind functionality to input
@@ -289,6 +293,10 @@ void AMainChar::AttackB()
 
 void AMainChar::Attack()
 {
+	// I can cancel dodge into attack
+	if (CharState == EMainCharState::DODGE)
+		Cancel();
+
 	if (CheckAttackStart())
 	{
 		if (Movement->IsGrounded() || !AirAttack)
@@ -315,6 +323,7 @@ void AMainChar::Attack()
 
 bool AMainChar::CheckAttackStart()
 {
+	// if and only if I'm in a neutral state I can start an attack
 	return CharState == EMainCharState::MOVING;
 }
 
@@ -512,9 +521,13 @@ void AMainChar::Targeting()
 		APHGame* Game = Cast<APHGame>(GetWorld()->GetAuthGameMode());
 		TSet<AEnemy*> enemiesInFront;
 		if (Movement->GetCurrentInputVector() != FVector::ZeroVector)
+		{
 			enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), Movement->GetCurrentInputVector());
+		}
 		else
+		{
 			enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), GetActorForwardVector());
+		}
 
 		// AutoTarget = Game->GetClosestEnemy(Game->Enemies, GetActorLocation());
 		AutoTarget = Game->GetClosestEnemy(enemiesInFront, GetActorLocation());
