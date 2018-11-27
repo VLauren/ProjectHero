@@ -124,11 +124,6 @@ void AMainChar::Tick(float DeltaTime)
 	// EMainCharState
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EMainCharState"), true);
 	print(EnumPtr->GetNameByValue((int64)CharState).ToString());
-
-	// int(IsAttackB() ? "ATTACK B" : "ATTACK A");
-
-	// UE_LOG(LogTemp, Warning, TEXT(""));
-	DrawDebugLine(GetWorld(), GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * 300), FColor::Green);
 }
 
 // Called to bind functionality to input
