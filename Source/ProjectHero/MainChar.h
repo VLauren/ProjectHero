@@ -93,6 +93,8 @@ public:
 		bool Running;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
 		bool BackDodge;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool Trail;
 
 	bool IsRunning();
 
