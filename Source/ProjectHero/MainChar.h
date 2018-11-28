@@ -49,6 +49,18 @@ protected:
 
 public:
 
+	// Events
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnGroundJump();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnAirJump();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnAttackHit(FVector HitPosition);
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnGroundDodge();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnAirDodge();
+
 	static FVector GetPlayerLocation();
 	static EMainCharState GetPlayerState();
 

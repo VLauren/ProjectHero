@@ -193,8 +193,16 @@ void AMainChar::Jump()
 	if (CharState == EMainCharState::MOVING)
 	{
 		if (!Movement->IsGrounded())
+		{
 			AirJump = true;
+			OnAirJump();
+		}
+		else
+		{
+			OnGroundJump();
+		}
 		Movement->Jump();
+
 	}
 }
 
@@ -217,7 +225,14 @@ void AMainChar::Dodge()
 		GetWorld()->GetTimerManager().SetTimer(DodgeTimerHandle, this, &AMainChar::Cancel, DodgeTime);
 
 		if (!Movement->IsGrounded())
+		{
 			AirDodge = true;
+			OnAirDodge();
+		}
+		else
+		{
+			OnGroundDodge();
+		}
 	}
 }
 
@@ -556,6 +571,10 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 
 			if (attackInfo.descend)
 				Cast<AEnemy>(OtherComp->GetOwner())->QuickFall();
+
+			// TODO give a better hit position by manually trace or sweep
+			FVector hitPosition = GetActorLocation() + (OtherComp->GetOwner()->GetActorLocation() - GetActorLocation()) / 2;
+			OnAttackHit(hitPosition);
 
 			// HACK For now, I disable the hit box
 			AlreadyHit = true;
