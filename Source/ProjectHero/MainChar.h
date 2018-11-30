@@ -55,7 +55,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnAirJump();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
-		void OnAttackHit(FVector HitPosition);
+		void OnAttackHit(FVector HitPosition, FRotator ForwardRotation);
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnGroundDodge();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)

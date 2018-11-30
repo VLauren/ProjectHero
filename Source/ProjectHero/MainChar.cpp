@@ -258,15 +258,9 @@ void AMainChar::AttackA()
 {
 	UAttackData* Data;
 	if (Movement->IsGrounded()) 
-	{
 		Data = AttackDataA;
-		UE_LOG(LogTemp, Warning, TEXT("Ground A"))
-	}
 	else
-	{
 		Data = AirAttackDataA;
-		UE_LOG(LogTemp, Warning, TEXT("Air A"))
-	}
 
 	if (AttackData != Data)
 	{
@@ -327,7 +321,7 @@ void AMainChar::Attack()
 	else if (CharState != EMainCharState::HIT && CheckIfLinkFrame())
 	{
 		linkAttack = true;
-		UE_LOG(LogTemp, Warning, TEXT("LINK! %d"), (currentAttackIndex + 1));
+		// UE_LOG(LogTemp, Warning, TEXT("LINK! %d"), (currentAttackIndex + 1));
 	}
 }
 
@@ -573,8 +567,11 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 				Cast<AEnemy>(OtherComp->GetOwner())->QuickFall();
 
 			// TODO give a better hit position by manually trace or sweep
-			FVector hitPosition = GetActorLocation() + (OtherComp->GetOwner()->GetActorLocation() - GetActorLocation()) / 2;
-			OnAttackHit(hitPosition);
+			// FVector hitPosition = GetActorLocation() + (OtherComp->GetOwner()->GetActorLocation() - GetActorLocation()) / 2;
+			// OnAttackHit(hitPosition);
+			FVector hitPosition = OtherComp->GetOwner()->GetActorLocation();
+			UE_LOG(LogTemp, Warning, TEXT("FX Pos: %s"), *hitPosition.ToString())
+			OnAttackHit(hitPosition, GetActorForwardVector().Rotation());
 
 			// HACK For now, I disable the hit box
 			AlreadyHit = true;
