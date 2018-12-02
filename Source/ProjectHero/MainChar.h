@@ -73,7 +73,8 @@ public:
 	// TODO Animations
 
 	// State
-	EMainCharState CharState;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EMainCharState CharState;
 
 	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
 		UAttackData* AttackDataA = nullptr;
