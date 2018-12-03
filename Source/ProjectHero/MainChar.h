@@ -160,6 +160,7 @@ private:
 	// Input methods
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
+	void YawInput(float Val);
 	void Jump();
 	void Dodge();
 	void StopRun();

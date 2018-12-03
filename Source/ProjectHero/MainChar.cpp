@@ -132,7 +132,7 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Camera input
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &AMainChar::YawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	// Movement input
@@ -168,6 +168,12 @@ void AMainChar::MoveRight(float AxisValue)
 		if (CharState == EMainCharState::MOVING)
 			AddControllerYawInput(AxisValue / 6);
 	}
+}
+
+void AMainChar::YawInput(float Val)
+{
+	if (LockTarget == nullptr)
+		AddControllerYawInput(Val);
 }
 
 void AMainChar::Jump()
@@ -524,19 +530,26 @@ void AMainChar::Targeting()
 {
 	if (CharState == EMainCharState::ATTACK)
 	{
-		APHGame* Game = Cast<APHGame>(GetWorld()->GetAuthGameMode());
-		TSet<AEnemy*> enemiesInFront;
-		if (Movement->GetCurrentInputVector() != FVector::ZeroVector)
+		if (LockTarget != nullptr)
 		{
-			enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), Movement->GetCurrentInputVector());
+			AutoTarget = LockTarget;
 		}
 		else
 		{
-			enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), GetActorForwardVector());
-		}
+			APHGame* Game = Cast<APHGame>(GetWorld()->GetAuthGameMode());
+			TSet<AEnemy*> enemiesInFront;
+			if (Movement->GetCurrentInputVector() != FVector::ZeroVector)
+			{
+				enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), Movement->GetCurrentInputVector());
+			}
+			else
+			{
+				enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), GetActorForwardVector());
+			}
 
-		// AutoTarget = Game->GetClosestEnemy(Game->Enemies, GetActorLocation());
-		AutoTarget = Game->GetClosestEnemy(enemiesInFront, GetActorLocation());
+			// AutoTarget = Game->GetClosestEnemy(Game->Enemies, GetActorLocation());
+			AutoTarget = Game->GetClosestEnemy(enemiesInFront, GetActorLocation());
+		}
 	}
 }
 
