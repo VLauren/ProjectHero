@@ -173,7 +173,9 @@ void AMainChar::MoveRight(float AxisValue)
 void AMainChar::YawInput(float Val)
 {
 	if (LockTarget == nullptr)
+	{
 		AddControllerYawInput(Val);
+	}
 }
 
 void AMainChar::Jump()

@@ -18,8 +18,13 @@ class PROJECTHERO_API APHGame : public AGameModeBase
 public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSet<AEnemy*> Enemies;
+
+	UFUNCTION(BlueprintPure)
+		TArray<AEnemy*> GetEnemies();
+
+	void AddEnemy(AEnemy* enemy);
 
 	TSet<AEnemy*> GetEnemiesInFront(FVector Position, FVector Direction);
 	AEnemy * GetClosestEnemy(TSet<AEnemy*> Enems, FVector Position);

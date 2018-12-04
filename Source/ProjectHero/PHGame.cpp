@@ -10,18 +10,30 @@ void APHGame::InitGame(const FString& MapName, const FString& Options, FString& 
 
 	Enemies.Reset();
 
-	UE_LOG(LogTemp, Warning, TEXT("PHGame InitGame !"));
+	// UE_LOG(LogTemp, Warning, TEXT("PHGame InitGame !"));
+}
+
+TArray<AEnemy*> APHGame::GetEnemies()
+{
+	return Enemies.Array();
+}
+
+void APHGame::AddEnemy(AEnemy* enemy)
+{
+	Enemies.Add(enemy);
+
+	// UE_LOG(LogTemp, Warning, TEXT("AddEnemy - %d"), Enemies.Num());
 }
 
 TSet<AEnemy*> APHGame::GetEnemiesInFront(FVector Position, FVector Direction)
 {
 	TSet<AEnemy*> res;
 
-	for (int i = 0; i < Enemies.Num(); i++)
+	for (int i = 0; i < GetEnemies().Num(); i++)
 	{
-		float angle = FMath::RadiansToDegrees(FGenericPlatformMath::Acos(FVector::DotProduct((Enemies.Array()[i]->GetActorLocation() - Position).GetSafeNormal(), Direction)));
+		float angle = FMath::RadiansToDegrees(FGenericPlatformMath::Acos(FVector::DotProduct((GetEnemies()[i]->GetActorLocation() - Position).GetSafeNormal(), Direction)));
 		if (angle < 45)
-			res.Add(Enemies.Array()[i]);
+			res.Add(GetEnemies()[i]);
 	}
 
 	return res;

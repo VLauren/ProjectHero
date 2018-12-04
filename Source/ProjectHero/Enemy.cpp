@@ -38,9 +38,10 @@ void AEnemy::BeginPlay()
 	// }
 
 
-	Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Add(this);
+	// Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Add(this);
+	Cast<APHGame>(GetWorld()->GetAuthGameMode())->AddEnemy(this);
 
-	UE_LOG(LogTemp, Warning, TEXT("Enemy Set Num: %d"), Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Num());
+	// UE_LOG(LogTemp, Warning, TEXT("Enemy Set Num: %d"), Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Num());
 }
 
 void AEnemy::Tick(float DeltaTime)
