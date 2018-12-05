@@ -80,3 +80,30 @@ AEnemy* APHGame::GetEnemyToTheRight(AEnemy* Current)
 
 	return Res;
 }
+
+AEnemy* APHGame::GetEnemyToTheLeft(AEnemy* Current)
+{
+	if (Current == nullptr)
+		return nullptr;
+
+	FVector Origin = Current->GetActorLocation() - AMainChar::GetPlayerLocation();
+
+	float MinAngle = 360;
+	AEnemy* Res = nullptr;
+
+	for (int i = 0; i < GetEnemies().Num(); i++)
+	{
+		FVector Dest = GetEnemies()[i]->GetActorLocation() - AMainChar::GetPlayerLocation();
+
+		// Left angle check
+		if (FVector::CrossProduct(Origin.GetSafeNormal(), Dest.GetSafeNormal()).Z < 0)
+		{
+			// Get smallest angle
+			float Angle = FMath::RadiansToDegrees(FGenericPlatformMath::Acos(FVector::DotProduct(Origin.GetSafeNormal(), Dest.GetSafeNormal())));
+			if (Angle < MinAngle && GetEnemies()[i] != Current)
+				Res = GetEnemies()[i];
+		}
+	}
+
+	return Res;
+}

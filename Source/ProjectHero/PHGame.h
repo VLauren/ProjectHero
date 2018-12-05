@@ -28,6 +28,9 @@ public:
 		AEnemy * GetEnemyToTheRight(AEnemy * Current);
 
 	UFUNCTION(BlueprintPure)
+		AEnemy * GetEnemyToTheLeft(AEnemy * Current);
+
+	UFUNCTION(BlueprintPure)
 		AEnemy * GetClosestEnemy(TSet<AEnemy*> Enems, FVector Position);
 
 	UFUNCTION(BlueprintPure)
