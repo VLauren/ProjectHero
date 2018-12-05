@@ -74,7 +74,10 @@ AEnemy* APHGame::GetEnemyToTheRight(AEnemy* Current)
 			// Get smallest angle
 			float Angle = FMath::RadiansToDegrees(FGenericPlatformMath::Acos(FVector::DotProduct(Origin.GetSafeNormal(), Dest.GetSafeNormal())));
 			if (Angle < MinAngle && GetEnemies()[i] != Current)
+			{
 				Res = GetEnemies()[i];
+				MinAngle = Angle;
+			}
 		}
 	}
 
@@ -101,7 +104,10 @@ AEnemy* APHGame::GetEnemyToTheLeft(AEnemy* Current)
 			// Get smallest angle
 			float Angle = FMath::RadiansToDegrees(FGenericPlatformMath::Acos(FVector::DotProduct(Origin.GetSafeNormal(), Dest.GetSafeNormal())));
 			if (Angle < MinAngle && GetEnemies()[i] != Current)
+			{
 				Res = GetEnemies()[i];
+				MinAngle = Angle;
+			}
 		}
 	}
 
