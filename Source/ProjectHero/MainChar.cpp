@@ -124,6 +124,13 @@ void AMainChar::Tick(float DeltaTime)
 	// EMainCharState
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EMainCharState"), true);
 	print(EnumPtr->GetNameByValue((int64)CharState).ToString());
+
+	if (AttackData != nullptr)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(3, 1.5, FColor::Cyan, AttackData->GetName());
+	}
+	else
+		if (GEngine) GEngine->AddOnScreenDebugMessage(3, 1.5, FColor::Cyan, "Null");
 }
 
 // Called to bind functionality to input
@@ -175,6 +182,10 @@ void AMainChar::YawInput(float Val)
 	if (LockTarget == nullptr)
 	{
 		AddControllerYawInput(Val);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LockTarget: %s"), *LockTarget->GetName());
 	}
 }
 
@@ -270,9 +281,9 @@ void AMainChar::AttackA()
 	else
 		Data = AirAttackDataA;
 
+	NextAttackData = Data;
 	if (AttackData != Data)
 	{
-		NextAttackData = Data;
 		attackChange = true;
 		linkAttack = false;
 	}
@@ -286,20 +297,19 @@ void AMainChar::AttackB()
 	if (Movement->IsGrounded())
 	{
 		Data = AttackDataB;
-		UE_LOG(LogTemp, Warning, TEXT("Ground B"))
 	}
 	else
 	{
 		Data = AirAttackDataB;
-		UE_LOG(LogTemp, Warning, TEXT("Air B"))
 	}
 
+	NextAttackData = Data;
 	if (AttackData != Data)
 	{
-		NextAttackData = Data;
 		attackChange = true;
 		linkAttack = false;
 	}
+
 	Attack();
 }
 
@@ -404,6 +414,7 @@ void AMainChar::StartAttack(int index)
 	if (attackChange)
 	{
 		AttackData = NextAttackData;
+		UE_LOG(LogTemp, Warning, TEXT("StartAttack() - Attack data set: %s"), IsAttackB() ? TEXT("B") : TEXT("A"));
 		attackChange = false;
 		currentAttackFrame = 0;
 		currentAttackIndex = 0;
@@ -585,7 +596,7 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			// FVector hitPosition = GetActorLocation() + (OtherComp->GetOwner()->GetActorLocation() - GetActorLocation()) / 2;
 			// OnAttackHit(hitPosition);
 			FVector hitPosition = OtherComp->GetOwner()->GetActorLocation();
-			UE_LOG(LogTemp, Warning, TEXT("FX Pos: %s"), *hitPosition.ToString())
+			// UE_LOG(LogTemp, Warning, TEXT("FX Pos: %s"), *hitPosition.ToString())
 			OnAttackHit(hitPosition, GetActorForwardVector().Rotation());
 
 			// HACK For now, I disable the hit box
