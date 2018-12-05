@@ -24,8 +24,14 @@ public:
 	UFUNCTION(BlueprintPure)
 		TArray<AEnemy*> GetEnemies();
 
-	void AddEnemy(AEnemy* enemy);
+	UFUNCTION(BlueprintPure)
+		AEnemy * GetEnemyToTheRight(AEnemy * Current);
 
-	TSet<AEnemy*> GetEnemiesInFront(FVector Position, FVector Direction);
-	AEnemy * GetClosestEnemy(TSet<AEnemy*> Enems, FVector Position);
+	UFUNCTION(BlueprintPure)
+		AEnemy * GetClosestEnemy(TSet<AEnemy*> Enems, FVector Position);
+
+	UFUNCTION(BlueprintPure)
+		TSet<AEnemy*> GetEnemiesInFront(FVector Position, FVector Direction);
+
+	void AddEnemy(AEnemy* enemy);
 };
