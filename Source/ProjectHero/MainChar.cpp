@@ -149,6 +149,7 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	// Actions input
 	PlayerInputComponent->BindAction("AttackA", IE_Pressed, this, &AMainChar::AttackA);
 	PlayerInputComponent->BindAction("AttackB", IE_Pressed, this, &AMainChar::AttackB);
+	PlayerInputComponent->BindAction("AttackB", IE_Released, this, &AMainChar::ReleaseB);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMainChar::Jump);
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AMainChar::Dodge);
 	PlayerInputComponent->BindAction("Dodge", IE_Released, this, &AMainChar::StopRun);
@@ -185,7 +186,7 @@ void AMainChar::YawInput(float Val)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LockTarget: %s"), *LockTarget->GetName());
+		// UE_LOG(LogTemp, Warning, TEXT("LockTarget: %s"), *LockTarget->GetName());
 	}
 }
 
@@ -293,6 +294,7 @@ void AMainChar::AttackA()
 
 void AMainChar::AttackB()
 {
+	BPressed = true;
 	UAttackData* Data;
 	if (Movement->IsGrounded())
 	{
@@ -311,6 +313,11 @@ void AMainChar::AttackB()
 	}
 
 	Attack();
+}
+
+void AMainChar::ReleaseB()
+{
+	BPressed = false;
 }
 
 void AMainChar::Attack()
@@ -478,7 +485,8 @@ void AMainChar::DoAttack(float DeltaTime)
 					{
 						// if (!Movement->IsGrounded())
 							// AirJump = true;
-						// Movement->Jump();
+						if (BPressed)
+							Movement->Jump();
 					}
 				}
 			}
@@ -648,6 +656,22 @@ UAttackData* AMainChar::GetCurrentAttackData()
 bool AMainChar::IsAttackB()
 {
 	return AttackData == AttackDataB || AttackData == AirAttackDataB;
+}
+
+bool AMainChar::IsBPressed()
+{
+	return BPressed;
+}
+
+bool AMainChar::RisingAttack()
+{
+	if (AttackData == nullptr)
+		return false;
+
+	if(currentAttackIndex >= AttackData->Attacks.Num())
+		return false;
+
+	return AttackData->Attacks[currentAttackIndex].ascend;
 }
 
 void AMainChar::CameraReset()

@@ -126,6 +126,12 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool IsAttackB();
 
+	UFUNCTION(BlueprintPure)
+		bool IsBPressed();
+
+	UFUNCTION(BlueprintPure)
+		bool RisingAttack();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		AEnemy* AutoTarget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -147,6 +153,8 @@ private:
 	bool linkAttack;
 	bool attackChange;
 
+	bool BPressed;
+
 	// Current attack data
 	UAttackData* AttackData = nullptr;
 	int currentAttackIndex;
@@ -166,6 +174,7 @@ private:
 	void StopRun();
 	void AttackA();
 	void AttackB();
+	void ReleaseB();
 	void CameraReset();
 
 	void Attack();

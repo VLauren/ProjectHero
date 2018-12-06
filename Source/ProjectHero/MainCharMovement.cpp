@@ -54,7 +54,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				MainChar->Running = false;
 			UseGravity = true;
 		}
-		else
+		else if(!MainChar->RisingAttack())
 			UseGravity = false;
 
 		// Si chocamos con algo, me deslizo sobre el
