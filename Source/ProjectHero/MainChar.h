@@ -140,8 +140,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool FallAttack;
 
-	void FallAttackEnd();
-
 	bool CanTrack();
 
 private:
@@ -154,6 +152,7 @@ private:
 	bool attackChange;
 
 	bool BPressed;
+	bool falling;
 
 	// Current attack data
 	UAttackData* AttackData = nullptr;

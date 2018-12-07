@@ -479,6 +479,7 @@ void AMainChar::DoAttack(float DeltaTime)
 					{
 						Movement->Descend(1600);
 						FallAttack = true;
+						falling = true;
 					}
 
 					if (AttackData->Attacks[currentAttackIndex].ascend)
@@ -504,6 +505,20 @@ void AMainChar::DoAttack(float DeltaTime)
 			return;
 		}
 
+		// Fall attack
+		if (FallAttack && falling)
+		{
+			if (Movement->IsGrounded())
+			{
+				falling = false;
+				currentAttackFrame = AttackData->Attacks[currentAttackIndex].hitEnd - 1;
+			}
+			else if(currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd)
+			{
+				currentAttackFrame = AttackData->Attacks[currentAttackIndex].hitEnd - 1;
+			}
+		}
+
 		// Attack finish check
 		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd + 1)
 		{
@@ -521,19 +536,8 @@ void AMainChar::DoAttack(float DeltaTime)
 					Movement->ResetYVel();
 				}
 			}
-			// Fall attack end
-			else if (false)
-			{
-				// TODO consistent recovery frames after touching the ground
-
-			}
 		}
 	}
-}
-
-void AMainChar::FallAttackEnd()
-{
-	// TODO algo para que solo se llame la primera vez?
 }
 
 bool AMainChar::CanTrack()
