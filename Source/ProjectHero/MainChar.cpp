@@ -428,6 +428,8 @@ void AMainChar::StartAttack(int index)
 	}
 
 	AttackMove(1, 0.5f);
+
+	OnAttackStart();
 }
 
 void AMainChar::AttackMove(float amount, float time)

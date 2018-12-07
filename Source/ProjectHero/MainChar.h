@@ -60,6 +60,8 @@ public:
 		void OnGroundDodge();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnAirDodge();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnAttackStart();
 
 	static FVector GetPlayerLocation();
 	static EMainCharState GetPlayerState();
