@@ -93,7 +93,7 @@ void AMainChar::BeginPlay()
 	if (hitBox != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("There is a hitbox"));
-		hitBox->SetGenerateOverlapEvents(true);
+		hitBox->SetGenerateOverlapEvents(false);
 		// hitBox->SetVisibility(false);
 		// hitBox->SetHiddenInGame(true);
 
