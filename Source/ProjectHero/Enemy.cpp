@@ -2,7 +2,16 @@
 #include "PHPawn.h"
 #include "EnemyMovement.h"
 #include "PHGame.h"
+#include "MainChar.h"
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
+#include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
+#include "Runtime/NavigationSystem/Public/NavigationPath.h"
+// #include "Runtime/Engine/Classes/AI/NavigationSystemBase.h"
+// #include "Runtime/Engine/Classes/AI/Navigation/NavigationTypes.h"
+// #include "Runtime/Engine/Classes/AI/NavigationSystemBase.h"	
+#include "Runtime/NavigationSystem/Public/NavigationSystem.h"
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
+
 
 AEnemy::AEnemy()
 {
@@ -17,6 +26,24 @@ AEnemy::AEnemy()
 	CapsuleComponent->SetCanEverAffectNavigation(false);
 	CapsuleComponent->bDynamicObstacle = true;
 	RootComponent = CapsuleComponent;
+
+	// Mesh
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	if (Mesh != nullptr)
+	{
+		Mesh->AlwaysLoadOnClient = true;
+		Mesh->AlwaysLoadOnServer = true;
+		Mesh->bOwnerNoSee = false;
+		Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
+		Mesh->bCastDynamicShadow = true;
+		Mesh->bAffectDynamicIndirectLighting = true;
+		Mesh->PrimaryComponentTick.TickGroup = TG_PrePhysics;
+		Mesh->SetupAttachment(CapsuleComponent);
+		static FName MeshCollisionProfileName(TEXT("CharacterMesh"));
+		Mesh->SetCollisionProfileName(MeshCollisionProfileName);
+		Mesh->SetGenerateOverlapEvents(false);
+		Mesh->SetCanEverAffectNavigation(false);
+	}
 
 	// Movement component
 	Movement = CreateDefaultSubobject<UEnemyMovement>(TEXT("Movement"));
@@ -47,6 +74,26 @@ void AEnemy::BeginPlay()
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// HACK TESTS
+
+	// UNavigationPath* tpath = nullptr;
+	// UNavigationSystem* NavSys = nullptr;
+	// UNavigationSystem* NavSys = Cast<UNavigationSystem>(GetWorld()->GetNavigationSystem());
+	// class FNavigationSystem* NavSys = FNavigationSystem::GetCurrent(GetWorld());
+	// FNavigationSystem asd;
+
+	// UNavigationPath* tpath = NavSys->FindPathToLocationSynchronously(GetWorld(), GetActorLocation(), FVector(0, 0, 0));
+
+	// UNavigationSystemV1* navSys = UNavigationSystemV1::GetCurrent(GetWorld());
+	// UNavigationPath* path = navSys->FindPathToLocationSynchronously(GetWorld(), GetActorLocation(), AMainChar::GetPlayerLocation());
+	// if (path != NULL)
+	// {
+		// for (int i = 0; i < path->PathPoints.Num(); i++)
+		// {
+			// DrawDebugSphere(GetWorld(), path->PathPoints[i], 10, 8, FColor::Green);
+		// }
+	// }
 }
 
 void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch)
@@ -72,5 +119,10 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 void AEnemy::QuickFall()
 {
 	Movement->Descend(1900);
+}
+
+UPHMovement * AEnemy::GetMovement()
+{
+	return Movement;
 }
 

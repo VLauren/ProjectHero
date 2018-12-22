@@ -14,6 +14,7 @@ class PROJECTHERO_API UEnemyMovement : public UPHMovement
 
 private:
 	float StartGravity;
+	FRotator CurrentRotation;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -26,4 +27,5 @@ public:
 
 	void AirHit();
 
+	void Move(float DeltaTime, FVector Destination);
 };

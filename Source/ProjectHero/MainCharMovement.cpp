@@ -57,7 +57,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		else if(!MainChar->RisingAttack())
 			UseGravity = false;
 
-		// Si chocamos con algo, me deslizo sobre el
+		// If it hits something, it slides along its surface
 		if (Hit.IsValidBlockingHit())
 			SlideAlongSurface(Move, 1.f - Hit.Time, Hit.Normal, Hit);
 		

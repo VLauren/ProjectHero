@@ -10,14 +10,20 @@
 UENUM()
 enum class EEnemyState : uint8
 {
+	IDLE,
 	MOVING,
-	LAUNCHED
+	HIT,
+	LAUNCHED,
+	GROUND,
+	WAKE_UP
 };
 
 UCLASS()
 class PROJECTHERO_API AEnemy : public APHPawn
 {
 	GENERATED_BODY()
+
+protected:
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UCapsuleComponent* CapsuleComponent;
@@ -29,7 +35,12 @@ public:
 	// Sets default values for this pawn's properties
 	AEnemy();
 
-	EEnemyState State;
+	// State
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EEnemyState State;
+
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class USkeletalMeshComponent* Mesh;
 
 protected:
 	// Called when the game starts or when spawned
@@ -40,5 +51,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false);
+
 	void QuickFall();
+
+	UPHMovement* GetMovement();
 };
