@@ -26,6 +26,20 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+
+	float frameCount;
+
+public:
+
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float GravityStrength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Recovery)
+		int HitRecooveryTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Recovery)
+		int GroundRecoveryTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Recovery)
+		int WakeUpTime;
+
 };
