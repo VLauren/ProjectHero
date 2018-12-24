@@ -16,17 +16,32 @@ class PROJECTHERO_API ABasicEnemy : public AEnemy
 	GENERATED_BODY()
 
 public:
+
 	ABasicEnemy();
 	
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	bool CheckActiveFrame();
+	void DoAttack(float DeltaTime);
 
+	void OnHitboxOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+public:	
+
+	virtual void Tick(float DeltaTime) override;
 	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false);
+
+protected:
+
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UBoxComponent* hitBox = nullptr;
+
+	float currentAttackFrame;
+	bool AlreadyHit;
+
+public:
 
 	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
 		float AttackDistance;
@@ -34,8 +49,4 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
 		UAttackData* AttackData = nullptr;
 
-private:
-
-	float currentAttackFrame;
-	bool AlreadyHit;
 };
