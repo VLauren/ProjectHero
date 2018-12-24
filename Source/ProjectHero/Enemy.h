@@ -14,8 +14,11 @@ enum class EEnemyState : uint8
 	MOVING,
 	HIT,
 	LAUNCHED,
-	GROUND,
-	WAKE_UP
+	KNOCKED_DOWN,
+	WAKE_UP,
+	ATTACK_A,
+	ATTACK_B,
+	ATTACK_C
 };
 
 UCLASS()
@@ -55,4 +58,7 @@ public:
 	void QuickFall();
 
 	UPHMovement* GetMovement();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool hitStart;
 };

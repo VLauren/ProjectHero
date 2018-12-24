@@ -94,6 +94,11 @@ void AEnemy::Tick(float DeltaTime)
 			// DrawDebugSphere(GetWorld(), path->PathPoints[i], 10, 8, FColor::Green);
 		// }
 	// }
+
+	if (State == EEnemyState::HIT && !hitStart)
+		hitStart = true;
+	else if (State == EEnemyState::HIT && hitStart)
+		hitStart = false;
 }
 
 void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch)

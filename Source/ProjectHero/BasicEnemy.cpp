@@ -7,16 +7,20 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
 
+ABasicEnemy::ABasicEnemy()
+{
+	HitRecooveryTime = 35;
+	GroundRecoveryTime = 40;
+	WakeUpTime = 40;
+	AttackDistance = 150;
+}
+
 void ABasicEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
 	CapsuleComponent->SetVisibility(true);
 	CapsuleComponent->SetHiddenInGame(false);
-
-	HitRecooveryTime = 35;
-	GroundRecoveryTime = 40;
-	WakeUpTime = 40;
 }
 
 void ABasicEnemy::Tick(float DeltaTime)
@@ -28,20 +32,25 @@ void ABasicEnemy::Tick(float DeltaTime)
 		if (frameCount >= 120)
 			State = EEnemyState::MOVING;
 	}
-	if (State == EEnemyState::MOVING)
+	else if (State == EEnemyState::MOVING)
 	{
 		Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerLocation());
+		if (FVector::Distance(GetActorLocation(), AMainChar::GetPlayerLocation()) < AttackDistance)
+		{
+			// State = EEnemyState::ATTACK_A;
+			// WIP
+		}
 	}
 
-	if (State == EEnemyState::LAUNCHED)
+	else if (State == EEnemyState::LAUNCHED)
 	{
 		if (Movement->IsGrounded())
 		{
-			State = EEnemyState::GROUND;
+			State = EEnemyState::KNOCKED_DOWN;
 			frameCount = 0;
 		}
 	}
-	if (State == EEnemyState::HIT)
+	else if (State == EEnemyState::HIT)
 	{
 		// Wait for hit recovery time
 		if (frameCount >= HitRecooveryTime)
@@ -50,7 +59,7 @@ void ABasicEnemy::Tick(float DeltaTime)
 			frameCount = 0;
 		}
 	}
-	if (State == EEnemyState::GROUND)
+	else if (State == EEnemyState::KNOCKED_DOWN)
 	{
 		if (frameCount >= GroundRecoveryTime)
 		{
@@ -58,7 +67,7 @@ void ABasicEnemy::Tick(float DeltaTime)
 			frameCount = 0;
 		}
 	}
-	if (State == EEnemyState::WAKE_UP)
+	else if (State == EEnemyState::WAKE_UP)
 	{
 		if (frameCount >= WakeUpTime)
 		{
@@ -70,7 +79,8 @@ void ABasicEnemy::Tick(float DeltaTime)
 	frameCount += DeltaTime * 60;
 
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 1.5, FColor::White, EnumPtr->GetNameByValue((int64)State).ToString());;
+	FString msg = FString::Printf(TEXT("State: %s, dtp:%f"), *EnumPtr->GetNameByValue((int64)State).ToString(), FVector::Dist(GetActorLocation(), AMainChar::GetPlayerLocation()));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 1.5, FColor::White, msg);
 }
 
 void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch)

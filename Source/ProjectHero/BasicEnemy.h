@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Enemy.h"
+#include "AttackData.h"
 #include "BasicEnemy.generated.h"
 
 /**
@@ -13,6 +14,9 @@ UCLASS()
 class PROJECTHERO_API ABasicEnemy : public AEnemy
 {
 	GENERATED_BODY()
+
+public:
+	ABasicEnemy();
 	
 protected:
 	// Called when the game starts or when spawned
@@ -23,4 +27,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false);
+
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		float AttackDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		UAttackData* AttackData = nullptr;
+
+private:
+
+	float currentAttackFrame;
+	bool AlreadyHit;
 };
