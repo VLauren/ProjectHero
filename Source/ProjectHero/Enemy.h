@@ -61,4 +61,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		bool hitStart;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool hitToggle;
 };

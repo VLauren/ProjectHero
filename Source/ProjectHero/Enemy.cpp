@@ -104,6 +104,7 @@ void AEnemy::Tick(float DeltaTime)
 void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch)
 {
 	// Change state to hit stun
+	hitToggle = !hitToggle;
 
 	// Knockback
 	FVector KBDirection = GetActorLocation() - sourcePoint;
