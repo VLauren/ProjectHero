@@ -92,7 +92,7 @@ void AMainChar::BeginPlay()
 	hitBox = (UBoxComponent*)GetComponentByClass(UBoxComponent::StaticClass());
 	if (hitBox != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("There is a hitbox"));
+		UE_LOG(LogTemp, Warning, TEXT("MainChar: There is a hitbox"));
 		hitBox->SetGenerateOverlapEvents(false);
 		// hitBox->SetVisibility(false);
 		// hitBox->SetHiddenInGame(true);
@@ -115,6 +115,17 @@ void AMainChar::Tick(float DeltaTime)
 
 	DoAttack(DeltaTime);
 	Targeting();
+
+	if (CharState == EMainCharState::HIT)
+	{
+		// Wait for hit recovery time
+		if (frameCount >= HitRecooveryTime)
+		{
+			CharState = EMainCharState::MOVING;
+			frameCount = 0;
+		}
+	}
+	frameCount += DeltaTime * 60;
 
 	// Double jump, air dodge and air attack recovery
 	if (AirJump && Movement->IsGrounded()) AirJump = false;
@@ -598,10 +609,9 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			FAttackInfo attackInfo = AttackData->Attacks[currentAttackIndex];
 
 			if (attackInfo.launchEnemy)
-				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), attackInfo.moveAmount, true);
-				// ((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), 800);
+				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), attackInfo.pushAmount, true, attackInfo.riseAmount);
 			else
-				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), attackInfo.moveAmount);
+				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), attackInfo.pushAmount);
 
 			if (attackInfo.descend)
 				Cast<AEnemy>(OtherComp->GetOwner())->QuickFall();
@@ -688,4 +698,18 @@ void AMainChar::CameraReset()
 
 	AddControllerYawInput((Target.Yaw - Current.Yaw) / InputScale);
 }
+
+void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, int riseAmount)
+{
+	CharState = EMainCharState::HIT;
+	frameCount = 0;
+
+	// Knockback
+	FVector KBDirection = GetActorLocation() - sourcePoint;
+	KBDirection.Z = 0;
+	KBDirection.Normalize();
+	bool stg = !launch && Movement->IsGrounded();
+	Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
+}
+
 

@@ -144,6 +144,8 @@ public:
 
 	bool CanTrack();
 
+	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false, int riseAmount = 0);
+
 private:
 
 	// Static reference to the main character (singleton)

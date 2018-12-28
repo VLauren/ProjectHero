@@ -14,6 +14,7 @@ enum class EEnemyState : uint8
 	MOVING,
 	HIT,
 	LAUNCHED,
+	LAUNCHED_HIT,
 	KNOCKED_DOWN,
 	WAKE_UP,
 	ATTACK_A,
@@ -53,7 +54,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false);
+	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false, float riseAmount = 0);
 
 	void QuickFall();
 

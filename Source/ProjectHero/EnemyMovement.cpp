@@ -16,7 +16,7 @@ void UEnemyMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (Cast<AEnemy>(GetOwner())->State == EEnemyState::LAUNCHED && ZVel < 1 && ZVel > -1)
+	if ((Cast<AEnemy>(GetOwner())->State == EEnemyState::LAUNCHED || Cast<AEnemy>(GetOwner())->State == EEnemyState::LAUNCHED_HIT) && ZVel < 1 && ZVel > -1)
 	{
 		Cast<AEnemy>(GetOwner())->GravityStrength = 5;
 	}
@@ -26,10 +26,10 @@ void UEnemyMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	}
 }
 
-void UEnemyMovement::Launch()
+void UEnemyMovement::Launch(float amount)
 {
 	UseGravity = true;
-	ZVel = 24; // TODO variable or constant
+	ZVel = amount;
 }
 
 void UEnemyMovement::AirHit()

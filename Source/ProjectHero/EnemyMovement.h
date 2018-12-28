@@ -23,7 +23,7 @@ protected:
 public:
 	virtual bool IsGrounded();
 
-	void Launch();
+	void Launch(float amount);
 
 	void AirHit();
 

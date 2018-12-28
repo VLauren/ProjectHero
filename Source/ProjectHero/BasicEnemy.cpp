@@ -23,7 +23,7 @@ void ABasicEnemy::BeginPlay()
 	hitBox = (UBoxComponent*)GetComponentByClass(UBoxComponent::StaticClass());
 	if (hitBox != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("There is a hitbox"));
+		UE_LOG(LogTemp, Warning, TEXT("Enemy: There is a hitbox"));
 		hitBox->SetGenerateOverlapEvents(false);
 		// hitBox->SetVisibility(false);
 		// hitBox->SetHiddenInGame(true);
@@ -31,6 +31,8 @@ void ABasicEnemy::BeginPlay()
 		// Hit box overlap event
 		hitBox->OnComponentBeginOverlap.AddDynamic(this, &ABasicEnemy::OnHitboxOverlap);
 	}
+	else
+		UE_LOG(LogTemp, Warning, TEXT("Enemy: There is no hitbox"));
 
 	CapsuleComponent->SetVisibility(true);
 	CapsuleComponent->SetHiddenInGame(false);
@@ -51,6 +53,7 @@ void ABasicEnemy::Tick(float DeltaTime)
 		if (FVector::Distance(GetActorLocation(), AMainChar::GetPlayerLocation()) < AttackDistance)
 		{
 			currentAttackFrame = 0;
+			AlreadyHit = false;
 			State = EEnemyState::ATTACK_A;
 		}
 	}
@@ -69,6 +72,15 @@ void ABasicEnemy::Tick(float DeltaTime)
 		if (frameCount >= HitRecooveryTime)
 		{
 			State = EEnemyState::IDLE;
+			frameCount = 0;
+		}
+	}
+	else if (State == EEnemyState::LAUNCHED_HIT)
+	{
+		// Wait for hit recovery time
+		if (frameCount >= HitRecooveryTime)
+		{
+			State = EEnemyState::LAUNCHED;
 			frameCount = 0;
 		}
 	}
@@ -91,14 +103,14 @@ void ABasicEnemy::Tick(float DeltaTime)
 
 	frameCount += DeltaTime * 60;
 
-	// DoAttack(DeltaTime);
+	DoAttack(DeltaTime);
 
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
 	FString msg = FString::Printf(TEXT("State: %s, dtp:%f"), *EnumPtr->GetNameByValue((int64)State).ToString(), FVector::Dist(GetActorLocation(), AMainChar::GetPlayerLocation()));
 	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 1.5, FColor::White, msg);
 }
 
-void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch)
+void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount)
 {
 	if (launch)
 	{
@@ -107,11 +119,14 @@ void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool 
 	}
 	else
 	{
-		State = EEnemyState::HIT;
+		if (Movement->IsGrounded())
+			State = EEnemyState::HIT;
+		else
+			State = EEnemyState::LAUNCHED_HIT;
 		frameCount = 0;
 	}
 
-	Super::Damage(amount, sourcePoint, knockBack, launch);
+	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount);
 }
 
 bool ABasicEnemy::CheckActiveFrame()
@@ -155,11 +170,19 @@ void ABasicEnemy::DoAttack(float DeltaTime)
 			}
 		}
 
-		UE_LOG(LogTemp, Error, TEXT("DO Attack frame: %f"), currentAttackFrame);
 		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[0].hitEnd + 1)
 		{
 			State = EEnemyState::IDLE;
 			frameCount = 0;
+		}
+	}
+	else
+	{
+		if (hitBox != nullptr)
+		{
+			hitBox->SetGenerateOverlapEvents(false);
+			hitBox->SetVisibility(false);
+			hitBox->SetHiddenInGame(true);
 		}
 	}
 }
@@ -171,7 +194,7 @@ void ABasicEnemy::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AMainChar>() && OtherComp->IsA(UCapsuleComponent::StaticClass()))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT"));
-			((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), AttackData->Attacks[0].moveAmount);
+			((AMainChar*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), AttackData->Attacks[0].moveAmount);
 			AlreadyHit = true;
 		}
 	}

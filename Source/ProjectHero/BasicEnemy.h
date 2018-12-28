@@ -26,12 +26,13 @@ protected:
 	bool CheckActiveFrame();
 	void DoAttack(float DeltaTime);
 
-	void OnHitboxOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	UFUNCTION()
+		void OnHitboxOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 public:	
 
 	virtual void Tick(float DeltaTime) override;
-	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false);
+	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false, float riseAmount = 0);
 
 protected:
 

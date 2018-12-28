@@ -101,7 +101,7 @@ void AEnemy::Tick(float DeltaTime)
 		hitStart = false;
 }
 
-void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch)
+void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount)
 {
 	// Change state to hit stun
 	hitToggle = !hitToggle;
@@ -115,11 +115,13 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 
 	if (launch)
 	{
-		Cast<UEnemyMovement>(Movement)->Launch();
+		Cast<UEnemyMovement>(Movement)->Launch(riseAmount);
 		State = EEnemyState::LAUNCHED;
 	}
 	else if (!Movement->IsGrounded())
+	{
 		Cast<UEnemyMovement>(Movement)->AirHit();
+	}
 }
 
 void AEnemy::QuickFall()
