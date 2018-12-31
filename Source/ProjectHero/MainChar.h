@@ -49,6 +49,9 @@ protected:
 
 public:
 
+	UPROPERTY(EditDefaultsOnly, Category = HitPoints)
+		int MaxHitPoints;
+
 	// Events
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnGroundJump();
@@ -150,6 +153,8 @@ private:
 
 	// Static reference to the main character (singleton)
 	static AMainChar* Instance;
+
+	int HitPoints;
 
 	// Flag to notify the start of the next linked attack
 	bool linkAttack;

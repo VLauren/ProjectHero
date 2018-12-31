@@ -31,7 +31,8 @@ struct FAttackInfo
 		bool ascend = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool descend = false;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int Damage = 20;
 };
 
 UCLASS()

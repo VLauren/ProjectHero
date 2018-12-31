@@ -28,6 +28,10 @@ void APHPawn::Tick(float DeltaTime)
 void APHPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
 
+void APHPawn::Death()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Death: %s"), *GetName());
 }
 

@@ -78,6 +78,7 @@ AMainChar::AMainChar()
 	GravityStrength = 60.0f;
 	StopLerpSpeed = 0.14f;
 	DodgeTime = 0.3f;
+	MaxHitPoints = 100;
 
 	Instance = this;
 
@@ -102,6 +103,8 @@ void AMainChar::BeginPlay()
 	}
 
 	CharState = EMainCharState::MOVING;
+
+	HitPoints = MaxHitPoints;
 
 	UE_LOG(LogTemp, Warning, TEXT("CameraLagSpeed: %f"), CameraBoom->CameraLagSpeed)
 
@@ -609,9 +612,9 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			FAttackInfo attackInfo = AttackData->Attacks[currentAttackIndex];
 
 			if (attackInfo.launchEnemy)
-				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), attackInfo.pushAmount, true, attackInfo.riseAmount);
+				((AEnemy*)OtherComp->GetOwner())->Damage(attackInfo.Damage, GetActorLocation(), attackInfo.pushAmount, true, attackInfo.riseAmount);
 			else
-				((AEnemy*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), attackInfo.pushAmount);
+				((AEnemy*)OtherComp->GetOwner())->Damage(attackInfo.Damage, GetActorLocation(), attackInfo.pushAmount);
 
 			if (attackInfo.descend)
 				Cast<AEnemy>(OtherComp->GetOwner())->QuickFall();
@@ -710,6 +713,10 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 	KBDirection.Normalize();
 	bool stg = !launch && Movement->IsGrounded();
 	Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
+
+	HitPoints -= amount;
+	if (HitPoints <= 0)
+		Death();
 }
 
 

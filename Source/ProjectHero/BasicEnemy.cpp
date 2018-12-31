@@ -157,7 +157,9 @@ void ABasicEnemy::DoAttack(float DeltaTime)
 			// First active frame
 			if (currentAttackFrame == 0 || currentAttackFrame - 1 < AttackData->Attacks[0].hitStart)
 			{
-
+				// Attack movement
+				FAttackInfo attack = AttackData->Attacks[0];
+				Movement->MoveOverTime(attack.moveAmount, 0.15f, true, FVector::ZeroVector, Movement->IsGrounded());
 			}
 		}
 		else
@@ -193,8 +195,8 @@ void ABasicEnemy::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	{
 		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AMainChar>() && OtherComp->IsA(UCapsuleComponent::StaticClass()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT"));
-			((AMainChar*)OtherComp->GetOwner())->Damage(10, GetActorLocation(), AttackData->Attacks[0].moveAmount);
+			UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), AttackData->Attacks[0].Damage);
+			((AMainChar*)OtherComp->GetOwner())->Damage(AttackData->Attacks[0].Damage, GetActorLocation(), AttackData->Attacks[0].moveAmount);
 			AlreadyHit = true;
 		}
 	}

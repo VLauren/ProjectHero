@@ -59,13 +59,8 @@ void AEnemy::BeginPlay()
 	State = EEnemyState::MOVING;
 	Movement->UseGravity = true;
 
-	// if (Enemies == nullptr)
-	// {
-		// UE_LOG(LogTemp, Warning, TEXT("New enemy set"));
-	// }
+	HitPoints = MaxHitPoints;
 
-
-	// Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Add(this);
 	Cast<APHGame>(GetWorld()->GetAuthGameMode())->AddEnemy(this);
 
 	// UE_LOG(LogTemp, Warning, TEXT("Enemy Set Num: %d"), Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Num());
@@ -122,6 +117,10 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 	{
 		Cast<UEnemyMovement>(Movement)->AirHit();
 	}
+
+	HitPoints -= amount;
+	if (HitPoints <= 0)
+		Death();
 }
 
 void AEnemy::QuickFall()

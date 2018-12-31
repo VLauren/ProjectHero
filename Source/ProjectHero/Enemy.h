@@ -39,6 +39,9 @@ public:
 	// Sets default values for this pawn's properties
 	AEnemy();
 
+	UPROPERTY(EditDefaultsOnly, Category = HitPoints)
+		int MaxHitPoints;
+
 	// State
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		EEnemyState State;
@@ -47,6 +50,9 @@ public:
 		class USkeletalMeshComponent* Mesh;
 
 protected:
+
+	int HitPoints;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
