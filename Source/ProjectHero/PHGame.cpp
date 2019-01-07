@@ -1,16 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "PHGame.h"
 #include "MainChar.h"
-
 
 void APHGame::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
 	Enemies.Reset();
-
-	// UE_LOG(LogTemp, Warning, TEXT("PHGame InitGame !"));
 }
 
 TArray<AEnemy*> APHGame::GetEnemies()
@@ -22,7 +17,7 @@ void APHGame::AddEnemy(AEnemy* enemy)
 {
 	Enemies.Add(enemy);
 
-	UE_LOG(LogTemp, Warning, TEXT("AddEnemy - %d"), Enemies.Num());
+	// UE_LOG(LogTemp, Warning, TEXT("AddEnemy - %d"), Enemies.Num());
 }
 
 TSet<AEnemy*> APHGame::GetEnemiesInFront(FVector Position, FVector Direction)

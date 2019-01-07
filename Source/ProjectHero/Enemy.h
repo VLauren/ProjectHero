@@ -16,6 +16,7 @@ enum class EEnemyState : uint8
 	LAUNCHED,
 	LAUNCHED_HIT,
 	KNOCKED_DOWN,
+	KD_HIT,
 	WAKE_UP,
 	ATTACK_A,
 	ATTACK_B,

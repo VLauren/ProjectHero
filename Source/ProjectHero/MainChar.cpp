@@ -531,18 +531,13 @@ void AMainChar::DoAttack(float DeltaTime)
 				falling = false;
 				currentAttackFrame = AttackData->Attacks[currentAttackIndex].hitEnd - 1;
 
-				UE_LOG(LogTemp, Warning, TEXT("FALL ATACK END"));
 				linkAttack = true;
 			}
 			else if(currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("FALL ATACK FALLING"));
 				currentAttackFrame = AttackData->Attacks[currentAttackIndex].hitEnd - 1;
 			}
 		}
-
-		FString msg = falling ? TEXT("True") : TEXT("False");
-		UE_LOG(LogTemp, Warning, TEXT("FALL ATTACK: %s"), *msg);
 
 		// Attack finish check
 		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd + 1)
@@ -560,8 +555,6 @@ void AMainChar::DoAttack(float DeltaTime)
 					CharState = EMainCharState::MOVING;
 					Movement->ResetZVel();
 				}
-
-				UE_LOG(LogTemp, Warning, TEXT("ATTACK END"));
 			}
 		}
 	}

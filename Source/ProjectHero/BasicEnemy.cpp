@@ -75,12 +75,26 @@ void ABasicEnemy::Tick(float DeltaTime)
 			frameCount = 0;
 		}
 	}
+	else if (State == EEnemyState::KD_HIT)
+	{
+		// Wait for hit recovery time
+		if (frameCount >= HitRecooveryTime)
+		{
+			State = EEnemyState::WAKE_UP;
+			frameCount = 0;
+		}
+	}
 	else if (State == EEnemyState::LAUNCHED_HIT)
 	{
 		// Wait for hit recovery time
 		if (frameCount >= HitRecooveryTime)
 		{
 			State = EEnemyState::LAUNCHED;
+			frameCount = 0;
+		}
+		if (Movement->IsGrounded())
+		{
+			State = EEnemyState::KNOCKED_DOWN;
 			frameCount = 0;
 		}
 	}
@@ -112,19 +126,25 @@ void ABasicEnemy::Tick(float DeltaTime)
 
 void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount)
 {
+	// Wake up armor
+	if (State == EEnemyState::WAKE_UP)
+		return;
+
 	if (launch)
 	{
 		State = EEnemyState::LAUNCHED;
-		frameCount = 0;
 	}
 	else
 	{
-		if (Movement->IsGrounded())
+		if(State == EEnemyState::KNOCKED_DOWN || State == EEnemyState::KD_HIT)
+			State = EEnemyState::KD_HIT;
+		else if (Movement->IsGrounded())
 			State = EEnemyState::HIT;
 		else
 			State = EEnemyState::LAUNCHED_HIT;
-		frameCount = 0;
 	}
+
+	frameCount = 0;
 
 	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount);
 }
