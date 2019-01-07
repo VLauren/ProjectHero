@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,14 +6,26 @@
 
 /**
  * MainCharMovement updates movement for the main character.
- * It manages control movement, jump, knockbacks, movement while attacking, etc.
+ * It manages control movement, jump, knockbacks, attack movement, etc.
  */
 UCLASS()
 class PROJECTHERO_API UMainCharMovement : public UPHMovement
 {
 	GENERATED_BODY()
 
+private:
+
+	class AMainChar* MainChar = nullptr;
+	class USkeletalMeshComponent* Mesh = nullptr;
+
+	FVector InputVector;
+	FVector Move;
+	int32 justJumped;
+	FRotator CurrentRotation;
+	bool isMoving;
+
 protected:
+
 	virtual void BeginPlay() override;
 
 public:
@@ -26,22 +36,11 @@ public:
 
 	void Jump();
 	void Dodge();
-	void ResetYVel();
+	void ResetZVel();
 
 	UFUNCTION(BlueprintPure)
 		bool IsMoving();
 
 	void Cancel();
 	FVector GetCurrentInputVector();
-
-private:
-	class AMainChar* MainChar = nullptr;
-	class USkeletalMeshComponent* Mesh = nullptr;
-
-	FVector InputVector;
-	FVector Move;
-	int32 justJumped;
-	FRotator CurrentRotation;
-	bool isMoving;
-
 };

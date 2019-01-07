@@ -12,8 +12,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Engine/Engine.h"
 
-AMainChar* AMainChar::Instance;
 #define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(2, 1.5, FColor::White, text)
+
+AMainChar* AMainChar::Instance;
 
 AMainChar::AMainChar()
 {
@@ -78,6 +79,7 @@ AMainChar::AMainChar()
 	GravityStrength = 60.0f;
 	StopLerpSpeed = 0.14f;
 	DodgeTime = 0.3f;
+	RunSpeedMultiplier = 2;
 	MaxHitPoints = 100;
 
 	Instance = this;
@@ -90,16 +92,16 @@ void AMainChar::BeginPlay()
 {
 	Super::BeginPlay();
 
-	hitBox = (UBoxComponent*)GetComponentByClass(UBoxComponent::StaticClass());
-	if (hitBox != nullptr)
+	HitBox = (UBoxComponent*)GetComponentByClass(UBoxComponent::StaticClass());
+	if (HitBox != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MainChar: There is a hitbox"));
-		hitBox->SetGenerateOverlapEvents(false);
+		HitBox->SetGenerateOverlapEvents(false);
 		// hitBox->SetVisibility(false);
 		// hitBox->SetHiddenInGame(true);
 
 		// Hit box overlap event
-		hitBox->OnComponentBeginOverlap.AddDynamic(this, &AMainChar::OnHitboxOverlap);
+		HitBox->OnComponentBeginOverlap.AddDynamic(this, &AMainChar::OnHitboxOverlap);
 	}
 
 	CharState = EMainCharState::MOVING;
@@ -472,11 +474,11 @@ void AMainChar::DoAttack(float DeltaTime)
 		}
 		currentAttackFrame += DeltaTime * 60;
 
-		if (hitBox != nullptr)
+		if (HitBox != nullptr)
 		{
 			if (CheckActiveFrame() && !AlreadyHit && (!FallAttack || !Movement->IsGrounded()))
 			{
-				hitBox->SetGenerateOverlapEvents(true);
+				HitBox->SetGenerateOverlapEvents(true);
 				// hitBox->SetVisibility(true);
 				// hitBox->SetHiddenInGame(false);
 
@@ -509,7 +511,7 @@ void AMainChar::DoAttack(float DeltaTime)
 			}
 			else
 			{
-				hitBox->SetGenerateOverlapEvents(false);
+				HitBox->SetGenerateOverlapEvents(false);
 				// hitBox->SetVisibility(false);
 				// hitBox->SetHiddenInGame(true);
 			}
@@ -522,18 +524,25 @@ void AMainChar::DoAttack(float DeltaTime)
 		}
 
 		// Fall attack
-		if (FallAttack && falling)
+		if (FallAttack && falling && currentAttackIndex == 0)
 		{
 			if (Movement->IsGrounded())
 			{
 				falling = false;
 				currentAttackFrame = AttackData->Attacks[currentAttackIndex].hitEnd - 1;
+
+				UE_LOG(LogTemp, Warning, TEXT("FALL ATACK END"));
+				linkAttack = true;
 			}
 			else if(currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("FALL ATACK FALLING"));
 				currentAttackFrame = AttackData->Attacks[currentAttackIndex].hitEnd - 1;
 			}
 		}
+
+		FString msg = falling ? TEXT("True") : TEXT("False");
+		UE_LOG(LogTemp, Warning, TEXT("FALL ATTACK: %s"), *msg);
 
 		// Attack finish check
 		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd + 1)
@@ -549,8 +558,10 @@ void AMainChar::DoAttack(float DeltaTime)
 				if (CharState != EMainCharState::MOVING)
 				{
 					CharState = EMainCharState::MOVING;
-					Movement->ResetYVel();
+					Movement->ResetZVel();
 				}
+
+				UE_LOG(LogTemp, Warning, TEXT("ATTACK END"));
 			}
 		}
 	}
@@ -640,7 +651,7 @@ void AMainChar::Cancel()
 
 	CharState = EMainCharState::MOVING;
 	Movement->Cancel(); 
-	hitBox->SetGenerateOverlapEvents(false);
+	HitBox->SetGenerateOverlapEvents(false);
 	// hitBox->SetHiddenInGame(true);
 	AirAttack = false;
 	// Running = false;

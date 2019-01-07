@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,21 +5,15 @@
 #include "PHMovement.generated.h"
 
 /**
- * 
+ * PHMovement manages basic pawn movement.
+ * It has move over time functionality and manages vertical velocity movement such as gravity.
  */
 UCLASS()
 class PROJECTHERO_API UPHMovement : public UPawnMovementComponent
 {
 	GENERATED_BODY()
 
-private:
-
-	bool CheckGroundedAtPosition(FVector Position);
-	bool CheckGroundedAhead(FVector Delta);
-
 protected:
-
-	virtual void BeginPlay() override;
 
 	// Move over time vars
 	FVector PushDir;
@@ -38,6 +30,19 @@ protected:
 
 public:
 
+	bool UseGravity = true;
+
+private:
+
+	bool CheckGroundedAtPosition(FVector Position);
+	bool CheckGroundedAhead(FVector Delta);
+
+protected:
+
+	virtual void BeginPlay() override;
+
+public:
+
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	void MoveOverTime(float strength, float time, bool forward, FVector direction = FVector::ZeroVector, bool stickToGround = false);
@@ -46,7 +51,5 @@ public:
 
 	UFUNCTION(BlueprintPure)
 		virtual bool IsGrounded();
-
-	bool UseGravity = true;
 
 };

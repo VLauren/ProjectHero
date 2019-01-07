@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "PHMovement.h"
 #include "PHPawn.h"
 #include "DrawDebugHelpers.h"
@@ -11,7 +9,6 @@
 void UPHMovement::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
@@ -24,11 +21,13 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 		FHitResult Hit;
 		FVector PushFrameMove;
 
+		// Calculate movement this frame
 		if (!PushForward)
 			PushFrameMove = PushDir * DeltaTime * PushStrength;
 		else
 			PushFrameMove = GetOwner()->GetActorForwardVector() * DeltaTime * PushStrength;
 
+		// Move
 		if (!PushStickToGround || CheckGroundedAhead(PushFrameMove))
 			SafeMoveUpdatedComponent(PushFrameMove, UpdatedComponent->GetComponentRotation(), true, Hit);
 
@@ -37,17 +36,12 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 			PushActive = false;
 	}
 
-	// UE_LOG(LogTemp, Warning, TEXT("%s UseGrav: %s, Grounded: %s"), *GetOwner()->GetName(), UseGravity ? TEXT("True") : TEXT("False"), IsGrounded() ? TEXT("True") : TEXT("False"));
+	// Vertical Movement
+	// =========================
 
 	// Gravity
 	if (IsGrounded() || !UseGravity)
 	{
-		if (ZVel != 0.0f)
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("GRAV 0!!!!!"));
-			// UseGravity = false;
-		}
-
 		// Vertical velocity is cero
 		ZVel = 0.0f;
 	}
@@ -57,7 +51,7 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 		ZVel -= Cast<APHPawn>(GetOwner())->GravityStrength * DeltaTime;
 	}
 
-	// Vertical movement
+	// Apply vertical velocity
 	FHitResult Hit;
 	SafeMoveUpdatedComponent(FVector(0, 0, ZVel), UpdatedComponent->GetComponentRotation(), true, Hit);
 	if (Hit.IsValidBlockingHit())
@@ -89,7 +83,6 @@ void UPHMovement::MoveOverTime(float strength, float time, bool forward, FVector
 
 void UPHMovement::Descend(float Speed)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Descend"));
 	QuickFallSpeed = Speed;
 	QuickFall = true;
 }
@@ -101,14 +94,13 @@ bool UPHMovement::CheckGroundedAtPosition(FVector Position)
 	FHitResult OutHit;
 	FCollisionQueryParams ColParams;
 
+	// Spherecast to check ground collision
 	if (GetWorld()->SweepSingleByChannel(OutHit, Position, Position, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(Radius)))
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("GROUNDED"));
 		return true;
 	}
 	else
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("NOT GROUNDED"));
 		return false;
 	}
 }

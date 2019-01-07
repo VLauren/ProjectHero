@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -26,11 +25,37 @@ class PROJECTHERO_API AMainChar : public APHPawn
 {
 	GENERATED_BODY()
 
+private:
+
+	// Static reference to the main character (singleton)
+	static AMainChar* Instance;
+
+	int HitPoints;
+
+	// Flag to notify the start of the next linked attack
+	bool linkAttack;
+	bool attackChange;
+
+	bool BPressed;
+	bool falling;
+
+	// Current attack data
+	UAttackData* AttackData = nullptr;
+	int currentAttackIndex;
+	float currentAttackFrame;
+	bool AlreadyHit;
+
+	UAttackData* NextAttackData = nullptr;
+
+	FTimerHandle DodgeTimerHandle;
+
+protected:
+
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UCapsuleComponent* CapsuleComponent;
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		class UBoxComponent* hitBox = nullptr;
+		class UBoxComponent* HitBox = nullptr;
 
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
@@ -42,15 +67,70 @@ class PROJECTHERO_API AMainChar : public APHPawn
 		class UMainCharMovement* Movement;
 
 public:
-	AMainChar();
+
+	UPROPERTY(EditDefaultsOnly, Category = HitPoints)
+		int MaxHitPoints;
+
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class USkeletalMeshComponent* Mesh;
+
+	// State
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		EMainCharState CharState;
+
+	// Attack data
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		UAttackData* AttackDataA = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		UAttackData* AttackDataB = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		UAttackData* AirAttackDataA = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
+		UAttackData* AirAttackDataB = nullptr;;
+
+	// Movement parameters
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float MovementSpeed;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float RotationLerpSpeed;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float JumpStrength;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float StopLerpSpeed;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float DodgeTime;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float RunSpeedMultiplier;
+
+	// Flags
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool AirAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool AirDodge;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool AirJump;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool Running;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool BackDodge;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool Trail;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool FallAttack;
+
+	// Targeting values
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AEnemy* AutoTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AEnemy* LockTarget;
 
 protected:
+
 	virtual void BeginPlay() override;
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, Category = HitPoints)
-		int MaxHitPoints;
+	AMainChar();
 
 	// Events
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
@@ -71,48 +151,6 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		class USkeletalMeshComponent* Mesh;
-
-	// TODO Animations
-
-	// State
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		EMainCharState CharState;
-
-	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
-		UAttackData* AttackDataA = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
-		UAttackData* AttackDataB = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
-		UAttackData* AirAttackDataA = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category = AttackDat)
-		UAttackData* AirAttackDataB = nullptr;;
-
-	UPROPERTY(EditAnywhere, Category = MovementValues)
-		float MovementSpeed;
-	UPROPERTY(EditAnywhere, Category = MovementValues)
-		float RotationLerpSpeed;
-	UPROPERTY(EditAnywhere, Category = MovementValues)
-		float JumpStrength;
-	UPROPERTY(EditAnywhere, Category = MovementValues)
-		float StopLerpSpeed;
-	UPROPERTY(EditAnywhere, Category = MovementValues)
-		float DodgeTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
-		bool AirAttack;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
-		bool AirDodge;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
-		bool AirJump;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
-		bool Running;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
-		bool BackDodge;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
-		bool Trail;
 
 	bool IsRunning();
 
@@ -137,41 +175,11 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool RisingAttack();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		AEnemy* AutoTarget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		AEnemy* LockTarget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		bool FallAttack;
-
 	bool CanTrack();
 
 	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false, int riseAmount = 0);
 
 private:
-
-	// Static reference to the main character (singleton)
-	static AMainChar* Instance;
-
-	int HitPoints;
-
-	// Flag to notify the start of the next linked attack
-	bool linkAttack;
-	bool attackChange;
-
-	bool BPressed;
-	bool falling;
-
-	// Current attack data
-	UAttackData* AttackData = nullptr;
-	int currentAttackIndex;
-	float currentAttackFrame;
-	bool AlreadyHit;
-
-	UAttackData* NextAttackData = nullptr;
-
-	FTimerHandle DodgeTimerHandle;
 
 	// Input methods
 	void MoveForward(float AxisValue);

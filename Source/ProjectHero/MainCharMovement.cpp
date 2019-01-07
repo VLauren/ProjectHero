@@ -29,22 +29,17 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	InputVector = ConsumeInputVector().GetClampedToMaxSize(1.0f);
 	movementVector = InputVector * MainChar->MovementSpeed;
 	if (MainChar->IsRunning())
-		movementVector *= 2; // HACK TODO create RunningSpeed variable
-	//// movementVector.Z = YVel;
+		movementVector *= MainChar->RunSpeedMultiplier;
 	movementVector *= DeltaTime;
 
-	// Move = movimientoDeseado;
 	Move = FMath::Lerp(Move, movementVector, MainChar->StopLerpSpeed);
 
-	// FVector movimientoEsteFrame = movimientoDeseado;
-
-	// Movimiento
+	// Control movement is only applied in neutral or attack state
 	if (!Move.IsNearlyZero() && (AMainChar::GetPlayerState() == EMainCharState::MOVING) || (AMainChar::GetPlayerState() == EMainCharState::ATTACK))
 	{
-		//// Move.Z = YVel;
 		FHitResult Hit;
 
-		// Movimiento
+		// Standard control movement
 		if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
 		{
 			SafeMoveUpdatedComponent(Move, UpdatedComponent->GetComponentRotation(), true, Hit);
@@ -68,8 +63,10 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		{
 			if (MainChar->AutoTarget != nullptr && MainChar->CanTrack())
 			{
+				// Target direction
 				FVector dir = MainChar->AutoTarget->GetActorLocation() - MainChar->GetActorLocation();
 
+				// Rotate character towards target
 				dir.Z = 0;
 				dir.Normalize();
 				CurrentRotation = FMath::Lerp(CurrentRotation, dir.Rotation(), MainChar->RotationLerpSpeed);
@@ -86,22 +83,21 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				if (DeltaYaw < -180) DeltaYaw += 360;
 				// TODO ComposeRotator
 
-				// Auto target adjustment
+				// Auto target camera follow
 				if(MainChar->LockTarget == nullptr && FMath::Abs(DeltaYaw) > 60)
 					MainChar->AddControllerYawInput(DeltaYaw * DeltaTime * 0.5f / InputScale);
 
-				// Lock target adjustment
+				// Lock target camera follow
 				if (MainChar->LockTarget != nullptr && FMath::Abs(DeltaYaw) > 5)
 					MainChar->AddControllerYawInput(DeltaYaw * DeltaTime / InputScale);
 			}
 		}
-		else
-
-		if (!movementVector.IsNearlyZero())
+		else if (!movementVector.IsNearlyZero())
 		{
-			// Movement rotation
+			// Target rotation
 			FRotator ctrlRot = movementVector.Rotation();
 
+			// Rotate character towards target rotation
 			if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
 				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot,  MainChar->RotationLerpSpeed);
 			else if(PushActive && PushForward)
@@ -118,6 +114,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			UseGravity = true;
 	}
 
+	// Ignore gravity frames
 	if (justJumped > 0)
 		justJumped--;
 }
@@ -135,17 +132,16 @@ void UMainCharMovement::Jump()
 	if (MainChar == nullptr)
 		return;
 
-	// if (IsGrounded())
-	{
-		UseGravity = true;
-		ZVel = MainChar->JumpStrength;
-		justJumped = 4;
-	}
+	UseGravity = true;
+	ZVel = MainChar->JumpStrength;
+	justJumped = 4;
 }
 
 void UMainCharMovement::Dodge()
 {
 	FVector direction = InputVector;
+
+	// Dodge following input vector
 	if (InputVector != FVector::ZeroVector)
 	{
 		MoveOverTime(2.5f * MainChar->MovementSpeed, MainChar->DodgeTime, false, direction);
@@ -155,6 +151,7 @@ void UMainCharMovement::Dodge()
 
 		CurrentRotation = InputVector.Rotation();
 	}
+	// If the is no direction to dodge, perform a back dodge
 	else
 	{
 		direction = -MainChar->GetActorForwardVector();
@@ -162,15 +159,9 @@ void UMainCharMovement::Dodge()
 
 		MainChar->BackDodge = true;
 	}
-	
-
-	// if (InputVector != FVector::ZeroVector)
-		// Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, InputVector);
-	// else
-		// Push(2 * MainChar->MovementSpeed, MainChar->DodgeTime, false, -MainChar->GetActorForwardVector());
 }
 
-void UMainCharMovement::ResetYVel()
+void UMainCharMovement::ResetZVel()
 {
 	ZVel = 0;
 }
@@ -179,7 +170,6 @@ bool UMainCharMovement::IsMoving()
 {
 	return isMoving;
 }
-
 
 void UMainCharMovement::Cancel()
 {

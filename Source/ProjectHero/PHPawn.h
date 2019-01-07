@@ -11,24 +11,6 @@ class PROJECTHERO_API APHPawn : public APawn
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this pawn's properties
-	APHPawn();
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	// Called every frame
-	virtual void Death();
-
 protected:
 
 	float frameCount;
@@ -44,5 +26,21 @@ public:
 		int GroundRecoveryTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Recovery)
 		int WakeUpTime;
+
+public:
+
+	APHPawn();
+
+protected:
+
+	virtual void BeginPlay() override;
+
+public:	
+
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void Death();
 
 };
