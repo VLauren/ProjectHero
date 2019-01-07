@@ -130,6 +130,32 @@ void AMainChar::Tick(float DeltaTime)
 			frameCount = 0;
 		}
 	}
+	else if (CharState == EMainCharState::LAUNCHED)
+	{
+		if (Movement->IsGrounded())
+		{
+			CharState = EMainCharState::KNOCKED_DOWN;
+			frameCount = 0;
+		}
+	}
+	else if (CharState == EMainCharState::KNOCKED_DOWN)
+	{
+		if (frameCount >= GroundRecoveryTime)
+		{
+			CharState = EMainCharState::WAKE_UP;
+			frameCount = 0;
+		}
+	}
+	else if (CharState == EMainCharState::WAKE_UP)
+	{
+		if (frameCount >= WakeUpTime)
+		{
+			CharState = EMainCharState::MOVING;
+			frameCount = 0;
+		}
+	}
+
+
 	frameCount += DeltaTime * 60;
 
 	// Double jump, air dodge and air attack recovery
@@ -706,7 +732,7 @@ void AMainChar::CameraReset()
 	AddControllerYawInput((Target.Yaw - Current.Yaw) / InputScale);
 }
 
-void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, int riseAmount)
+void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount, bool spLaunch)
 {
 	CharState = EMainCharState::HIT;
 	frameCount = 0;
@@ -716,7 +742,22 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 	KBDirection.Z = 0;
 	KBDirection.Normalize();
 	bool stg = !launch && Movement->IsGrounded();
-	Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
+
+	if(!launch)
+		Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
+	else
+		Movement->MoveOverTime(knockBack, 2 * riseAmount / GravityStrength, false, KBDirection, stg);
+
+	// Face damage origin
+	FVector rotationDir = sourcePoint - GetActorLocation();
+	rotationDir.Z = 0;
+	SetActorRotation(rotationDir.Rotation());
+
+	if (launch)
+	{
+		Movement->Launch(riseAmount, spLaunch);
+		CharState = EMainCharState::LAUNCHED;
+	}
 
 	HitPoints -= amount;
 	if (HitPoints <= 0)

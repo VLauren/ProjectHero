@@ -134,6 +134,13 @@ void UMainCharMovement::Jump()
 
 	UseGravity = true;
 	ZVel = MainChar->JumpStrength;
+}
+
+void UMainCharMovement::Launch(float amount, bool spLaunch)
+{
+	UseGravity = true;
+	ZVel = amount;
+	SpLaunch = spLaunch;
 	justJumped = 4;
 }
 

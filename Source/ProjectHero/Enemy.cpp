@@ -86,7 +86,6 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 		Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
 	else
 		Movement->MoveOverTime(knockBack, 2 * riseAmount / GravityStrength, false, KBDirection, stg);
-		// TODO 1 -> riseAmount / gravedad o algo asi
 
 	FVector rotationDir = sourcePoint - GetActorLocation();
 	rotationDir.Z = 0;

@@ -15,9 +15,10 @@ class PROJECTHERO_API UEnemyMovement : public UPHMovement
 private:
 	float StartGravity;
 	FRotator CurrentRotation;
-	bool SpLaunch;
 	
 protected:
+	bool SpLaunch;
+
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 

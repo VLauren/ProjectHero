@@ -216,7 +216,10 @@ void ABasicEnemy::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AMainChar>() && OtherComp->IsA(UCapsuleComponent::StaticClass()))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), AttackData->Attacks[0].Damage);
-			((AMainChar*)OtherComp->GetOwner())->Damage(AttackData->Attacks[0].Damage, GetActorLocation(), AttackData->Attacks[0].moveAmount);
+
+			FAttackInfo attackInfo = AttackData->Attacks[0];
+
+			((AMainChar*)OtherComp->GetOwner())->Damage(attackInfo.Damage, GetActorLocation(), attackInfo.moveAmount, attackInfo.launchEnemy, attackInfo.riseAmount, attackInfo.spLaunch);
 			AlreadyHit = true;
 		}
 	}

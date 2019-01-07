@@ -23,6 +23,7 @@ private:
 	int32 justJumped;
 	FRotator CurrentRotation;
 	bool isMoving;
+	bool SpLaunch;
 
 protected:
 
@@ -37,6 +38,7 @@ public:
 	void Jump();
 	void Dodge();
 	void ResetZVel();
+	void Launch(float amount, bool spLaunch);
 
 	UFUNCTION(BlueprintPure)
 		bool IsMoving();
