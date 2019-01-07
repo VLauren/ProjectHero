@@ -124,7 +124,7 @@ void ABasicEnemy::Tick(float DeltaTime)
 	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 1.5, FColor::White, msg);
 }
 
-void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount)
+void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount, bool spLaunch)
 {
 	// Wake up armor
 	if (State == EEnemyState::WAKE_UP)
@@ -146,7 +146,7 @@ void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool 
 
 	frameCount = 0;
 
-	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount);
+	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount, spLaunch);
 }
 
 bool ABasicEnemy::CheckActiveFrame()

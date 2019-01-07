@@ -6,9 +6,6 @@
 #include "Runtime/Engine/Classes/Components/CapsuleComponent.h"
 #include "Runtime/Engine/Classes/Components/SkeletalMeshComponent.h"
 #include "Runtime/NavigationSystem/Public/NavigationPath.h"
-// #include "Runtime/Engine/Classes/AI/NavigationSystemBase.h"
-// #include "Runtime/Engine/Classes/AI/Navigation/NavigationTypes.h"
-// #include "Runtime/Engine/Classes/AI/NavigationSystemBase.h"	
 #include "Runtime/NavigationSystem/Public/NavigationSystem.h"
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
 
@@ -62,33 +59,11 @@ void AEnemy::BeginPlay()
 	HitPoints = MaxHitPoints;
 
 	Cast<APHGame>(GetWorld()->GetAuthGameMode())->AddEnemy(this);
-
-	// UE_LOG(LogTemp, Warning, TEXT("Enemy Set Num: %d"), Cast<APHGame>(GetWorld()->GetAuthGameMode())->Enemies.Num());
 }
 
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// HACK TESTS
-
-	// UNavigationPath* tpath = nullptr;
-	// UNavigationSystem* NavSys = nullptr;
-	// UNavigationSystem* NavSys = Cast<UNavigationSystem>(GetWorld()->GetNavigationSystem());
-	// class FNavigationSystem* NavSys = FNavigationSystem::GetCurrent(GetWorld());
-	// FNavigationSystem asd;
-
-	// UNavigationPath* tpath = NavSys->FindPathToLocationSynchronously(GetWorld(), GetActorLocation(), FVector(0, 0, 0));
-
-	// UNavigationSystemV1* navSys = UNavigationSystemV1::GetCurrent(GetWorld());
-	// UNavigationPath* path = navSys->FindPathToLocationSynchronously(GetWorld(), GetActorLocation(), AMainChar::GetPlayerLocation());
-	// if (path != NULL)
-	// {
-		// for (int i = 0; i < path->PathPoints.Num(); i++)
-		// {
-			// DrawDebugSphere(GetWorld(), path->PathPoints[i], 10, 8, FColor::Green);
-		// }
-	// }
 
 	if (State == EEnemyState::HIT && !hitStart)
 		hitStart = true;
@@ -96,7 +71,7 @@ void AEnemy::Tick(float DeltaTime)
 		hitStart = false;
 }
 
-void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount)
+void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount, bool spLaunch)
 {
 	// Change state to hit stun
 	hitToggle = !hitToggle;
@@ -106,11 +81,20 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 	KBDirection.Z = 0;
 	KBDirection.Normalize();
 	bool stg = !launch && Movement->IsGrounded();
-	Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
+
+	if(!spLaunch || !launch)
+		Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
+	else
+		Movement->MoveOverTime(knockBack, 2 * riseAmount / GravityStrength, false, KBDirection, stg);
+		// TODO 1 -> riseAmount / gravedad o algo asi
+
+	FVector rotationDir = sourcePoint - GetActorLocation();
+	rotationDir.Z = 0;
+	SetActorRotation(rotationDir.Rotation());
 
 	if (launch)
 	{
-		Cast<UEnemyMovement>(Movement)->Launch(riseAmount);
+		Cast<UEnemyMovement>(Movement)->Launch(riseAmount, spLaunch);
 		State = EEnemyState::LAUNCHED;
 	}
 	else if (!Movement->IsGrounded())
@@ -128,7 +112,7 @@ void AEnemy::QuickFall()
 	Movement->Descend(1900);
 }
 
-UPHMovement * AEnemy::GetMovement()
+UPHMovement* AEnemy::GetMovement()
 {
 	return Movement;
 }

@@ -19,7 +19,7 @@ public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage);
 
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSet<AEnemy*> Enemies;
+	TSet<AEnemy*> Enemies;
 
 	UFUNCTION(BlueprintPure)
 		TArray<AEnemy*> GetEnemies();

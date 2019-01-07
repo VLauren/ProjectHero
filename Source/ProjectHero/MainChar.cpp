@@ -616,7 +616,7 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			FAttackInfo attackInfo = AttackData->Attacks[currentAttackIndex];
 
 			if (attackInfo.launchEnemy)
-				((AEnemy*)OtherComp->GetOwner())->Damage(attackInfo.Damage, GetActorLocation(), attackInfo.pushAmount, true, attackInfo.riseAmount);
+				((AEnemy*)OtherComp->GetOwner())->Damage(attackInfo.Damage, GetActorLocation(), attackInfo.pushAmount, true, attackInfo.riseAmount, attackInfo.spLaunch);
 			else
 				((AEnemy*)OtherComp->GetOwner())->Damage(attackInfo.Damage, GetActorLocation(), attackInfo.pushAmount);
 

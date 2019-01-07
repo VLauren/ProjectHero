@@ -15,6 +15,7 @@ class PROJECTHERO_API UEnemyMovement : public UPHMovement
 private:
 	float StartGravity;
 	FRotator CurrentRotation;
+	bool SpLaunch;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -23,7 +24,7 @@ protected:
 public:
 	virtual bool IsGrounded();
 
-	void Launch(float amount);
+	void Launch(float amount, bool spLaunch);
 
 	void AirHit();
 
