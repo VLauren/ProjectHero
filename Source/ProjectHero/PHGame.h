@@ -37,4 +37,5 @@ public:
 		TSet<AEnemy*> GetEnemiesInFront(FVector Position, FVector Direction);
 
 	void AddEnemy(AEnemy* enemy);
+	void RemoveEnemy(AEnemy* enemy);
 };

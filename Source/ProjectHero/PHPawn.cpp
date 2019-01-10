@@ -23,6 +23,6 @@ void APHPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void APHPawn::Death()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Death: %s"), *GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Pawn Death: %s"), *GetName());
 }
 

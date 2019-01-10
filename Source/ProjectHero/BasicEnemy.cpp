@@ -224,3 +224,12 @@ void ABasicEnemy::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		}
 	}
 }
+
+void ABasicEnemy::Death()
+{
+	Super::Death();
+
+	UE_LOG(LogTemp, Warning, TEXT("Basic Enemy Death"));
+
+	Destroy();
+}

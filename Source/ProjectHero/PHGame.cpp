@@ -5,11 +5,13 @@ void APHGame::InitGame(const FString& MapName, const FString& Options, FString& 
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
+	UE_LOG(LogTemp, Warning, TEXT("Init Game PHGame"), Enemies.Num());
 	Enemies.Reset();
 }
 
 TArray<AEnemy*> APHGame::GetEnemies()
 {
+	// UE_LOG(LogTemp, Warning, TEXT("Get Enemies %d"), Enemies.Array().Num());
 	return Enemies.Array();
 }
 
@@ -17,7 +19,14 @@ void APHGame::AddEnemy(AEnemy* enemy)
 {
 	Enemies.Add(enemy);
 
-	// UE_LOG(LogTemp, Warning, TEXT("AddEnemy - %d"), Enemies.Num());
+	UE_LOG(LogTemp, Warning, TEXT("AddEnemy - %d"), Enemies.Num());
+}
+
+void APHGame::RemoveEnemy(AEnemy* enemy)
+{
+	Enemies.Remove(enemy);
+
+	UE_LOG(LogTemp, Warning, TEXT("RemoveEnemy - %d"), Enemies.Num());
 }
 
 TSet<AEnemy*> APHGame::GetEnemiesInFront(FVector Position, FVector Direction)

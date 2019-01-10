@@ -58,6 +58,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+
+	virtual void Death();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

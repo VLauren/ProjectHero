@@ -116,3 +116,10 @@ UPHMovement* AEnemy::GetMovement()
 	return Movement;
 }
 
+void AEnemy::Death()
+{
+	Super::Death();
+
+	// Remove enemy from set
+	Cast<APHGame>(GetWorld()->GetAuthGameMode())->RemoveEnemy(this);
+}

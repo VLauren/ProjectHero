@@ -31,6 +31,9 @@ public:
 
 	APHPawn();
 
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnDeath();
+
 protected:
 
 	virtual void BeginPlay() override;
