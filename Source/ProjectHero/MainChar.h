@@ -17,7 +17,8 @@ enum class EMainCharState : uint8
 	DODGE,
 	LAUNCHED,
 	KNOCKED_DOWN,
-	WAKE_UP
+	WAKE_UP,
+	DEATH
 };
 
 /**
@@ -135,6 +136,8 @@ public:
 
 	AMainChar();
 
+	virtual void Death() override;
+
 	// Events
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnGroundJump();
@@ -150,6 +153,7 @@ public:
 		void OnAttackStart();
 
 	static FVector GetPlayerLocation();
+	static FVector GetPlayerGroundLocation();
 	static EMainCharState GetPlayerState();
 
 	virtual void Tick(float DeltaTime) override;

@@ -59,7 +59,7 @@ protected:
 
 public:	
 
-	virtual void Death();
+	virtual void Death() override;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -74,4 +74,7 @@ public:
 		bool hitStart;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		bool hitToggle;
+
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float MovementSpeed;
 };

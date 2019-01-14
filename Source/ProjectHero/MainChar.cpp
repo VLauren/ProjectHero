@@ -316,6 +316,16 @@ FVector AMainChar::GetPlayerLocation()
 	return Instance->GetActorLocation();
 }
 
+FVector AMainChar::GetPlayerGroundLocation()
+{
+	// HACK
+	FVector res = Instance->GetActorLocation();
+	res.Z = 130;
+	return res;
+
+	// TODO use ray cast
+}
+
 void AMainChar::AttackA()
 {
 	UAttackData* Data;
@@ -737,6 +747,8 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 	CharState = EMainCharState::HIT;
 	frameCount = 0;
 
+	HitBox->SetGenerateOverlapEvents(false);
+
 	// Knockback
 	FVector KBDirection = GetActorLocation() - sourcePoint;
 	KBDirection.Z = 0;
@@ -764,4 +776,10 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 		Death();
 }
 
+void AMainChar::Death()
+{
+	CharState = EMainCharState::DEATH;
+	UE_LOG(LogTemp, Warning, TEXT("Main Char Paco"));
+	OnDeath();
+}
 

@@ -14,6 +14,7 @@ ABasicEnemy::ABasicEnemy()
 	GroundRecoveryTime = 40;
 	WakeUpTime = 40;
 	AttackDistance = 150;
+	MovementSpeed = 400;
 }
 
 void ABasicEnemy::BeginPlay()
@@ -35,7 +36,7 @@ void ABasicEnemy::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Enemy: There is no hitbox"));
 
 	CapsuleComponent->SetVisibility(true);
-	CapsuleComponent->SetHiddenInGame(false);
+	// CapsuleComponent->SetHiddenInGame(false);
 }
 
 void ABasicEnemy::Tick(float DeltaTime)
@@ -49,8 +50,14 @@ void ABasicEnemy::Tick(float DeltaTime)
 	}
 	else if (State == EEnemyState::MOVING)
 	{
-		Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerLocation());
-		if (FVector::Distance(GetActorLocation(), AMainChar::GetPlayerLocation()) < AttackDistance)
+		Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerGroundLocation());
+
+		FVector v = (AMainChar::GetPlayerGroundLocation() - GetActorLocation()).GetSafeNormal();
+		float angle = FMath::RadiansToDegrees(FGenericPlatformMath::Acos(FVector::DotProduct(v, GetActorForwardVector())));
+		bool orientationOk = angle < 30;
+		bool distanceOk = FVector::Distance(GetActorLocation(), AMainChar::GetPlayerGroundLocation()) < AttackDistance;
+
+		if (distanceOk && orientationOk)
 		{
 			currentAttackFrame = 0;
 			AlreadyHit = false;
@@ -120,7 +127,7 @@ void ABasicEnemy::Tick(float DeltaTime)
 	DoAttack(DeltaTime);
 
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	FString msg = FString::Printf(TEXT("State: %s, dtp:%f"), *EnumPtr->GetNameByValue((int64)State).ToString(), FVector::Dist(GetActorLocation(), AMainChar::GetPlayerLocation()));
+	FString msg = FString::Printf(TEXT("State: %s, dtp:%f"), *EnumPtr->GetNameByValue((int64)State).ToString(), FVector::Dist(GetActorLocation(), AMainChar::GetPlayerGroundLocation()));
 	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 1.5, FColor::White, msg);
 }
 
@@ -171,7 +178,7 @@ void ABasicEnemy::DoAttack(float DeltaTime)
 			{
 				hitBox->SetGenerateOverlapEvents(true);
 				hitBox->SetVisibility(true);
-				hitBox->SetHiddenInGame(false);
+				// hitBox->SetHiddenInGame(false);
 			}
 
 			// First active frame
@@ -188,7 +195,7 @@ void ABasicEnemy::DoAttack(float DeltaTime)
 			{
 				hitBox->SetGenerateOverlapEvents(false);
 				hitBox->SetVisibility(false);
-				hitBox->SetHiddenInGame(true);
+				// hitBox->SetHiddenInGame(true);
 			}
 		}
 
@@ -204,7 +211,7 @@ void ABasicEnemy::DoAttack(float DeltaTime)
 		{
 			hitBox->SetGenerateOverlapEvents(false);
 			hitBox->SetVisibility(false);
-			hitBox->SetHiddenInGame(true);
+			// hitBox->SetHiddenInGame(true);
 		}
 	}
 }

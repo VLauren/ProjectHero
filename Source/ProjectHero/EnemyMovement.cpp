@@ -42,7 +42,7 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 {
 	// Get path
 	UNavigationSystemV1* navSys = UNavigationSystemV1::GetCurrent(GetWorld());
-	UNavigationPath* path = navSys->FindPathToLocationSynchronously(GetWorld(), GetOwner()->GetActorLocation(), AMainChar::GetPlayerLocation(), GetOwner());
+	UNavigationPath* path = navSys->FindPathToLocationSynchronously(GetWorld(), GetOwner()->GetActorLocation(), AMainChar::GetPlayerGroundLocation(), GetOwner());
 
 	if (path != NULL && path->PathPoints.Num() > 1)
 	{
@@ -63,7 +63,7 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 		direction.Normalize();
 
 		// Move
-		FVector move = direction * DeltaTime * 200;
+		FVector move = direction * DeltaTime * Cast<AEnemy>(GetOwner())->MovementSpeed;
 		move.Z = 0;
 		FHitResult Hit;
 		SafeMoveUpdatedComponent(move, UpdatedComponent->GetComponentRotation(), true, Hit);
@@ -76,6 +76,7 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 			// Movement rotation
 			FRotator ctrlRot = move.Rotation();
 
+			// TODO WHAT THE FUDGE player state?
 			if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
 				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, 0.1f);
 			else if(PushActive && PushForward)
@@ -83,6 +84,19 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 			UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 		}
 	}
+}
+
+void UEnemyMovement::RotateTowards(float DeltaTime, FVector Destination)
+{
+	// Movement rotation
+	FRotator ctrlRot = (Destination - GetOwner()->GetActorLocation()).Rotation();
+
+	// TODO WHAT THE FUDGE player state?
+	if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
+		CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, 0.1f);
+	else if (PushActive && PushForward)
+		CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, 0.1f);
+	UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 }
 
 bool UEnemyMovement::IsGrounded()

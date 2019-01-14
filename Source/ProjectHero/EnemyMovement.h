@@ -30,4 +30,5 @@ public:
 	void AirHit();
 
 	void Move(float DeltaTime, FVector Destination);
+	void RotateTowards(float DeltaTime, FVector Destination);
 };

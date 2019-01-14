@@ -19,7 +19,7 @@ void APHGame::AddEnemy(AEnemy* enemy)
 {
 	Enemies.Add(enemy);
 
-	UE_LOG(LogTemp, Warning, TEXT("AddEnemy - %d"), Enemies.Num());
+	// UE_LOG(LogTemp, Warning, TEXT("AddEnemy - %d"), Enemies.Num());
 }
 
 void APHGame::RemoveEnemy(AEnemy* enemy)
