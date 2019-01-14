@@ -45,7 +45,7 @@ void ABasicEnemy::Tick(float DeltaTime)
 
 	if (State == EEnemyState::IDLE)
 	{
-		if (frameCount >= 120)
+		if (frameCount >= 5)
 			State = EEnemyState::MOVING;
 	}
 	else if (State == EEnemyState::MOVING)
@@ -199,7 +199,7 @@ void ABasicEnemy::DoAttack(float DeltaTime)
 			}
 		}
 
-		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[0].hitEnd + 1)
+		if (AttackData != nullptr && currentAttackFrame >= AttackData->Attacks[0].lastFrame + 1)
 		{
 			State = EEnemyState::IDLE;
 			frameCount = 0;
