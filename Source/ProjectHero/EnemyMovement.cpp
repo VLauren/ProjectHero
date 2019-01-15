@@ -9,6 +9,8 @@ void UEnemyMovement::BeginPlay()
 {
 	Super::BeginPlay();
 
+	MoveVector = FVector::ZeroVector;
+
 	StartGravity = Cast<AEnemy>(GetOwner())->GravityStrength;
 }
 
@@ -66,15 +68,17 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 		FVector move = direction * DeltaTime * Cast<AEnemy>(GetOwner())->MovementSpeed;
 		move.Z = 0;
 		FHitResult Hit;
-		SafeMoveUpdatedComponent(move, UpdatedComponent->GetComponentRotation(), true, Hit);
 
+		MoveVector = FMath::Lerp(MoveVector, move, 0.1f); // TODO move lerp speed variable
+
+		SafeMoveUpdatedComponent(MoveVector, UpdatedComponent->GetComponentRotation(), true, Hit);
 		if (Hit.IsValidBlockingHit())
 			SlideAlongSurface(move, 1.f - Hit.Time, Hit.Normal, Hit);
 
-		if (!move.IsNearlyZero())
+		if (!MoveVector.IsNearlyZero())
 		{
 			// Movement rotation
-			FRotator ctrlRot = move.Rotation();
+			FRotator ctrlRot = MoveVector.Rotation();
 
 			// TODO WHAT THE FUDGE player state?
 			if (AMainChar::GetPlayerState() == EMainCharState::MOVING)

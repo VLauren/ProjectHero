@@ -15,6 +15,7 @@ class PROJECTHERO_API UEnemyMovement : public UPHMovement
 private:
 	float StartGravity;
 	FRotator CurrentRotation;
+	FVector MoveVector;
 	
 protected:
 	bool SpLaunch;
