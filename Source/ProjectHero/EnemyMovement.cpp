@@ -80,8 +80,7 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 			// Movement rotation
 			FRotator ctrlRot = MoveVector.Rotation();
 
-			// TODO WHAT THE FUDGE player state?
-			if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
+			if(Cast<AEnemy>(GetOwner())->State == EEnemyState::MOVING)
 				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, 0.1f);
 			else if(PushActive && PushForward)
 				CurrentRotation = FMath::Lerp(CurrentRotation, ctrlRot, 0.1f);
