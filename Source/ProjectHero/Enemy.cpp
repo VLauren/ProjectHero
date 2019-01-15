@@ -76,21 +76,7 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 	// Change state to hit stun
 	hitToggle = !hitToggle;
 
-	// Knockback
-	FVector KBDirection = GetActorLocation() - sourcePoint;
-	KBDirection.Z = 0;
-	KBDirection.Normalize();
-	bool stg = !launch && Movement->IsGrounded();
-
-	if(!spLaunch || !launch)
-		Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
-	else
-		Movement->MoveOverTime(knockBack, 2 * riseAmount / GravityStrength, false, KBDirection, stg);
-
-	FVector rotationDir = sourcePoint - GetActorLocation();
-	rotationDir.Z = 0;
-	SetActorRotation(rotationDir.Rotation());
-
+	// Launch
 	if (launch)
 	{
 		Cast<UEnemyMovement>(Movement)->Launch(riseAmount, spLaunch);
@@ -100,6 +86,21 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 	{
 		Cast<UEnemyMovement>(Movement)->AirHit();
 	}
+
+	// Knockback
+	FVector KBDirection = GetActorLocation() - sourcePoint;
+	KBDirection.Z = 0;
+	KBDirection.Normalize();
+	bool stg = !launch && Movement->IsGrounded();
+
+	FVector rotationDir = sourcePoint - GetActorLocation();
+	rotationDir.Z = 0;
+	SetActorRotation(rotationDir.Rotation());
+
+	if(!spLaunch || !launch)
+		Movement->MoveOverTime(knockBack, 0.15f, false, KBDirection, stg);
+	else
+		Movement->MoveOverTime(knockBack, 2 * riseAmount / GravityStrength, false, KBDirection, stg);
 
 	HitPoints -= amount;
 	if (HitPoints <= 0)

@@ -755,6 +755,7 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 	if (IsInvulnerable())
 		return;
 
+	Cancel();
 	CharState = EMainCharState::HIT;
 	frameCount = 0;
 
