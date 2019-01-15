@@ -50,14 +50,15 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 	{
 		// for (int i = 0; i < path->PathPoints.Num(); i++)
 			// DrawDebugSphere(GetWorld(), path->PathPoints[i], 10, 8, FColor::Green, true, 0.5f);
-		// DrawDebugSphere(GetWorld(), path->PathPoints[0], 10, 8, FColor::Green, true, 0.5f);
-		// DrawDebugSphere(GetWorld(), path->PathPoints[1], 10, 8, FColor::Green, true, 0.5f);
 
 		// Get direction towards first route point
 		FVector direction;
 		
 		int nextPoint = 0;
-		while (path->PathPoints.Num() > nextPoint + 1 && FVector::Distance(GetOwner()->GetActorLocation(), path->PathPoints[nextPoint]) < 85)
+		while (path->PathPoints.Num() > nextPoint && FVector::Distance(GetOwner()->GetActorLocation(), path->PathPoints[nextPoint]) < 85)
+			nextPoint++;
+
+		if (nextPoint == 0)
 			nextPoint++;
 
 		direction = path->PathPoints[nextPoint] - GetOwner()->GetActorLocation();
