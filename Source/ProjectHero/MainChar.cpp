@@ -81,6 +81,7 @@ AMainChar::AMainChar()
 	DodgeTime = 0.3f;
 	RunSpeedMultiplier = 2;
 	MaxHitPoints = 100;
+	DodgeInvulFrames = 10;
 
 	Instance = this;
 
@@ -154,7 +155,11 @@ void AMainChar::Tick(float DeltaTime)
 			frameCount = 0;
 		}
 	}
-
+	else if (CharState == EMainCharState::DODGE)
+	{
+		if (frameCount >= DodgeInvulFrames)
+			invulnerable = false;
+	}
 
 	frameCount += DeltaTime * 60;
 
@@ -165,7 +170,7 @@ void AMainChar::Tick(float DeltaTime)
 
 	// EMainCharState
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EMainCharState"), true);
-	print(EnumPtr->GetNameByValue((int64)CharState).ToString());
+	print(EnumPtr->GetNameByValue((int64)CharState).ToString() + " invul:" + (invulnerable ? "true" : "false"));
 
 	if (AttackData != nullptr)
 	{
@@ -295,6 +300,9 @@ void AMainChar::Dodge()
 		{
 			OnGroundDodge();
 		}
+
+		invulnerable = true;
+		frameCount = 0;
 	}
 }
 
@@ -730,7 +738,7 @@ bool AMainChar::RisingAttack()
 	if(currentAttackIndex >= AttackData->Attacks.Num())
 		return false;
 
-	return AttackData->Attacks[currentAttackIndex].ascend;
+	return AttackData->Attacks[currentAttackIndex].ascend && CheckActiveFrame();
 }
 
 void AMainChar::CameraReset()
@@ -744,6 +752,9 @@ void AMainChar::CameraReset()
 
 void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount, bool spLaunch)
 {
+	if (IsInvulnerable())
+		return;
+
 	CharState = EMainCharState::HIT;
 	frameCount = 0;
 

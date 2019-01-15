@@ -105,6 +105,8 @@ public:
 		float DodgeTime;
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float RunSpeedMultiplier;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
+		int DodgeInvulFrames;
 
 	// Flags
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)

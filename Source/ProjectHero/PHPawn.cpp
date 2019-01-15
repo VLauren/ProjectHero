@@ -26,3 +26,8 @@ void APHPawn::Death()
 	UE_LOG(LogTemp, Warning, TEXT("Pawn Death: %s"), *GetName());
 }
 
+bool APHPawn::IsInvulnerable()
+{
+	return invulnerable;
+}
+

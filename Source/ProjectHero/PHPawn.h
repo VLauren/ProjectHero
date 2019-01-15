@@ -14,6 +14,7 @@ class PROJECTHERO_API APHPawn : public APawn
 protected:
 
 	float frameCount;
+	bool invulnerable;
 
 public:
 
@@ -46,4 +47,5 @@ public:
 
 	virtual void Death();
 
+	bool IsInvulnerable();
 };
