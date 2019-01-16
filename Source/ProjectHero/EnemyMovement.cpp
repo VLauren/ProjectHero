@@ -32,7 +32,7 @@ void UEnemyMovement::Launch(float amount, bool spLaunch)
 {
 	UseGravity = true;
 	ZVel = amount;
-	StartGravity = Cast<AEnemy>(GetOwner())->GravityStrength;
+	Cast<AEnemy>(GetOwner())->GravityStrength = StartGravity;
 	SpLaunch = spLaunch;
 }
 
