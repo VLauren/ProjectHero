@@ -62,6 +62,9 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 		if (nextPoint == 0)
 			nextPoint++;
 
+		if (nextPoint >= path->PathPoints.Num())
+			nextPoint--;
+
 		direction = path->PathPoints[nextPoint] - GetOwner()->GetActorLocation();
 		direction.Z = 0;
 		direction.Normalize();
