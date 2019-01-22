@@ -29,6 +29,14 @@ void APHGame::RemoveEnemy(AEnemy* enemy)
 	UE_LOG(LogTemp, Warning, TEXT("RemoveEnemy - %d"), Enemies.Num());
 }
 
+void APHGame::DamageArea(FVector Center, float radius, int damage)
+{
+}
+
+void APHGame::DamageLine(FVector Start, FVector End, int damage)
+{
+}
+
 TSet<AEnemy*> APHGame::GetEnemiesInFront(FVector Position, FVector Direction)
 {
 	TSet<AEnemy*> res;

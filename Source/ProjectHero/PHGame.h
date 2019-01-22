@@ -38,4 +38,7 @@ public:
 
 	void AddEnemy(AEnemy* enemy);
 	void RemoveEnemy(AEnemy* enemy);
+
+	void DamageArea(FVector Center, float radius, int damage);
+	void DamageLine(FVector Start, FVector End, int damage);
 };

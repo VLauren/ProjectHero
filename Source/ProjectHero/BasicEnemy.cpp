@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BasicEnemy.h"
 #include "EnemyMovement.h"
@@ -126,6 +125,7 @@ void ABasicEnemy::Tick(float DeltaTime)
 
 	DoAttack(DeltaTime);
 
+	// Screen log
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
 	FString msg = FString::Printf(TEXT("State: %s, dtp:%f"), *EnumPtr->GetNameByValue((int64)State).ToString(), FVector::Dist(GetActorLocation(), AMainChar::GetPlayerGroundLocation()));
 	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 1.5, FColor::White, msg);
@@ -166,6 +166,7 @@ bool ABasicEnemy::CheckActiveFrame()
 
 	return currentAttackFrame >= AttackData->Attacks[0].hitStart && currentAttackFrame < AttackData->Attacks[0].hitEnd;
 }
+
 void ABasicEnemy::DoAttack(float DeltaTime)
 {
 	if (State == EEnemyState::ATTACK_A)

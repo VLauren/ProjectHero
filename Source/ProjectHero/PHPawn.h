@@ -11,6 +11,10 @@ class PROJECTHERO_API APHPawn : public APawn
 {
 	GENERATED_BODY()
 
+private:
+
+	int freezeFramesCounter;
+
 protected:
 
 	float frameCount;
@@ -44,6 +48,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void FreezeFrames();
 
 	virtual void Death();
 
