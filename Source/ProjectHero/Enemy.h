@@ -20,7 +20,8 @@ enum class EEnemyState : uint8
 	WAKE_UP,
 	ATTACK_A,
 	ATTACK_B,
-	ATTACK_C
+	ATTACK_C,
+	DEATH
 };
 
 UCLASS()

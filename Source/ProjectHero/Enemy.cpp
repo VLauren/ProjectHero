@@ -125,4 +125,6 @@ void AEnemy::Death()
 
 	// Remove enemy from set
 	Cast<APHGame>(GetWorld()->GetAuthGameMode())->RemoveEnemy(this);
+
+	State = EEnemyState::DEATH;
 }

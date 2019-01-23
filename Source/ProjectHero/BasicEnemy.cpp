@@ -42,7 +42,7 @@ void ABasicEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (HitPoints <= 0)
+	if (State == EEnemyState::DEATH)
 		return;
 
 	if (State == EEnemyState::IDLE)
