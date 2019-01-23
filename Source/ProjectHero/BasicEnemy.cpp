@@ -42,6 +42,9 @@ void ABasicEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (HitPoints <= 0)
+		return;
+
 	if (State == EEnemyState::IDLE)
 	{
 		if (frameCount >= 5)
@@ -239,5 +242,5 @@ void ABasicEnemy::Death()
 
 	UE_LOG(LogTemp, Warning, TEXT("Basic Enemy Death"));
 
-	Destroy();
+	// Destroy();
 }
