@@ -34,12 +34,20 @@ public:
 	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false, float riseAmount = 0, bool spLaunch = false) override;
 	virtual void Death() override;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnShoot(FVector target);
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnShootWarning(FVector target);
+
 protected:
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UBoxComponent* hitBox = nullptr;
 
 	float currentAttackFrame;
+
+	UPROPERTY(EditAnywhere)
+	FVector ShootTarget;
 
 public:
 

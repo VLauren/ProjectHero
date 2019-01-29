@@ -135,13 +135,23 @@ void ABasicRangedEnemy::DoAttack(float DeltaTime)
 	{
 		currentAttackFrame += DeltaTime * 60;
 
+		if (currentAttackFrame <= 2)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Bim %f"), currentAttackFrame);
+			ShootTarget = AMainChar::GetPlayerLocation();
+			OnShootWarning(ShootTarget);
+		}
+
 		if (CheckActiveFrame())
 		{
 			// First active frame
-			if (currentAttackFrame == 0 || currentAttackFrame - 1 < AttackData->Attacks[0].hitStart)
+			if (currentAttackFrame - 1 < AttackData->Attacks[0].hitStart)
 			{
+				// UE_LOG(LogTemp, Warning, TEXT("Current attack frame: %f"), currentAttackFrame);
 				// UE_LOG(LogTemp, Warning, TEXT("PEW PEW PEW"));
 				// Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageLine(GetActorLocation(), FVector::ZeroVector, 20);
+
+				OnShoot(ShootTarget);
 			}
 		}
 

@@ -71,6 +71,9 @@ public:
 
 	UPHMovement* GetMovement();
 
+	UFUNCTION(BlueprintCallable)
+		FVector GetPlayerPosition();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		bool hitStart;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

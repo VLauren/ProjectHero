@@ -119,9 +119,15 @@ UPHMovement* AEnemy::GetMovement()
 	return Movement;
 }
 
+FVector AEnemy::GetPlayerPosition()
+{
+	return AMainChar::GetPlayerLocation();
+}
+
 void AEnemy::Death()
 {
 	Super::Death();
+	//FVector(0, 0, 0).Rotation();
 
 	// Remove enemy from set
 	Cast<APHGame>(GetWorld()->GetAuthGameMode())->RemoveEnemy(this);
