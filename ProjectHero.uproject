@@ -34,6 +34,10 @@
 		{
 			"Name": "FMODStudio",
 			"Enabled": false
+		},
+		{
+			"Name": "ApexDestruction",
+			"Enabled": true
 		}
 	]
 }
