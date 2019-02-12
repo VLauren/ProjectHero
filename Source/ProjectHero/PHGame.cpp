@@ -1,5 +1,7 @@
 #include "PHGame.h"
 #include "MainChar.h"
+#include "DrawDebugHelpers.h"
+#include "Classes/Components/CapsuleComponent.h"
 
 void APHGame::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -35,6 +37,30 @@ void APHGame::DamageArea(FVector Center, float radius, int damage)
 
 void APHGame::DamageLine(FVector Start, FVector End, int damage)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Damage Line %s %s"), *Start.ToString(), *End.ToString());
+
+	FHitResult OutHit;
+	FCollisionQueryParams ColParams;
+
+	// DrawDebugLine(GetWorld(), Start, End, FColor::Blue, true, 0.5f);
+
+	if(AMainChar::GetMainChar()->ActorLineTraceSingle(OutHit, Start, End, ECC_Pawn, ColParams))
+	{
+		if (OutHit.GetComponent()->GetOwner()->GetClass()->IsChildOf<AMainChar>() && OutHit.GetComponent()->IsA(UCapsuleComponent::StaticClass()))
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), AttackData->Attacks[0].Damage);
+			// FAttackInfo attackInfo = AttackData->Attacks[0];
+
+			// ((AMainChar*)OtherComp->GetOwner())->Damage(damage, OutHit.Location, attackInfo.moveAmount, attackInfo.launchEnemy, attackInfo.riseAmount, attackInfo.spLaunch);
+			((AMainChar*)OutHit.GetComponent()->GetOwner())->Damage(damage, OutHit.Location, 300, true, 20, false);
+		}
+	}
+
+}
+
+void APHGame::FreezeFrames()
+{
+	UE_LOG(LogTemp, Warning, TEXT("FREEZE"));
 }
 
 TSet<AEnemy*> APHGame::GetEnemiesInFront(FVector Position, FVector Direction)
