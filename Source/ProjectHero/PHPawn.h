@@ -14,6 +14,8 @@ class PROJECTHERO_API APHPawn : public APawn
 private:
 
 	int freezeFramesCounter;
+	float targetTimeScale;
+	float currentTimeScale;
 
 protected:
 
@@ -31,6 +33,8 @@ public:
 		int GroundRecoveryTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Recovery)
 		int WakeUpTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Recovery)
+		bool UseDamageFreeze;
 
 public:
 

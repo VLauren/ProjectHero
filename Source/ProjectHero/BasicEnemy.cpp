@@ -34,7 +34,7 @@ void ABasicEnemy::BeginPlay()
 	else
 		UE_LOG(LogTemp, Warning, TEXT("Enemy: There is no hitbox"));
 
-	CapsuleComponent->SetVisibility(true);
+	// CapsuleComponent->SetVisibility(true);
 	// CapsuleComponent->SetHiddenInGame(false);
 }
 

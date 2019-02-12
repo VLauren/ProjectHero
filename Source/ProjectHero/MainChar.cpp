@@ -88,6 +88,11 @@ AMainChar::AMainChar()
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
+AMainChar * AMainChar::GetMainChar()
+{
+	return Instance;
+}
+
 // Called when the game starts or when spawned
 void AMainChar::BeginPlay()
 {
@@ -542,6 +547,7 @@ void AMainChar::DoAttack(float DeltaTime)
 						Movement->Descend(1600);
 						FallAttack = true;
 						falling = true;
+						FallAttackEnd = true;
 					}
 
 					if (AttackData->Attacks[currentAttackIndex].ascend)
@@ -550,6 +556,14 @@ void AMainChar::DoAttack(float DeltaTime)
 							// AirJump = true;
 						if (BPressed)
 							Movement->Jump();
+					}
+
+					// Fall attack end
+					if(FallAttackEnd && Movement->IsGrounded())
+					{
+						// UE_LOG(LogTemp, Warning, TEXT("Fall attack end!"));
+						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, 20);
+						DrawDebugSphere(GetWorld(), GetActorLocation(), 200, 8, FColor::Red, true, 2);
 					}
 				}
 			}
@@ -598,6 +612,7 @@ void AMainChar::DoAttack(float DeltaTime)
 				{
 					CharState = EMainCharState::MOVING;
 					Movement->ResetZVel();
+					FallAttackEnd = false;
 				}
 			}
 		}
@@ -785,7 +800,7 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 		CharState = EMainCharState::LAUNCHED;
 	}
 
-	FreezeFrames();
+	// FreezeFrames();
 
 	HitPoints -= amount;
 	if (HitPoints <= 0)

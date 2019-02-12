@@ -118,7 +118,7 @@ bool UPHMovement::IsGrounded()
 {
 	float CapsuleHalfHeight = Cast<UCapsuleComponent>(UpdatedComponent)->GetUnscaledCapsuleHalfHeight();
 	float Radius = Cast<UCapsuleComponent>(UpdatedComponent)->GetScaledCapsuleRadius();
-	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 3.0f);
+	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 5.0f);
 
 	// Grounded sphere
 	// DrawDebugSphere(GetWorld(), Position, Radius, 8, FColor::Green);

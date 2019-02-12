@@ -137,7 +137,6 @@ void ABasicRangedEnemy::DoAttack(float DeltaTime)
 
 		if (currentAttackFrame <= 2)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Bim %f"), currentAttackFrame);
 			ShootTarget = AMainChar::GetPlayerLocation();
 			OnShootWarning(ShootTarget);
 		}
@@ -149,7 +148,9 @@ void ABasicRangedEnemy::DoAttack(float DeltaTime)
 			{
 				// UE_LOG(LogTemp, Warning, TEXT("Current attack frame: %f"), currentAttackFrame);
 				// UE_LOG(LogTemp, Warning, TEXT("PEW PEW PEW"));
-				// Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageLine(GetActorLocation(), FVector::ZeroVector, 20);
+				FVector dir = (ShootTarget - GetActorLocation()).GetSafeNormal();
+				float range = 8000;
+				Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageLine(GetActorLocation(), GetActorLocation() + dir * range, 20);
 
 				OnShoot(ShootTarget);
 			}

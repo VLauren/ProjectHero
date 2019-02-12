@@ -123,6 +123,8 @@ public:
 		bool Trail;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
 		bool FallAttack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool FallAttackEnd;
 
 	// Targeting values
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -137,6 +139,8 @@ protected:
 public:
 
 	AMainChar();
+
+	static AMainChar* GetMainChar();
 
 	virtual void Death() override;
 
