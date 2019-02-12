@@ -563,7 +563,8 @@ void AMainChar::DoAttack(float DeltaTime)
 					{
 						// UE_LOG(LogTemp, Warning, TEXT("Fall attack end!"));
 						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, 20);
-						DrawDebugSphere(GetWorld(), GetActorLocation(), 200, 8, FColor::Red, true, 2);
+
+						// DrawDebugSphere(GetWorld(), GetActorLocation(), 200, 8, FColor::Red, true, 2);
 					}
 				}
 			}
