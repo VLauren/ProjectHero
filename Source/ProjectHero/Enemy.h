@@ -44,6 +44,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = HitPoints)
 		int MaxHitPoints;
 
+	UPROPERTY(BlueprintReadOnly, Category = HitPoints)
+		int HitPoints;
+
 	// State
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		EEnemyState State;
@@ -52,8 +55,6 @@ public:
 		class USkeletalMeshComponent* Mesh;
 
 protected:
-
-	int HitPoints;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

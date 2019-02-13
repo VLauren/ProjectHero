@@ -34,8 +34,6 @@ private:
 	// Static reference to the main character (singleton)
 	static AMainChar* Instance;
 
-	int HitPoints;
-
 	// Flag to notify the start of the next linked attack
 	bool linkAttack;
 	bool attackChange;
@@ -71,6 +69,9 @@ protected:
 		class UMainCharMovement* Movement;
 
 public:
+
+	UPROPERTY(BlueprintReadOnly, Category = HitPoints)
+		int HitPoints;
 
 	UPROPERTY(EditDefaultsOnly, Category = HitPoints)
 		int MaxHitPoints;
