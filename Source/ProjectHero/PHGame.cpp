@@ -31,11 +31,48 @@ void APHGame::RemoveEnemy(AEnemy* enemy)
 	UE_LOG(LogTemp, Warning, TEXT("RemoveEnemy - %d"), Enemies.Num());
 }
 
-void APHGame::DamageArea(FVector Center, float radius, int damage)
+void APHGame::DamageArea(FVector Center, float radius, FAttackInfo attackInfo)
 {
+	// DrawDebugSphere(GetWorld(), Center, radius, 8, FColor::Red, true, 2);
+
+	TArray<FHitResult> OutHits;
+	FCollisionQueryParams ColParams;
+
+	if (GetWorld()->SweepMultiByChannel(OutHits, Center, Center, FQuat::Identity, ECollisionChannel::ECC_Pawn, FCollisionShape::MakeSphere(radius)))
+	{
+		for (int i = 0; i < OutHits.Num(); i++)
+		{
+			FHitResult OutHit = OutHits[i];
+			if (OutHit.Component->GetOwner()->GetClass()->IsChildOf<AEnemy>() && OutHit.Component->IsA(UCapsuleComponent::StaticClass()))
+			{
+				// UE_LOG(LogTemp, Warning, TEXT("Enemy damage area!"));
+
+				if (attackInfo.launchEnemy)
+					((AEnemy*)OutHit.Component->GetOwner())->Damage(attackInfo.Damage, Center, attackInfo.pushAmount, true, attackInfo.riseAmount, attackInfo.spLaunch);
+				else
+					((AEnemy*)OutHit.Component->GetOwner())->Damage(attackInfo.Damage, Center, attackInfo.pushAmount);
+
+				if (attackInfo.descend)
+					Cast<AEnemy>(OutHit.Component->GetOwner())->QuickFall();
+
+				// TODO effect
+
+				FreezeFrames();
+			}
+		}
+	}
+
+	// if (attackInfo == nullptr)
+	// {
+		// UE_LOG(LogTemp, Warning, TEXT("DamageArea"));
+	// }
+
+	UE_LOG(LogTemp, Warning, TEXT("DamageArea: %d"), attackInfo.Damage);
+	// UE_LOG(LogTemp, Warning, TEXT("DamageArea"));
+	// UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), attackInfo.Damage);
 }
 
-void APHGame::DamageLine(FVector Start, FVector End, int damage)
+void APHGame::DamageLine(FVector Start, FVector End, FAttackInfo attackInfo)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Damage Line %s %s"), *Start.ToString(), *End.ToString());
 
@@ -48,11 +85,12 @@ void APHGame::DamageLine(FVector Start, FVector End, int damage)
 	{
 		if (OutHit.GetComponent()->GetOwner()->GetClass()->IsChildOf<AMainChar>() && OutHit.GetComponent()->IsA(UCapsuleComponent::StaticClass()))
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), AttackData->Attacks[0].Damage);
+			UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), attackInfo.Damage);
 			// FAttackInfo attackInfo = AttackData->Attacks[0];
 
 			// ((AMainChar*)OtherComp->GetOwner())->Damage(damage, OutHit.Location, attackInfo.moveAmount, attackInfo.launchEnemy, attackInfo.riseAmount, attackInfo.spLaunch);
-			((AMainChar*)OutHit.GetComponent()->GetOwner())->Damage(damage, OutHit.Location, 300, true, 20, false);
+			((AMainChar*)OutHit.GetComponent()->GetOwner())->Damage(attackInfo.Damage, OutHit.Location, 300, true, 20, false);
+			// TODO datos de ataque
 		}
 	}
 

@@ -150,7 +150,7 @@ void ABasicRangedEnemy::DoAttack(float DeltaTime)
 				// UE_LOG(LogTemp, Warning, TEXT("PEW PEW PEW"));
 				FVector dir = (ShootTarget - GetActorLocation()).GetSafeNormal();
 				float range = 8000;
-				Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageLine(GetActorLocation(), GetActorLocation() + dir * range, 20);
+				Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageLine(GetActorLocation(), GetActorLocation() + dir * range, AttackData->Attacks[0]);
 
 				OnShoot(ShootTarget);
 			}

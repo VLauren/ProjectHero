@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Enemy.h"
+#include "AttackData.h"
 #include "GameFramework/GameModeBase.h"
 #include "PHGame.generated.h"
 
@@ -39,8 +40,8 @@ public:
 	void AddEnemy(AEnemy* enemy);
 	void RemoveEnemy(AEnemy* enemy);
 
-	void DamageArea(FVector Center, float radius, int damage);
-	void DamageLine(FVector Start, FVector End, int damage);
+	void DamageArea(FVector Center, float radius, FAttackInfo attackInfo);
+	void DamageLine(FVector Start, FVector End, FAttackInfo attackInfo);
 
 	static void FreezeFrames();
 };

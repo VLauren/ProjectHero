@@ -561,11 +561,16 @@ void AMainChar::DoAttack(float DeltaTime)
 					// Fall attack end
 					if(FallAttackEnd && Movement->IsGrounded())
 					{
-						// UE_LOG(LogTemp, Warning, TEXT("Fall attack end!"));
-						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, 20);
-
-						// DrawDebugSphere(GetWorld(), GetActorLocation(), 200, 8, FColor::Red, true, 2);
+						// Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, 20);
+						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, AttackData->Attacks[currentAttackIndex]);
+						UE_LOG(LogTemp, Warning, TEXT("Fall attack end, i:%d"), currentAttackIndex);
 					}
+				}
+
+				// Fall attack end only damages through the aoe
+				if (FallAttackEnd && Movement->IsGrounded())
+				{
+					HitBox->SetGenerateOverlapEvents(false);
 				}
 			}
 			else
