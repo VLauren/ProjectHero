@@ -698,6 +698,7 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			// HACK For now, I disable the hit box
 			AlreadyHit = true;
 
+			OnHit();
 			APHGame::FreezeFrames();
 		}
 	}
@@ -808,6 +809,7 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 		CharState = EMainCharState::LAUNCHED;
 	}
 
+	OnDamage();
 	// APHGame::FreezeFrames();
 
 	HitPoints -= amount;

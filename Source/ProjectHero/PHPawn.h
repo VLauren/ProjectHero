@@ -38,6 +38,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnDeath();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnDamage();
 
 protected:
 

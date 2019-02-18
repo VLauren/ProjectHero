@@ -158,6 +158,8 @@ public:
 		void OnAirDodge();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnAttackStart();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnHit();
 
 	static FVector GetPlayerLocation();
 	static FVector GetPlayerGroundLocation();
