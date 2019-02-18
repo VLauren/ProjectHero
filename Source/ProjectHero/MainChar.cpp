@@ -698,7 +698,7 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			// HACK For now, I disable the hit box
 			AlreadyHit = true;
 
-			FreezeFrames();
+			APHGame::FreezeFrames();
 		}
 	}
 }
@@ -778,6 +778,8 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 	if (IsInvulnerable())
 		return;
 
+	// UE_LOG(LogTemp, Warning, TEXT("Main Char Damage %d"), amount);
+
 	Cancel();
 	CharState = EMainCharState::HIT;
 	frameCount = 0;
@@ -806,7 +808,7 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 		CharState = EMainCharState::LAUNCHED;
 	}
 
-	// FreezeFrames();
+	// APHGame::FreezeFrames();
 
 	HitPoints -= amount;
 	if (HitPoints <= 0)
@@ -816,7 +818,6 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 void AMainChar::Death()
 {
 	CharState = EMainCharState::DEATH;
-	UE_LOG(LogTemp, Warning, TEXT("Main Char Paco"));
 	OnDeath();
 }
 

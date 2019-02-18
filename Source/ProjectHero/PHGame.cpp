@@ -2,6 +2,14 @@
 #include "MainChar.h"
 #include "DrawDebugHelpers.h"
 #include "Classes/Components/CapsuleComponent.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+
+APHGame* APHGame::Instance;
+
+APHGame::APHGame()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
 
 void APHGame::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -9,6 +17,25 @@ void APHGame::InitGame(const FString& MapName, const FString& Options, FString& 
 
 	UE_LOG(LogTemp, Warning, TEXT("Init Game PHGame"), Enemies.Num());
 	Enemies.Reset();
+
+	Instance = this;
+}
+
+void APHGame::Tick(float DeltaTime)
+{
+	if (freezeFramesCounter >= 0)
+		freezeFramesCounter--;
+
+	if (freezeFramesCounter == 0)
+	{
+		UGameplayStatics::SetGlobalTimeDilation(Instance->GetWorld(), 1);
+		// UE_LOG(LogTemp, Warning, TEXT("FREEZE STOP"));
+	}
+
+	// currentTimeScale = FMath::Lerp(currentTimeScale, targetTimeScale, 0.05f);
+	// UGameplayStatics::SetGlobalTimeDilation(GetWorld(), currentTimeScale);
+
+	Super::Tick(DeltaTime);
 }
 
 TArray<AEnemy*> APHGame::GetEnemies()
@@ -62,19 +89,12 @@ void APHGame::DamageArea(FVector Center, float radius, FAttackInfo attackInfo)
 		}
 	}
 
-	// if (attackInfo == nullptr)
-	// {
-		// UE_LOG(LogTemp, Warning, TEXT("DamageArea"));
-	// }
-
-	UE_LOG(LogTemp, Warning, TEXT("DamageArea: %d"), attackInfo.Damage);
-	// UE_LOG(LogTemp, Warning, TEXT("DamageArea"));
-	// UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), attackInfo.Damage);
+	// UE_LOG(LogTemp, Warning, TEXT("DamageArea: %d"), attackInfo.Damage);
 }
 
 void APHGame::DamageLine(FVector Start, FVector End, FAttackInfo attackInfo)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Damage Line %s %s"), *Start.ToString(), *End.ToString());
+	// UE_LOG(LogTemp, Warning, TEXT("Damage Line %s %s"), *Start.ToString(), *End.ToString());
 
 	FHitResult OutHit;
 	FCollisionQueryParams ColParams;
@@ -85,20 +105,21 @@ void APHGame::DamageLine(FVector Start, FVector End, FAttackInfo attackInfo)
 	{
 		if (OutHit.GetComponent()->GetOwner()->GetClass()->IsChildOf<AMainChar>() && OutHit.GetComponent()->IsA(UCapsuleComponent::StaticClass()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), attackInfo.Damage);
-			// FAttackInfo attackInfo = AttackData->Attacks[0];
+			// UE_LOG(LogTemp, Warning, TEXT("PLAYER HIT %d damagee"), attackInfo.Damage);
 
-			// ((AMainChar*)OtherComp->GetOwner())->Damage(damage, OutHit.Location, attackInfo.moveAmount, attackInfo.launchEnemy, attackInfo.riseAmount, attackInfo.spLaunch);
 			((AMainChar*)OutHit.GetComponent()->GetOwner())->Damage(attackInfo.Damage, OutHit.Location, 300, true, 20, false);
-			// TODO datos de ataque
 		}
 	}
-
 }
 
 void APHGame::FreezeFrames()
 {
-	UE_LOG(LogTemp, Warning, TEXT("FREEZE"));
+	// UE_LOG(LogTemp, Warning, TEXT("FREEZE START"));
+
+	Instance->currentTimeScale = 1;
+	Instance->targetTimeScale = 0.1f;
+	Instance->freezeFramesCounter = 5;
+	UGameplayStatics::SetGlobalTimeDilation(Instance->GetWorld(), 0.1);
 }
 
 TSet<AEnemy*> APHGame::GetEnemiesInFront(FVector Position, FVector Direction)

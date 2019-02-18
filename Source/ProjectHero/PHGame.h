@@ -16,8 +16,18 @@ class PROJECTHERO_API APHGame : public AGameModeBase
 {
 	GENERATED_BODY()
 
+private:
+
+	static APHGame* Instance;
+
+	int freezeFramesCounter;
+	float targetTimeScale;
+	float currentTimeScale;
+
 public:
+	APHGame();
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage);
+	virtual void Tick(float DeltaTime);
 
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSet<AEnemy*> Enemies;

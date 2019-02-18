@@ -13,10 +13,6 @@ class PROJECTHERO_API APHPawn : public APawn
 
 private:
 
-	int freezeFramesCounter;
-	float targetTimeScale;
-	float currentTimeScale;
-
 protected:
 
 	float frameCount;
@@ -52,8 +48,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	void FreezeFrames();
 
 	virtual void Death();
 
