@@ -171,8 +171,27 @@ void ABasicRangedEnemy::OnHitboxOverlap(UPrimitiveComponent * OverlappedComponen
 
 void ABasicRangedEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount, bool spLaunch)
 {
-	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount, spLaunch);
+	// Wake up armor
+	if (State == EEnemyState::WAKE_UP)
+		return;
 
+	if (launch)
+	{
+		State = EEnemyState::LAUNCHED;
+	}
+	else
+	{
+		if(State == EEnemyState::KNOCKED_DOWN || State == EEnemyState::KD_HIT)
+			State = EEnemyState::KD_HIT;
+		else if (Movement->IsGrounded())
+			State = EEnemyState::HIT;
+		else
+			State = EEnemyState::LAUNCHED_HIT;
+	}
+
+	frameCount = 0;
+
+	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount, spLaunch);
 }
 
 void ABasicRangedEnemy::Death()
