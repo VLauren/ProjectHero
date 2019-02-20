@@ -809,12 +809,13 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 		CharState = EMainCharState::LAUNCHED;
 	}
 
-	OnDamage();
 	// APHGame::FreezeFrames();
 
 	HitPoints -= amount;
 	if (HitPoints <= 0)
 		Death();
+
+	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount, spLaunch);
 }
 
 void AMainChar::Death()

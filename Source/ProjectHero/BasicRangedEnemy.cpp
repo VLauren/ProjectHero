@@ -5,13 +5,6 @@
 #include "PHGame.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
-// TODO
-// - completar estas funciones un poco
-// - estados perseguir, y atacar
-// - montar prefab muñeco anims basic y tal
-// - muñeco entero funcionando menos disparo
-// - planear disparo (raytrace?)
-
 ABasicRangedEnemy::ABasicRangedEnemy()
 {
 	HitRecooveryTime = 35;

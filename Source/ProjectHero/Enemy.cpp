@@ -102,12 +102,13 @@ void AEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launc
 	else
 		Movement->MoveOverTime(knockBack, 2 * riseAmount / GravityStrength, false, KBDirection, stg);
 
-	OnDamage();
 	// FreezeFrames();
 
 	HitPoints -= amount;
 	if (HitPoints <= 0)
 		Death();
+
+	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount, spLaunch);
 }
 
 void AEnemy::QuickFall()

@@ -193,7 +193,7 @@ public:
 
 	bool CanTrack();
 
-	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false, float riseAmount = 0, bool spLaunch = false);
+	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false, float riseAmount = 0, bool spLaunch = false) override;
 
 private:
 

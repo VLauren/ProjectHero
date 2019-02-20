@@ -54,4 +54,6 @@ public:
 	virtual void Death();
 
 	bool IsInvulnerable();
+
+	virtual void Damage(int amount, FVector sourcePoint, float knockBack, bool launch = false, float riseAmount = 0, bool spLaunch = false);
 };

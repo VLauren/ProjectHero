@@ -33,3 +33,8 @@ bool APHPawn::IsInvulnerable()
 	return invulnerable;
 }
 
+void APHPawn::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount, bool spLaunch)
+{
+	OnDamage();
+}
+
