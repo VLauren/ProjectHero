@@ -49,13 +49,14 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	{
 		// Apply gravity
 		ZVel -= Cast<APHPawn>(GetOwner())->GravityStrength * DeltaTime;
+		// UE_LOG(LogTemp, Warning, TEXT("ZVel: %f, DeltaTime: %f"), ZVel, DeltaTime);
 	}
 
 	// Apply vertical velocity
 	FHitResult Hit;
-	SafeMoveUpdatedComponent(FVector(0, 0, ZVel), UpdatedComponent->GetComponentRotation(), true, Hit);
+	SafeMoveUpdatedComponent(FVector(0, 0, ZVel) * DeltaTime * 60, UpdatedComponent->GetComponentRotation(), true, Hit);
 	if (Hit.IsValidBlockingHit())
-		SlideAlongSurface(FVector(0, 0, ZVel), 1.f - Hit.Time, Hit.Normal, Hit);
+		SlideAlongSurface(FVector(0, 0, ZVel) * DeltaTime * 60, 1.f - Hit.Time, Hit.Normal, Hit);
 
 	// Descent
 	if (QuickFall)
