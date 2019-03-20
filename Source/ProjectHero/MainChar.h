@@ -126,6 +126,8 @@ public:
 		bool FallAttack;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
 		bool FallAttackEnd;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Flags)
+		bool ShowHitbox;
 
 	// Targeting values
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -216,7 +218,7 @@ private:
 	bool CheckActiveFrame();
 	void StartAttack(int index);
 	void AttackMove(float amount, float time);
-	void DoAttack(float DeltaTime);
+	void AttackTick(float DeltaTime);
 	void Targeting();
 
 	UFUNCTION()

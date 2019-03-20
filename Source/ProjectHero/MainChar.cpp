@@ -93,7 +93,6 @@ AMainChar * AMainChar::GetMainChar()
 	return Instance;
 }
 
-// Called when the game starts or when spawned
 void AMainChar::BeginPlay()
 {
 	Super::BeginPlay();
@@ -102,9 +101,14 @@ void AMainChar::BeginPlay()
 	if (HitBox != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MainChar: There is a hitbox"));
+
 		HitBox->SetGenerateOverlapEvents(false);
-		// hitBox->SetVisibility(false);
-		// hitBox->SetHiddenInGame(true);
+
+		if (ShowHitbox)
+		{
+			HitBox->SetVisibility(false);
+			HitBox->SetHiddenInGame(true);
+		}
 
 		// Hit box overlap event
 		HitBox->OnComponentBeginOverlap.AddDynamic(this, &AMainChar::OnHitboxOverlap);
@@ -119,12 +123,11 @@ void AMainChar::BeginPlay()
 	GetWorld()->Exec(GetWorld(), TEXT("stat FPS"));
 }
 
-// Called every frame
 void AMainChar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	DoAttack(DeltaTime);
+	AttackTick(DeltaTime);
 	Targeting();
 
 	if (CharState == EMainCharState::HIT)
@@ -509,7 +512,7 @@ void AMainChar::AttackMove(float amount, float time)
 	Movement->MoveOverTime(attack.moveAmount, 0.15f, true, FVector::ZeroVector, Movement->IsGrounded()); // (Mesh->RelativeRotation - StartMeshRotation).Vector(), true);
 }
 
-void AMainChar::DoAttack(float DeltaTime)
+void AMainChar::AttackTick(float DeltaTime)
 {
 	// UE_LOG(LogTemp, Warning, TEXT("Link: %s, Change: %s"), (linkAttack ? TEXT("true") : TEXT("false")));
 
@@ -519,19 +522,21 @@ void AMainChar::DoAttack(float DeltaTime)
 		{
 			FString msg = FString::Printf(TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, FMath::FloorToInt(currentAttackFrame), (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
 			GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Green, msg);
-			// UE_LOG(LogTemp, Warning, TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, FMath::FloorToInt(currentAttackFrame), (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
 		}
 		currentAttackFrame += DeltaTime * 60;
 
 		if (HitBox != nullptr)
 		{
+			// If active frame ...
 			if (CheckActiveFrame() && !AlreadyHit && (!FallAttack || !Movement->IsGrounded()))
 			{
 				HitBox->SetGenerateOverlapEvents(true);
-				// hitBox->SetVisibility(true);
-				// hitBox->SetHiddenInGame(false);
 
-				// TODO Check first activation frame with GetAllOverlappingActors or UpdateOverlaps
+				if (ShowHitbox)
+				{
+					HitBox->SetVisibility(true);
+					HitBox->SetHiddenInGame(false);
+				}
 
 				if (currentAttackIndex >= AttackData->Attacks.Num())
 				{
@@ -542,6 +547,7 @@ void AMainChar::DoAttack(float DeltaTime)
 				// On the first active frame
 				if (currentAttackFrame == 0 || currentAttackFrame - 1 < AttackData->Attacks[currentAttackIndex].hitStart)
 				{
+					// Check attack descend
 					if (AttackData->Attacks[currentAttackIndex].descend)
 					{
 						Movement->Descend(1600);
@@ -550,6 +556,7 @@ void AMainChar::DoAttack(float DeltaTime)
 						FallAttackEnd = true;
 					}
 
+					// Check attack ascend
 					if (AttackData->Attacks[currentAttackIndex].ascend)
 					{
 						// if (!Movement->IsGrounded())
@@ -561,8 +568,9 @@ void AMainChar::DoAttack(float DeltaTime)
 					// Fall attack end
 					if(FallAttackEnd && Movement->IsGrounded())
 					{
-						// Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, 20);
 						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, AttackData->Attacks[currentAttackIndex]);
+						// TODO add fall attack radius variable
+
 						UE_LOG(LogTemp, Warning, TEXT("Fall attack end, i:%d"), currentAttackIndex);
 					}
 				}
@@ -576,8 +584,12 @@ void AMainChar::DoAttack(float DeltaTime)
 			else
 			{
 				HitBox->SetGenerateOverlapEvents(false);
-				// hitBox->SetVisibility(false);
-				// hitBox->SetHiddenInGame(true);
+
+				if (ShowHitbox)
+				{
+					HitBox->SetVisibility(false);
+					HitBox->SetHiddenInGame(true);
+				}
 			}
 		}
 

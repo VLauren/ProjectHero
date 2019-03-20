@@ -19,7 +19,7 @@ private:
 	class USkeletalMeshComponent* Mesh = nullptr;
 
 	FVector InputVector;
-	FVector Move;
+	FVector TickMove;
 	int32 justJumped;
 	FRotator CurrentRotation;
 	bool isMoving;

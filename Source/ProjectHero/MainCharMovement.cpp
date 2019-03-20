@@ -11,7 +11,7 @@ void UMainCharMovement::BeginPlay()
 
 	MainChar = (AMainChar*)GetOwner();
 
-	Move = FVector::ZeroVector;
+	TickMove = FVector::ZeroVector;
 	ZVel = 0;
 }
 
@@ -32,17 +32,17 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		movementVector *= MainChar->RunSpeedMultiplier;
 	movementVector *= DeltaTime;
 
-	Move = FMath::Lerp(Move, movementVector, MainChar->StopLerpSpeed);
+	TickMove = FMath::Lerp(TickMove, movementVector, MainChar->StopLerpSpeed);
 
 	// Control movement is only applied in neutral or attack state
-	if (!Move.IsNearlyZero() && (AMainChar::GetPlayerState() == EMainCharState::MOVING) || (AMainChar::GetPlayerState() == EMainCharState::ATTACK))
+	if (!TickMove.IsNearlyZero() && (AMainChar::GetPlayerState() == EMainCharState::MOVING) || (AMainChar::GetPlayerState() == EMainCharState::ATTACK))
 	{
 		FHitResult Hit;
 
 		// Standard control movement
 		if (AMainChar::GetPlayerState() == EMainCharState::MOVING)
 		{
-			SafeMoveUpdatedComponent(Move, UpdatedComponent->GetComponentRotation(), true, Hit);
+			SafeMoveUpdatedComponent(TickMove, UpdatedComponent->GetComponentRotation(), true, Hit);
 			if (!InputVector.IsNearlyZero())
 				isMoving = true;
 			else
@@ -54,7 +54,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 		// If it hits something, it slides along its surface
 		if (Hit.IsValidBlockingHit())
-			SlideAlongSurface(Move, 1.f - Hit.Time, Hit.Normal, Hit);
+			SlideAlongSurface(TickMove, 1.f - Hit.Time, Hit.Normal, Hit);
 		
 		movementVector.Z = 0;
 
