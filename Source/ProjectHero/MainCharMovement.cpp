@@ -191,3 +191,9 @@ FVector UMainCharMovement::GetCurrentInputVector()
 	return InputVector;
 }
 
+void UMainCharMovement::ForceSetRotation(FRotator NewRotation)
+{
+	// Rotate character towards target rotation
+	CurrentRotation = NewRotation;
+	UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
+}

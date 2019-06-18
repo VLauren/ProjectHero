@@ -147,6 +147,8 @@ public:
 
 	virtual void Death() override;
 
+	bool CanUseSkill();
+
 	// Events
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnGroundJump();
@@ -162,6 +164,8 @@ public:
 		void OnAttackStart();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnHit();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnSkillUsed();
 
 	static FVector GetPlayerLocation();
 	static FVector GetPlayerGroundLocation();
@@ -210,6 +214,7 @@ private:
 	void AttackB();
 	void ReleaseB();
 	void CameraReset();
+	void Skill();
 
 	void Attack();
 

@@ -45,4 +45,5 @@ public:
 
 	void Cancel();
 	FVector GetCurrentInputVector();
+	void ForceSetRotation(FRotator NewRotation);
 };

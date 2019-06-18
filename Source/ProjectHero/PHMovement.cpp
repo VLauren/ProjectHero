@@ -28,7 +28,7 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 			PushFrameMove = GetOwner()->GetActorForwardVector() * DeltaTime * PushStrength;
 
 		// Move
-		if (!PushStickToGround || CheckGroundedAhead(PushFrameMove))
+		// if (!PushStickToGround || CheckGroundedAhead(PushFrameMove))
 			SafeMoveUpdatedComponent(PushFrameMove, UpdatedComponent->GetComponentRotation(), true, Hit);
 
 		PushElapsedTime += DeltaTime;
@@ -126,3 +126,4 @@ bool UPHMovement::IsGrounded()
 
 	return CheckGroundedAtPosition(Position);
 }
+

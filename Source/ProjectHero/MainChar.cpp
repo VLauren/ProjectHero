@@ -209,6 +209,7 @@ void AMainChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AMainChar::Dodge);
 	PlayerInputComponent->BindAction("Dodge", IE_Released, this, &AMainChar::StopRun);
 	PlayerInputComponent->BindAction("CameraReset", IE_Pressed, this, &AMainChar::CameraReset);
+	PlayerInputComponent->BindAction("Skill", IE_Pressed, this, &AMainChar::Skill);
 }
 
 void AMainChar::MoveForward(float AxisValue)
@@ -319,6 +320,61 @@ void AMainChar::StopRun()
 	if (Running)
 	{
 		// Running = false;
+	}
+}
+
+void AMainChar::Skill()
+{
+	if (CanUseSkill()) // && AutoTarget != nullptr)
+	{
+		// TELEPORT
+		{
+			AEnemy* Target = nullptr;
+
+			if (LockTarget != nullptr)
+			{
+				Target = LockTarget;
+			}
+			else
+			{
+				APHGame* Game = Cast<APHGame>(GetWorld()->GetAuthGameMode());
+				TSet<AEnemy*> enemiesInFront;
+				if (Movement->GetCurrentInputVector() != FVector::ZeroVector)
+			{
+				enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), Movement->GetCurrentInputVector());
+			}
+			else
+			{
+				enemiesInFront = Game->GetEnemiesInFront(GetActorLocation(), GetActorForwardVector());
+			}
+
+			// AutoTarget = Game->GetClosestEnemy(Game->Enemies, GetActorLocation());
+				Target = Game->GetClosestEnemy(enemiesInFront, GetActorLocation());
+			}
+
+			if (Target != nullptr)
+			{
+				print("SKILL");
+				FVector BackDir = -Target->GetActorForwardVector();
+
+				// Teleport position
+				SetActorLocation(Target->GetActorLocation() + BackDir * 100); // TODO config teleport distance
+
+				// Character orientation
+				FVector TargetDirection = Target->GetActorLocation() - GetActorLocation();
+				TargetDirection.Z = 0;
+				TargetDirection.Normalize();
+				Movement->ForceSetRotation(TargetDirection.Rotation());
+
+				// Super Cancel
+				Cancel();
+				AirJump = false;
+				AirDodge = false;
+				AirAttack = false;
+
+				OnSkillUsed();
+			}
+		}
 	}
 }
 
@@ -521,7 +577,7 @@ void AMainChar::AttackTick(float DeltaTime)
 		if (GEngine)
 		{
 			FString msg = FString::Printf(TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, FMath::FloorToInt(currentAttackFrame), (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
-			GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Green, msg);
+			GEngine->AddOnScreenDebugMessage(1, 1.5f, FColor::Green, msg);
 		}
 		currentAttackFrame += DeltaTime * 60;
 
@@ -569,6 +625,7 @@ void AMainChar::AttackTick(float DeltaTime)
 					if(FallAttackEnd && Movement->IsGrounded())
 					{
 						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, AttackData->Attacks[currentAttackIndex]);
+						linkAttack = false;
 						// TODO add fall attack radius variable
 
 						UE_LOG(LogTemp, Warning, TEXT("Fall attack end, i:%d"), currentAttackIndex);
@@ -834,5 +891,18 @@ void AMainChar::Death()
 {
 	CharState = EMainCharState::DEATH;
 	OnDeath();
+}
+
+bool AMainChar::CanUseSkill()
+{
+	// I can cancel dodge into teleport
+	if (CharState == EMainCharState::DODGE)
+		Cancel();
+
+	// I can cancel attack into teleport
+	if (CharState == EMainCharState::ATTACK)
+		Cancel();
+	
+	return CharState == EMainCharState::MOVING;
 }
 
