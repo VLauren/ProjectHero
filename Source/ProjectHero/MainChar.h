@@ -77,6 +77,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = HitPoints)
 		int MaxHitPoints;
 
+	UPROPERTY(BlueprintReadOnly, Category = Energy)
+		int Energy;
+
+	UPROPERTY(EditDefaultsOnly, Category = Energy)
+		int MaxEnergy;
+
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class USkeletalMeshComponent* Mesh;
 
@@ -161,6 +167,10 @@ public:
 		void OnGroundDodge();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnAirDodge();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnGroundCancel(bool withAttack);
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnAirCancel(bool withAttack);
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnAttackStart();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)

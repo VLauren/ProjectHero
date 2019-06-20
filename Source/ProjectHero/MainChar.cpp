@@ -251,6 +251,14 @@ void AMainChar::Jump()
 	if (!Movement->IsGrounded() && AirJump)
 		return;
 
+	bool withAttack = CharState == EMainCharState::ATTACK;
+	if (withAttack)
+	{
+		if (!Movement->IsGrounded())
+			OnAirCancel(withAttack);
+		else
+			OnGroundCancel(withAttack);
+	}
 	// If the character is attacking I cancel the attack
 	// if (CharState == EMainCharState::ATTACK)
 	{
@@ -286,6 +294,8 @@ void AMainChar::Dodge()
 {
 	Running = true;
 
+	bool withAttack = CharState == EMainCharState::ATTACK;
+
 	if (!Movement->IsGrounded() && AirDodge)
 		return;
 
@@ -299,11 +309,13 @@ void AMainChar::Dodge()
 		if (!Movement->IsGrounded())
 		{
 			OnAirDodge();
+			OnAirCancel(withAttack);
 			AirDodge = true;
 		}
 		else
 		{
 			OnGroundDodge();
+			OnGroundCancel(withAttack);
 		}
 
 		invulnerable = true;
@@ -325,7 +337,7 @@ void AMainChar::StopRun()
 
 void AMainChar::Skill()
 {
-	if (CanUseSkill()) // && AutoTarget != nullptr)
+	if (CanUseSkill() && Energy > 10) // && AutoTarget != nullptr)
 	{
 		// TELEPORT
 		{
@@ -354,7 +366,6 @@ void AMainChar::Skill()
 
 			if (Target != nullptr)
 			{
-				print("SKILL");
 				FVector BackDir = -Target->GetActorForwardVector();
 
 				// Teleport position
@@ -448,7 +459,6 @@ void AMainChar::Attack()
 {
 	if (fallAttackLock)
 	{
-		UE_LOG(LogTemp, Error, TEXT("LOCK"));
 		return;
 	}
 
