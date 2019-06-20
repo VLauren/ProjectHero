@@ -77,7 +77,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = HitPoints)
 		int MaxHitPoints;
 
-	UPROPERTY(BlueprintReadOnly, Category = Energy)
+	UPROPERTY(BlueprintReadWrite, Category = Energy)
 		int Energy;
 
 	UPROPERTY(EditDefaultsOnly, Category = Energy)

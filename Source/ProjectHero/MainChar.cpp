@@ -337,10 +337,20 @@ void AMainChar::StopRun()
 
 void AMainChar::Skill()
 {
-	if (CanUseSkill() && Energy > 10) // && AutoTarget != nullptr)
+	// UE_LOG(LogTemp, Warning, TEXT("Energy: %d"), Energy);
+	if (CanUseSkill() && Energy >= 10) // && AutoTarget != nullptr)
 	{
 		// TELEPORT
 		{
+			// I can cancel dodge into teleport
+			if (CharState == EMainCharState::DODGE)
+				Cancel();
+
+			// I can cancel attack into teleport
+			if (CharState == EMainCharState::ATTACK)
+				Cancel();
+	
+
 			AEnemy* Target = nullptr;
 
 			if (LockTarget != nullptr)
@@ -516,12 +526,12 @@ bool AMainChar::CheckIfLinkFrame()
 
 	if (!attackChange)
 	{
-		UE_LOG(LogTemp, Error, TEXT("LINK FRAME A? %s"), (CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame) ? TEXT("true") : TEXT("flase"));
+		// UE_LOG(LogTemp, Error, TEXT("LINK FRAME A? %s"), (CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame) ? TEXT("true") : TEXT("flase"));
 		return CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("LINK FRAME B? %s"), (CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame) ? TEXT("true") : TEXT("flase"));
+		// UE_LOG(LogTemp, Error, TEXT("LINK FRAME B? %s"), (CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame) ? TEXT("true") : TEXT("flase"));
 		currentAttackIndex = 0;
 		return CharState == EMainCharState::ATTACK && linkFrame;
 	}
@@ -930,14 +940,6 @@ void AMainChar::Death()
 
 bool AMainChar::CanUseSkill()
 {
-	// I can cancel dodge into teleport
-	if (CharState == EMainCharState::DODGE)
-		Cancel();
-
-	// I can cancel attack into teleport
-	if (CharState == EMainCharState::ATTACK)
-		Cancel();
-	
-	return CharState == EMainCharState::MOVING;
+	return CharState == EMainCharState::MOVING || CharState == EMainCharState::DODGE || CharState == EMainCharState::ATTACK;
 }
 
