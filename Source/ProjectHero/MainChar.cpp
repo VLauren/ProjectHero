@@ -252,17 +252,17 @@ void AMainChar::Jump()
 		return;
 
 	// If the character is attacking I cancel the attack
-	if (CharState == EMainCharState::ATTACK)
+	// if (CharState == EMainCharState::ATTACK)
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("ATTACK Jump cancel"));
 		Cancel();
 	}
 
 	// If the character is dodging I cancel the dodge
-	if (CharState == EMainCharState::DODGE)
+	// if (CharState == EMainCharState::DODGE)
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("DODGE Jump cancel"));
-		Cancel();
+		// Cancel();
 	}
 
 	// If and only if the character is in moving state it can jump
@@ -296,14 +296,10 @@ void AMainChar::Dodge()
 	// If and only if the character is in moving state it can dodge
 	if (CharState == EMainCharState::MOVING)
 	{
-		CharState = EMainCharState::DODGE;
-		Movement->Dodge();
-		GetWorld()->GetTimerManager().SetTimer(DodgeTimerHandle, this, &AMainChar::Cancel, DodgeTime);
-
 		if (!Movement->IsGrounded())
 		{
-			AirDodge = true;
 			OnAirDodge();
+			AirDodge = true;
 		}
 		else
 		{
@@ -312,6 +308,10 @@ void AMainChar::Dodge()
 
 		invulnerable = true;
 		frameCount = 0;
+
+		CharState = EMainCharState::DODGE;
+		Movement->Dodge();
+		GetWorld()->GetTimerManager().SetTimer(DodgeTimerHandle, this, &AMainChar::Cancel, DodgeTime);
 	}
 }
 
@@ -446,6 +446,12 @@ void AMainChar::ReleaseB()
 
 void AMainChar::Attack()
 {
+	if (fallAttackLock)
+	{
+		UE_LOG(LogTemp, Error, TEXT("LOCK"));
+		return;
+	}
+
 	// I can cancel dodge into attack
 	if (CharState == EMainCharState::DODGE)
 		Cancel();
@@ -500,10 +506,12 @@ bool AMainChar::CheckIfLinkFrame()
 
 	if (!attackChange)
 	{
+		UE_LOG(LogTemp, Error, TEXT("LINK FRAME A? %s"), (CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame) ? TEXT("true") : TEXT("flase"));
 		return CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame;
 	}
 	else
 	{
+		UE_LOG(LogTemp, Error, TEXT("LINK FRAME B? %s"), (CharState == EMainCharState::ATTACK && hasNextAttack && linkFrame) ? TEXT("true") : TEXT("flase"));
 		currentAttackIndex = 0;
 		return CharState == EMainCharState::ATTACK && linkFrame;
 	}
@@ -545,7 +553,7 @@ void AMainChar::StartAttack(int index)
 	if (attackChange)
 	{
 		AttackData = NextAttackData;
-		UE_LOG(LogTemp, Warning, TEXT("StartAttack() - Attack data set: %s"), IsAttackB() ? TEXT("B") : TEXT("A"));
+		UE_LOG(LogTemp, Warning, TEXT("StartAttack() - Attack data set: %s, air:%s"), IsAttackB() ? TEXT("B") : TEXT("A"), Movement->IsGrounded() ? TEXT("true") : TEXT("false"));
 		attackChange = false;
 		currentAttackFrame = 0;
 		currentAttackIndex = 0;
@@ -610,6 +618,8 @@ void AMainChar::AttackTick(float DeltaTime)
 						FallAttack = true;
 						falling = true;
 						FallAttackEnd = true;
+						fallAttackLock = true;
+						UE_LOG(LogTemp, Error, TEXT("Fall atack lock true!"));
 					}
 
 					// Check attack ascend
@@ -621,12 +631,16 @@ void AMainChar::AttackTick(float DeltaTime)
 							Movement->Jump();
 					}
 
-					// Fall attack end
+					// Fall attack end (first frame of second B air attack)
 					if(FallAttackEnd && Movement->IsGrounded())
 					{
 						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, AttackData->Attacks[currentAttackIndex]);
 						linkAttack = false;
 						// TODO add fall attack radius variable
+
+						OnFallAttackArea();
+
+						UE_LOG(LogTemp, Warning, TEXT("Fall atack lock false"));
 
 						UE_LOG(LogTemp, Warning, TEXT("Fall attack end, i:%d"), currentAttackIndex);
 					}
@@ -665,6 +679,7 @@ void AMainChar::AttackTick(float DeltaTime)
 				currentAttackFrame = AttackData->Attacks[currentAttackIndex].hitEnd - 1;
 
 				linkAttack = true;
+				attackChange = false;
 			}
 			else if(currentAttackFrame >= AttackData->Attacks[currentAttackIndex].hitEnd)
 			{
@@ -687,10 +702,18 @@ void AMainChar::AttackTick(float DeltaTime)
 				{
 					CharState = EMainCharState::MOVING;
 					Movement->ResetZVel();
-					FallAttackEnd = false;
+
+					if (FallAttackEnd)
+					{
+						FallAttackEnd = false;
+						fallAttackLock = false;
+					}
+					UE_LOG(LogTemp, Warning, TEXT("Attack Finish"));
+
 				}
 			}
 		}
+
 	}
 }
 
@@ -785,7 +808,8 @@ void AMainChar::Cancel()
 	// hitBox->SetHiddenInGame(true);
 	AirAttack = false;
 	// Running = false;
-
+	fallAttackLock = false;
+	FallAttackEnd = false;
 }
 
 bool AMainChar::IsRunning()
@@ -815,6 +839,7 @@ UAttackData* AMainChar::GetCurrentAttackData()
 
 bool AMainChar::IsAttackB()
 {
+	// return NextAttackData == AttackDataB || NextAttackData == AirAttackDataB;
 	return AttackData == AttackDataB || AttackData == AirAttackDataB;
 }
 

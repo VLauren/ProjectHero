@@ -40,6 +40,7 @@ private:
 
 	bool BPressed;
 	bool falling;
+	bool fallAttackLock;
 
 	// Current attack data
 	UAttackData* AttackData = nullptr;
@@ -166,6 +167,8 @@ public:
 		void OnHit();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnSkillUsed();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnFallAttackArea();
 
 	static FVector GetPlayerLocation();
 	static FVector GetPlayerGroundLocation();
