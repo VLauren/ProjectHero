@@ -953,6 +953,8 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 
 	// APHGame::FreezeFrames();
 
+	OnHitReceived();
+
 	HitPoints -= amount;
 	if (HitPoints <= 0)
 		Death();
