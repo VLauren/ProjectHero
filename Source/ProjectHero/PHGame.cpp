@@ -114,7 +114,7 @@ void APHGame::DamageLine(FVector Start, FVector End, FAttackInfo attackInfo)
 
 void APHGame::FreezeFrames()
 {
-	UE_LOG(LogTemp, Warning, TEXT("FREEZE START"));
+	// UE_LOG(LogTemp, Warning, TEXT("FREEZE START"));
 
 	Instance->currentTimeScale = 1;
 	Instance->targetTimeScale = 0.1f;

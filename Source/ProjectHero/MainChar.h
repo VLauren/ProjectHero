@@ -176,6 +176,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnHit();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnSkillUsedStart(FVector StartLocation);
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnSkillUsed();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnFallAttackArea();

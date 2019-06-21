@@ -376,6 +376,8 @@ void AMainChar::Skill()
 
 			if (Target != nullptr)
 			{
+				OnSkillUsedStart(GetActorLocation());
+
 				FVector BackDir = -Target->GetActorForwardVector();
 
 				// Teleport position
@@ -604,8 +606,32 @@ void AMainChar::AttackTick(float DeltaTime)
 	{
 		if (GEngine)
 		{
-			FString msg = FString::Printf(TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, FMath::FloorToInt(currentAttackFrame), (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
-			GEngine->AddOnScreenDebugMessage(1, 1.5f, FColor::Green, msg);
+			FString msg; // = FString::Printf(TEXT("ATAQUE: %d - frame: %d - activo: %s"), currentAttackIndex, FMath::FloorToInt(currentAttackFrame), (CheckActiveFrame() ? TEXT("true") : TEXT("false")));
+
+			if (CheckActiveFrame())
+			{
+				msg = FString::Printf(TEXT("Ataque: %d(%d)0"), AttackData->Attacks[currentAttackIndex].hitStart - 1, FMath::FloorToInt(currentAttackFrame) - (AttackData->Attacks[currentAttackIndex].hitStart - 1));
+			}
+			else
+			{
+				if (FMath::FloorToInt(currentAttackFrame) < AttackData->Attacks[currentAttackIndex].hitStart + 1)
+					msg = FString::Printf(TEXT("Ataque: %d(0)0"), FMath::FloorToInt(currentAttackFrame));
+				else
+				{
+					int activeAmount = AttackData->Attacks[currentAttackIndex].hitEnd - AttackData->Attacks[currentAttackIndex].hitStart;
+
+					msg = FString::Printf(TEXT("Ataque: %d(%d)%d"), AttackData->Attacks[currentAttackIndex].hitStart - 1, activeAmount, FMath::FloorToInt(currentAttackFrame) - AttackData->Attacks[currentAttackIndex].hitEnd);
+				}
+			}
+
+			// pre activo: currentAttIndex + "(0)0"
+			// activo: Attacks[currentAttackIndex].hitstart - 1 ( currentattind-to lo de antes) 0
+			// post : Attacks[currentAttackIndex].hitstart - 1 (.hitend-1) [currentattindex - (to lo de antes)]
+
+			if (CheckActiveFrame())
+				GEngine->AddOnScreenDebugMessage(1, 1.5f, FColor::Yellow, msg);
+			else
+				GEngine->AddOnScreenDebugMessage(1, 1.5f, FColor::Green, msg);
 		}
 		currentAttackFrame += DeltaTime * 60;
 
@@ -654,9 +680,11 @@ void AMainChar::AttackTick(float DeltaTime)
 					// Fall attack end (first frame of second B air attack)
 					if(FallAttackEnd && Movement->IsGrounded())
 					{
-						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation(), 200, AttackData->Attacks[currentAttackIndex]);
+						Cast<APHGame>(GetWorld()->GetAuthGameMode())->DamageArea(GetActorLocation() + GetActorForwardVector() * 100, 200, AttackData->Attacks[currentAttackIndex]);
 						linkAttack = false;
 						// TODO add fall attack radius variable
+
+						currentAttackFrame++; // HACK
 
 						OnFallAttackArea();
 
