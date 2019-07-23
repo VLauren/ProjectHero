@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Enemy.h"
+#include "MainChar.h"
 #include "AttackData.h"
 #include "GameFramework/GameModeBase.h"
 #include "PHGame.generated.h"
@@ -31,9 +32,13 @@ public:
 
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSet<AEnemy*> Enemies;
+	AMainChar* Player;
 
 	UFUNCTION(BlueprintPure)
 		TArray<AEnemy*> GetEnemies();
+
+	UFUNCTION(BlueprintPure)
+		AMainChar* GetPlayer();
 
 	UFUNCTION(BlueprintPure)
 		AEnemy * GetEnemyToTheRight(AEnemy * Current);
@@ -48,6 +53,8 @@ public:
 		TSet<AEnemy*> GetEnemiesInFront(FVector Position, FVector Direction);
 
 	void AddEnemy(AEnemy* enemy);
+
+	UFUNCTION(BLueprintCallable)
 	void RemoveEnemy(AEnemy* enemy);
 
 	void DamageArea(FVector Center, float radius, FAttackInfo attackInfo);

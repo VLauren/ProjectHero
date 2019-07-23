@@ -8,7 +8,7 @@
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "MainChar.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EMainCharState : uint8
 {
 	MOVING,
@@ -71,7 +71,7 @@ protected:
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = HitPoints)
+	UPROPERTY(BlueprintReadWrite, Category = HitPoints)
 		int HitPoints;
 
 	UPROPERTY(EditDefaultsOnly, Category = HitPoints)

@@ -248,6 +248,9 @@ void AMainChar::YawInput(float Val)
 
 void AMainChar::Jump()
 {
+	if (CharState == EMainCharState::DEATH)
+		return;
+
 	if (!Movement->IsGrounded() && AirJump)
 		return;
 
@@ -337,6 +340,9 @@ void AMainChar::StopRun()
 
 void AMainChar::Skill()
 {
+	if (CharState == EMainCharState::DEATH)
+		return;
+
 	// UE_LOG(LogTemp, Warning, TEXT("Energy: %d"), Energy);
 	if (CanUseSkill() && Energy >= 10) // && AutoTarget != nullptr)
 	{

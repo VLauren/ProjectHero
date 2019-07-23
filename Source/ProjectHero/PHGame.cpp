@@ -44,6 +44,12 @@ TArray<AEnemy*> APHGame::GetEnemies()
 	return Enemies.Array();
 }
 
+AMainChar* APHGame::GetPlayer()
+{
+	// UE_LOG(LogTemp, Warning, TEXT("Get Enemies %d"), Enemies.Array().Num());
+	return Player;
+}
+
 void APHGame::AddEnemy(AEnemy* enemy)
 {
 	Enemies.Add(enemy);
