@@ -52,12 +52,13 @@ void ABasicEnemy::Tick(float DeltaTime)
 	}
 	else if (State == EEnemyState::MOVING)
 	{
-		Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerGroundLocation());
-
 		FVector v = (AMainChar::GetPlayerGroundLocation() - GetActorLocation()).GetSafeNormal();
 		float angle = FMath::RadiansToDegrees(FGenericPlatformMath::Acos(FVector::DotProduct(v, GetActorForwardVector())));
 		bool orientationOk = angle < 30;
 		bool distanceOk = FVector::Distance(GetActorLocation(), AMainChar::GetPlayerGroundLocation()) < AttackDistance;
+
+		if (!distanceOk)
+			Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerGroundLocation());
 
 		if (distanceOk && orientationOk)
 		{
@@ -129,9 +130,9 @@ void ABasicEnemy::Tick(float DeltaTime)
 	DoAttack(DeltaTime);
 
 	// Screen log
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
-	FString msg = FString::Printf(TEXT("State: %s, dtp:%f"), *EnumPtr->GetNameByValue((int64)State).ToString(), FVector::Dist(GetActorLocation(), AMainChar::GetPlayerGroundLocation()));
-	if (GEngine) GEngine->AddOnScreenDebugMessage(4, 1.5, FColor::White, msg);
+	// const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EEnemyState"), true);
+	// FString msg = FString::Printf(TEXT("State: %s, dtp:%f"), *EnumPtr->GetNameByValue((int64)State).ToString(), FVector::Dist(GetActorLocation(), AMainChar::GetPlayerGroundLocation()));
+	// if (GEngine) GEngine->AddOnScreenDebugMessage(4, 1.5, FColor::White, msg);
 }
 
 void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount, bool spLaunch)

@@ -31,6 +31,7 @@ protected:
 public:
 
 	bool UseGravity = true;
+	bool Flying = false;
 
 private:
 

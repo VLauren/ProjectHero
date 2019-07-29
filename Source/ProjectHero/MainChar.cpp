@@ -25,7 +25,7 @@ AMainChar::AMainChar()
 	CapsuleComponent->InitCapsuleSize(34.0f, 88.0f);
 	CapsuleComponent->SetCollisionProfileName("MainChar");
 	CapsuleComponent->CanCharacterStepUpOn = ECB_No;
-	CapsuleComponent->bCheckAsyncSceneOnMove = false;
+	// CapsuleComponent->bCheckAsyncSceneOnMove = false;
 	CapsuleComponent->SetCanEverAffectNavigation(false);
 	CapsuleComponent->bDynamicObstacle = true;
 	RootComponent = CapsuleComponent;

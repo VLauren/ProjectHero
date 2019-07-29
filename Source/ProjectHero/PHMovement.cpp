@@ -40,7 +40,7 @@ void UPHMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	// =========================
 
 	// Gravity
-	if (IsGrounded() || !UseGravity)
+	if (IsGrounded() || !UseGravity || Flying)
 	{
 		// Vertical velocity is cero
 		ZVel = 0.0f;
