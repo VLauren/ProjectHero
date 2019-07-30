@@ -178,7 +178,7 @@ void AMainChar::Tick(float DeltaTime)
 
 	// EMainCharState
 	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EMainCharState"), true);
-	print(EnumPtr->GetNameByValue((int64)CharState).ToString() + " invul:" + (invulnerable ? "true" : "false"));
+	print(EnumPtr->GetNameByValue((int64)CharState).ToString() + " invul:" + (invulnerable ? "true" : "false") + " grounded:" + (Movement->IsGrounded() ? "true" : "false"));
 
 	if (AttackData != nullptr)
 	{
@@ -421,7 +421,7 @@ FVector AMainChar::GetPlayerGroundLocation()
 {
 	// HACK
 	FVector res = Instance->GetActorLocation();
-	res.Z = 130;
+	res.Z = 2;
 	return res;
 
 	// TODO use ray cast

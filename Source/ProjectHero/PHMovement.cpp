@@ -95,9 +95,24 @@ bool UPHMovement::CheckGroundedAtPosition(FVector Position)
 	FHitResult OutHit;
 	FCollisionQueryParams ColParams;
 
+	ColParams.AddIgnoredActor(GetOwner());
+	// ColParams.
+
 	// Spherecast to check ground collision
-	if (GetWorld()->SweepSingleByChannel(OutHit, Position, Position, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(Radius)))
+	// if (GetWorld()->SweepSingleByChannel(OutHit, Position, Position, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(Radius)))
+	if (GetWorld()->SweepSingleByChannel(OutHit, Position, Position - FVector::UpVector * 3, FQuat::Identity, ECollisionChannel::ECC_Visibility, FCollisionShape::MakeSphere(Radius)))
 	{
+		/*
+		if (OutHit.Actor != nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("col: %s"), *OutHit.Actor->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Nada"));
+		}
+		*/
+
 		return true;
 	}
 	else
@@ -110,7 +125,7 @@ bool UPHMovement::CheckGroundedAhead(FVector Delta)
 {
 	float CapsuleHalfHeight = Cast<UCapsuleComponent>(UpdatedComponent)->GetUnscaledCapsuleHalfHeight();
 	float Radius = Cast<UCapsuleComponent>(UpdatedComponent)->GetScaledCapsuleRadius();
-	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 3.0f);
+	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius /*+ 3.0f*/);
 
 	return CheckGroundedAtPosition(Position + Delta);
 }
@@ -119,7 +134,7 @@ bool UPHMovement::IsGrounded()
 {
 	float CapsuleHalfHeight = Cast<UCapsuleComponent>(UpdatedComponent)->GetUnscaledCapsuleHalfHeight();
 	float Radius = Cast<UCapsuleComponent>(UpdatedComponent)->GetScaledCapsuleRadius();
-	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius + 5.0f);
+	FVector Position = UpdatedComponent->GetOwner()->GetActorLocation() - FVector(0, 0, CapsuleHalfHeight - Radius /*+ 3.0f*/);
 
 	// Grounded sphere
 	// DrawDebugSphere(GetWorld(), Position, Radius, 8, FColor::Green);
