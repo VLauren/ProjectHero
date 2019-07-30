@@ -31,12 +31,17 @@ void ABasicRangedEnemy::Tick(float DeltaTime)
 	else if (State == EEnemyState::MOVING)
 	{
 		// TODO random move
-		Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerGroundLocation());
+		// Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerGroundLocation());
 
 		FVector v = (AMainChar::GetPlayerGroundLocation() - GetActorLocation()).GetSafeNormal();
 		float angle = FMath::RadiansToDegrees(FGenericPlatformMath::Acos(FVector::DotProduct(v, GetActorForwardVector())));
 		bool orientationOk = angle < 5;
 		bool distanceOk = FVector::Distance(GetActorLocation(), AMainChar::GetPlayerGroundLocation()) < AttackDistance;
+
+		if (!distanceOk)
+			Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerGroundLocation());
+		else
+			Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, GetActorLocation() - v);
 
 		if (distanceOk && orientationOk)
 		{

@@ -59,6 +59,8 @@ void ABasicEnemy::Tick(float DeltaTime)
 
 		if (!distanceOk)
 			Cast<UEnemyMovement>(GetMovement())->Move(DeltaTime, AMainChar::GetPlayerGroundLocation());
+		else if (!orientationOk)
+			Cast<UEnemyMovement>(GetMovement())->RotateTowards(DeltaTime, AMainChar::GetPlayerGroundLocation());
 
 		if (distanceOk && orientationOk)
 		{
@@ -145,7 +147,7 @@ void ABasicEnemy::Damage(int amount, FVector sourcePoint, float knockBack, bool 
 	{
 		State = EEnemyState::LAUNCHED;
 	}
-	else
+	else if (State != EEnemyState::ATTACK_A)
 	{
 		if(State == EEnemyState::KNOCKED_DOWN || State == EEnemyState::KD_HIT)
 			State = EEnemyState::KD_HIT;
