@@ -118,6 +118,8 @@ void AMainChar::BeginPlay()
 
 	HitPoints = MaxHitPoints;
 
+	Cast<APHGame>(GetWorld()->GetAuthGameMode())->SetPlayer(this);
+
 	UE_LOG(LogTemp, Warning, TEXT("CameraLagSpeed: %f"), CameraBoom->CameraLagSpeed)
 
 	GetWorld()->Exec(GetWorld(), TEXT("stat FPS"));
@@ -966,6 +968,11 @@ void AMainChar::Damage(int amount, FVector sourcePoint, float knockBack, bool la
 		Death();
 
 	Super::Damage(amount, sourcePoint, knockBack, launch, riseAmount, spLaunch);
+}
+
+void AMainChar::DamagePlayer(int amount, FVector sourcePoint, float knockBack, bool launch, float riseAmount)
+{
+	Damage(amount, sourcePoint, knockBack, launch, riseAmount);
 }
 
 void AMainChar::Death()

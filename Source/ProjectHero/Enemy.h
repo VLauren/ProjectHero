@@ -7,7 +7,7 @@
 #include "PHMovement.h"
 #include "Enemy.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EEnemyState : uint8
 {
 	IDLE,

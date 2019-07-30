@@ -16,6 +16,7 @@ private:
 	float StartGravity;
 	FRotator CurrentRotation;
 	FVector MoveVector;
+	FVector ExtraMovement;
 	
 protected:
 	bool SpLaunch;
@@ -30,6 +31,7 @@ public:
 
 	void AirHit();
 
-	void Move(float DeltaTime, FVector Destination);
+	void Move(float DeltaTime, FVector Destination, bool IgnoreRotation = false);
+	void SimpleMove(float DeltaTime, FVector Direction, float MoveSpeed);
 	void RotateTowards(float DeltaTime, FVector Destination);
 };

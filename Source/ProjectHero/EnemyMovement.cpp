@@ -41,7 +41,7 @@ void UEnemyMovement::AirHit()
 	ZVel = 1;
 }
 
-void UEnemyMovement::Move(float DeltaTime, FVector Destination)
+void UEnemyMovement::Move(float DeltaTime, FVector Destination, bool ignoreRotation)
 {
 	// Get path
 	UNavigationSystemV1* navSys = UNavigationSystemV1::GetCurrent(GetWorld());
@@ -76,11 +76,11 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 
 		MoveVector = FMath::Lerp(MoveVector, move, 0.1f); // TODO move lerp speed variable
 
-		SafeMoveUpdatedComponent(MoveVector, UpdatedComponent->GetComponentRotation(), true, Hit);
+		SafeMoveUpdatedComponent(MoveVector + ExtraMovement, UpdatedComponent->GetComponentRotation(), true, Hit);
 		if (Hit.IsValidBlockingHit())
 			SlideAlongSurface(move, 1.f - Hit.Time, Hit.Normal, Hit);
 
-		if (!MoveVector.IsNearlyZero())
+		if (!ignoreRotation && !MoveVector.IsNearlyZero())
 		{
 			// Movement rotation
 			FRotator ctrlRot = MoveVector.Rotation();
@@ -92,6 +92,20 @@ void UEnemyMovement::Move(float DeltaTime, FVector Destination)
 			UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 		}
 	}
+}
+
+void UEnemyMovement::SimpleMove(float DeltaTime, FVector Direction, float MoveSpeed)
+{
+	// ExtraMovement = Direction * DeltaTime * MoveSpeed;
+
+	FHitResult Hit;
+	FVector move = Direction * DeltaTime * MoveSpeed;
+	MoveVector = FMath::Lerp(MoveVector, move, 0.05f);
+	// MoveVector = move;
+
+	SafeMoveUpdatedComponent(MoveVector, UpdatedComponent->GetComponentRotation(), true, Hit);
+	if (Hit.IsValidBlockingHit())
+		SlideAlongSurface(move, 1.f - Hit.Time, Hit.Normal, Hit);
 }
 
 void UEnemyMovement::RotateTowards(float DeltaTime, FVector Destination)

@@ -16,10 +16,31 @@ class PROJECTHERO_API ABasicFlyingEnemy : public AEnemy
 
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int FlyingHeight = 500;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int DistanceToSeek = 600;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float FlyingInclination = 20;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float AngleLerpStrength = 0.1f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float AttackTime = 3;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnAttack();
+
 	ABasicFlyingEnemy();
+
+private:
+
+	FRotator CurrentRotation;
 	
 protected:
+
 	virtual void BeginPlay() override;
+
+	void RotateTowards(float DeltaTime, FRotator TargetRot);
 
 public:
 

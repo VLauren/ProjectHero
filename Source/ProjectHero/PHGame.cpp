@@ -46,7 +46,6 @@ TArray<AEnemy*> APHGame::GetEnemies()
 
 AMainChar* APHGame::GetPlayer()
 {
-	// UE_LOG(LogTemp, Warning, TEXT("Get Enemies %d"), Enemies.Array().Num());
 	return Player;
 }
 
@@ -62,6 +61,11 @@ void APHGame::RemoveEnemy(AEnemy* enemy)
 	Enemies.Remove(enemy);
 
 	UE_LOG(LogTemp, Warning, TEXT("RemoveEnemy - %d"), Enemies.Num());
+}
+
+void APHGame::SetPlayer(AMainChar* player)
+{
+	Player = player;
 }
 
 void APHGame::DamageArea(FVector Center, float radius, FAttackInfo attackInfo)

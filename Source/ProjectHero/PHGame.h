@@ -53,6 +53,7 @@ public:
 		TSet<AEnemy*> GetEnemiesInFront(FVector Position, FVector Direction);
 
 	void AddEnemy(AEnemy* enemy);
+	void SetPlayer(AMainChar* enemy);
 
 	UFUNCTION(BLueprintCallable)
 	void RemoveEnemy(AEnemy* enemy);
