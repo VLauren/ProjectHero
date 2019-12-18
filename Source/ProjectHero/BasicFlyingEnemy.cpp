@@ -220,4 +220,5 @@ void ABasicFlyingEnemy::Damage(int amount, FVector sourcePoint, float knockBack,
 
 void ABasicFlyingEnemy::Death()
 {
+	Super::Death();
 }
