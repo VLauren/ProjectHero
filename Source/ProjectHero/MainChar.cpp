@@ -882,7 +882,9 @@ void AMainChar::Cancel()
 
 bool AMainChar::IsRunning()
 {
-	return Running;
+	return true;
+
+	// return Running;
 }
 
 bool AMainChar::IsDodging()
