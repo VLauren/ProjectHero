@@ -183,6 +183,8 @@ public:
 		void OnSkillUsed();
 	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
 		void OnFallAttackArea();
+	UFUNCTION(BlueprintImplementableEvent, Category = CppEvents)
+		void OnCancel();
 
 	static FVector GetPlayerLocation();
 	static FVector GetPlayerGroundLocation();

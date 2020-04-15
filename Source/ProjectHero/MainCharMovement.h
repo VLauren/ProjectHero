@@ -24,6 +24,9 @@ private:
 	FRotator CurrentRotation;
 	bool isMoving;
 	bool SpLaunch;
+	bool rising;
+
+	float startGravityStrength;
 
 protected:
 
@@ -36,6 +39,7 @@ public:
 	virtual bool IsGrounded();
 
 	void Jump();
+	void Rise();
 	void Dodge();
 	void ResetZVel();
 	void Launch(float amount, bool spLaunch);

@@ -195,5 +195,4 @@ void ABasicRangedEnemy::Damage(int amount, FVector sourcePoint, float knockBack,
 void ABasicRangedEnemy::Death()
 {
 	Super::Death();
-
 }

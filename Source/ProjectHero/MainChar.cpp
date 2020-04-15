@@ -682,7 +682,7 @@ void AMainChar::AttackTick(float DeltaTime)
 						// if (!Movement->IsGrounded())
 							// AirJump = true;
 						if (BPressed)
-							Movement->Jump();
+							Movement->Rise();
 					}
 
 					// Fall attack end (first frame of second B air attack)
@@ -854,6 +854,11 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 
 void AMainChar::Cancel()
 {
+	bool somethingHasBeenCanceled = false;
+
+	if (CharState != EMainCharState::MOVING)
+		somethingHasBeenCanceled = true;
+
 	// If I'm dodging, I stop the post dodge cancel timer
 	if (CharState == EMainCharState::DODGE)
 		GetWorld()->GetTimerManager().ClearTimer(DodgeTimerHandle);
@@ -866,6 +871,9 @@ void AMainChar::Cancel()
 	// Running = false;
 	fallAttackLock = false;
 	FallAttackEnd = false;
+
+	if(somethingHasBeenCanceled)
+		OnCancel();
 }
 
 bool AMainChar::IsRunning()

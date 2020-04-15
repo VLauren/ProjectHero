@@ -11,6 +11,8 @@ void UMainCharMovement::BeginPlay()
 
 	MainChar = (AMainChar*)GetOwner();
 
+	startGravityStrength = MainChar->GravityStrength;
+
 	TickMove = FVector::ZeroVector;
 	ZVel = 0;
 }
@@ -117,6 +119,12 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// Ignore gravity frames
 	if (justJumped > 0)
 		justJumped--;
+
+	// Launch attack float
+	if (rising && ZVel <= 0.1f && ZVel > -2)
+		MainChar->GravityStrength = startGravityStrength / 4;
+	else
+		MainChar->GravityStrength = startGravityStrength;
 }
 
 bool UMainCharMovement::IsGrounded()
@@ -135,6 +143,18 @@ void UMainCharMovement::Jump()
 	UseGravity = true;
 	ZVel = MainChar->JumpStrength;
 	justJumped = 4;
+	rising = false;
+}
+
+void UMainCharMovement::Rise()
+{
+	if (MainChar == nullptr)
+		return;
+
+	UseGravity = true;
+	ZVel = MainChar->JumpStrength;
+	justJumped = 4;
+	rising = true;
 }
 
 void UMainCharMovement::Launch(float amount, bool spLaunch)
@@ -143,11 +163,13 @@ void UMainCharMovement::Launch(float amount, bool spLaunch)
 	ZVel = amount;
 	SpLaunch = spLaunch;
 	justJumped = 4;
+	rising = false;
 }
 
 void UMainCharMovement::Dodge()
 {
 	FVector direction = InputVector;
+	rising = false;
 
 	// Dodge following input vector
 	if (InputVector != FVector::ZeroVector)
