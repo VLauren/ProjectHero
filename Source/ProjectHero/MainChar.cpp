@@ -304,6 +304,10 @@ void AMainChar::Dodge()
 	if (!Movement->IsGrounded() && AirDodge)
 		return;
 
+	// Energy requirement to dodge
+	if(Energy < 10)
+		return;
+
 	// If the character is attacking I cancel the attack
 	if (CharState == EMainCharState::ATTACK)
 		Cancel();
