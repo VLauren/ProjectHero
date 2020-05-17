@@ -23,14 +23,14 @@ void APHGame::InitGame(const FString& MapName, const FString& Options, FString& 
 
 void APHGame::Tick(float DeltaTime)
 {
-	if (freezeFramesCounter >= 0)
-		freezeFramesCounter--;
+	// if (freezeFramesCounter >= 0)
+		// freezeFramesCounter--;
 
-	if (freezeFramesCounter == 0)
-	{
-		UGameplayStatics::SetGlobalTimeDilation(Instance->GetWorld(), 1);
+	// if (freezeFramesCounter == 0)
+	// {
+		// UGameplayStatics::SetGlobalTimeDilation(Instance->GetWorld(), 1);
 		// UE_LOG(LogTemp, Warning, TEXT("FREEZE STOP"));
-	}
+	// }
 
 	// currentTimeScale = FMath::Lerp(currentTimeScale, targetTimeScale, 0.05f);
 	// UGameplayStatics::SetGlobalTimeDilation(GetWorld(), currentTimeScale);
@@ -126,10 +126,12 @@ void APHGame::FreezeFrames()
 {
 	UE_LOG(LogTemp, Warning, TEXT("FREEZE START"));
 
-	Instance->currentTimeScale = 1;
-	Instance->targetTimeScale = 0.1f;
-	Instance->freezeFramesCounter = 3;
-	UGameplayStatics::SetGlobalTimeDilation(Instance->GetWorld(), 0.1);
+	// Instance->currentTimeScale = 1;
+	// Instance->targetTimeScale = 0.1f;
+	// Instance->freezeFramesCounter = 3;
+	// UGameplayStatics::SetGlobalTimeDilation(Instance->GetWorld(), 0.1);
+
+	Instance->TimeDilationEffectFrames(0.1f, 6);
 }
 
 TSet<AEnemy*> APHGame::GetEnemiesInFront(FVector Position, FVector Direction)

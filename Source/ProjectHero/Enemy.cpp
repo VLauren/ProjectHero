@@ -9,7 +9,6 @@
 #include "Runtime/NavigationSystem/Public/NavigationSystem.h"
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
 
-
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;

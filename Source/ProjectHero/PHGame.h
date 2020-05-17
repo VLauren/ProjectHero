@@ -30,9 +30,16 @@ public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage);
 	virtual void Tick(float DeltaTime);
 
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite)time
 	TSet<AEnemy*> Enemies;
 	AMainChar* Player;
+
+	// Event
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = CppEvents)
+		void TimeDilationEffect(float timeDilation, float time);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = CppEvents)
+		void TimeDilationEffectFrames(float timeDilation, int frames);
 
 	UFUNCTION(BlueprintPure)
 		TArray<AEnemy*> GetEnemies();
@@ -55,7 +62,7 @@ public:
 	void AddEnemy(AEnemy* enemy);
 	void SetPlayer(AMainChar* enemy);
 
-	UFUNCTION(BLueprintCallable)
+	UFUNCTION(BlueprintCallable)
 	void RemoveEnemy(AEnemy* enemy);
 
 	void DamageArea(FVector Center, float radius, FAttackInfo attackInfo);
