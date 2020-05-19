@@ -67,6 +67,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 			{
 				// Target direction
 				FVector dir = MainChar->AutoTarget->GetActorLocation() - MainChar->GetActorLocation();
+				float verticalDir = dir.Z;
 
 				// Rotate character towards target
 				dir.Z = 0;
@@ -92,6 +93,17 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				// Lock target camera follow
 				if (MainChar->LockTarget != nullptr && FMath::Abs(DeltaYaw) > 5)
 					MainChar->AddControllerYawInput(DeltaYaw * DeltaTime / InputScale);
+
+				// Vertical adjust
+				if (!IsGrounded() && PushActive)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("vdir: %f"), verticalDir);
+					if (FMath::Abs(verticalDir) > 10)
+					{
+						float vMove = FMath::Sign(verticalDir) * 500 * DeltaTime;
+						SafeMoveUpdatedComponent(FVector(0, 0, vMove), UpdatedComponent->GetComponentRotation(), true, Hit);
+					}
+				}
 			}
 		}
 		else if (!movementVector.IsNearlyZero())
