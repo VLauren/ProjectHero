@@ -71,7 +71,7 @@ void UMainCharMovement::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 				// Rotate character towards target
 				dir.Z = 0;
 				dir.Normalize();
-				CurrentRotation = FMath::Lerp(CurrentRotation, dir.Rotation(), MainChar->RotationLerpSpeed);
+				CurrentRotation = FMath::Lerp(CurrentRotation, dir.Rotation(), MainChar->AttackRotationLerpSpeed);
 				UpdatedComponent->GetOwner()->SetActorRotation(CurrentRotation);
 
 				// Camera auto reorientation

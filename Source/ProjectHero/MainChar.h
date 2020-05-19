@@ -106,6 +106,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float RotationLerpSpeed;
 	UPROPERTY(EditAnywhere, Category = MovementValues)
+		float AttackRotationLerpSpeed;
+	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float JumpStrength;
 	UPROPERTY(EditAnywhere, Category = MovementValues)
 		float StopLerpSpeed;
