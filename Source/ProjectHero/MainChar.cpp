@@ -347,6 +347,9 @@ void AMainChar::StopRun()
 
 void AMainChar::Skill()
 {
+	// HACK
+	return;
+
 	if (CharState == EMainCharState::DEATH)
 		return;
 
