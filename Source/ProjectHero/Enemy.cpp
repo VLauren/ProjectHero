@@ -125,6 +125,11 @@ FVector AEnemy::GetPlayerPosition()
 	return AMainChar::GetPlayerLocation();
 }
 
+void AEnemy::ForceSetHitPoints(int hp)
+{
+	HitPoints = hp;
+}
+
 void AEnemy::Death()
 {
 	Super::Death();

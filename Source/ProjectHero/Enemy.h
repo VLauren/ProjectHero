@@ -75,6 +75,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		FVector GetPlayerPosition();
 
+	UFUNCTION(BlueprintCallable)
+		void ForceSetHitPoints(int hp);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		bool hitStart;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
