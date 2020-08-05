@@ -47,6 +47,7 @@ private:
 	int currentAttackIndex;
 	float currentAttackFrame;
 	bool AlreadyHit;
+	TArray<AEnemy*> AlreadyHitEnemies;
 
 	UAttackData* NextAttackData = nullptr;
 

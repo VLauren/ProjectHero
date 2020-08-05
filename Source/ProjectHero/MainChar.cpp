@@ -1,4 +1,4 @@
-#include "MainChar.h"
+﻿#include "MainChar.h"
 #include "Enemy.h"
 #include "PHGame.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
@@ -585,7 +585,8 @@ void AMainChar::StartAttack(int index)
 	CharState = EMainCharState::ATTACK;
 	currentAttackFrame = 0;
 	currentAttackIndex = index;
-	AlreadyHit = false;
+	// AlreadyHit = false;
+	AlreadyHitEnemies.Empty();
 	FallAttack = false;
 
 	if (attackChange)
@@ -654,7 +655,7 @@ void AMainChar::AttackTick(float DeltaTime)
 		if (HitBox != nullptr)
 		{
 			// If active frame ...
-			if (CheckActiveFrame() && !AlreadyHit && (!FallAttack || !Movement->IsGrounded()))
+			if (CheckActiveFrame() && /* !AlreadyHit && */ (!FallAttack || !Movement->IsGrounded()))
 			{
 				HitBox->SetGenerateOverlapEvents(true);
 
@@ -823,7 +824,7 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 {
 	if (OtherComp != nullptr)
 	{
-		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() && OtherComp->IsA(UCapsuleComponent::StaticClass()))
+		if (OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() && OtherComp->IsA(UCapsuleComponent::StaticClass()) && !AlreadyHitEnemies.Contains(OtherComp->GetOwner()))
 		{
 			// UE_LOG(LogTemp, Warning, TEXT("OVERLAP"));
 			// UE_LOG(LogTemp, Warning, TEXT("Hitbox overlap! %s"), OtherComp->GetOwner()->GetClass()->IsChildOf<AEnemy>() ? TEXT("ES ENEMIGO") : TEXT("no es enemigo"));
@@ -848,11 +849,12 @@ void AMainChar::OnHitboxOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 			// FVector hitPosition = GetActorLocation() + (OtherComp->GetOwner()->GetActorLocation() - GetActorLocation()) / 2;
 			// OnAttackHit(hitPosition);
 			FVector hitPosition = OtherComp->GetOwner()->GetActorLocation();
-			// UE_LOG(LogTemp, Warning, TEXT("FX Pos: %s"), *hitPosition.ToString())
+			UE_LOG(LogTemp, Warning, TEXT("FX Pos: %s"), *hitPosition.ToString())
 			OnAttackHit(hitPosition, GetActorForwardVector().Rotation());
 
 			// HACK For now, I disable the hit box
-			AlreadyHit = true;
+			// AlreadyHit = true;
+			AlreadyHitEnemies.Emplace((AEnemy*)OtherComp->GetOwner());
 
 			OnHit();
 			APHGame::FreezeFrames();
