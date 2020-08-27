@@ -80,6 +80,18 @@ void APHGame::DamageArea(FVector Center, float radius, FAttackInfo attackInfo)
 		for (int i = 0; i < OutHits.Num(); i++)
 		{
 			FHitResult OutHit = OutHits[i];
+			if (OutHit.Component == nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("DamageArea sweep component null!"));
+				return;
+			}
+
+			if (OutHit.Component->GetOwner() == nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("DamageArea sweep component OWNER null!"));
+				return;
+			}
+
 			if (OutHit.Component->GetOwner()->GetClass()->IsChildOf<AEnemy>() && OutHit.Component->IsA(UCapsuleComponent::StaticClass()))
 			{
 				// UE_LOG(LogTemp, Warning, TEXT("Enemy damage area!"));
