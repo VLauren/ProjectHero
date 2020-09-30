@@ -27,7 +27,11 @@ void ABasicFlyingEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (State == EEnemyState::DEATH)
+	{
+		if (!Movement->Disabled)
+			Movement->Disabled = true;
 		return;
+	}
 
 	if (State == EEnemyState::IDLE)
 	{

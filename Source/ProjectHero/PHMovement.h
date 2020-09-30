@@ -30,6 +30,8 @@ protected:
 
 public:
 
+	bool Disabled = false;
+
 	bool UseGravity = true;
 	bool Flying = false;
 
